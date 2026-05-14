@@ -1,0 +1,1015 @@
+==========================================
+Running: gpt2_1 (fp32)
+==========================================
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+Running pytorch 2.9.0+cu130
+using device: cuda
+total desired batch size: 256
+=> calculated gradient accumulation steps: 1
+loading weights from pretrained gpt: gpt2
+DataLoader: total number of tokens: 305,260 across 1 files
+padded vocab size from 50257 to 50304
+wrote gpt2_124M.bin
+padded vocab size from 50257 to 50304
+wrote gpt2_124M_bf16.bin
+padded vocab size in reference grads from 50257 to 50304
+wrote gpt2_124M_debug_state.bin
+step    1/10 | train loss 5.356192 | norm -1.0000 | lr 1.00e-04 | (48.10 ms | 5323 tok/s)
+step    2/10 | train loss 5.060585 | norm -1.0000 | lr 1.00e-04 | (25.57 ms | 10010 tok/s)
+step    3/10 | train loss 4.860328 | norm -1.0000 | lr 1.00e-04 | (26.88 ms | 9525 tok/s)
+step    4/10 | train loss 4.961310 | norm -1.0000 | lr 1.00e-04 | (27.75 ms | 9224 tok/s)
+step    5/10 | train loss 4.888239 | norm -1.0000 | lr 1.00e-04 | (29.74 ms | 8607 tok/s)
+step    6/10 | train loss 5.099205 | norm -1.0000 | lr 1.00e-04 | (30.73 ms | 8332 tok/s)
+step    7/10 | train loss 4.860473 | norm -1.0000 | lr 1.00e-04 | (31.67 ms | 8083 tok/s)
+step    8/10 | train loss 4.945070 | norm -1.0000 | lr 1.00e-04 | (32.18 ms | 7956 tok/s)
+step    9/10 | train loss 5.121134 | norm -1.0000 | lr 1.00e-04 | (33.05 ms | 7746 tok/s)
+step   10/10 | train loss 5.270753 | norm -1.0000 | lr 1.00e-04 | (33.75 ms | 7586 tok/s)
+final 9 iters Latency avg: 30.147ms
+final 9 iters Throughput avg: 8563 tok/s
+peak memory consumption: 1372 MiB
+==========================================
+Running: gpt2_1_bfloat16
+==========================================
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+Running pytorch 2.9.0+cu130
+using device: cuda
+total desired batch size: 256
+=> calculated gradient accumulation steps: 1
+loading weights from pretrained gpt: gpt2
+DataLoader: total number of tokens: 305,260 across 1 files
+padded vocab size from 50257 to 50304
+wrote gpt2_124M.bin
+padded vocab size from 50257 to 50304
+wrote gpt2_124M_bf16.bin
+padded vocab size in reference grads from 50257 to 50304
+wrote gpt2_124M_debug_state.bin
+step    1/10 | train loss 5.317617 | norm -1.0000 | lr 1.00e-04 | (129.77 ms | 1973 tok/s)
+step    2/10 | train loss 5.037539 | norm -1.0000 | lr 1.00e-04 | (26.43 ms | 9686 tok/s)
+step    3/10 | train loss 4.869174 | norm -1.0000 | lr 1.00e-04 | (25.79 ms | 9926 tok/s)
+step    4/10 | train loss 4.959387 | norm -1.0000 | lr 1.00e-04 | (26.62 ms | 9618 tok/s)
+step    5/10 | train loss 4.916750 | norm -1.0000 | lr 1.00e-04 | (27.23 ms | 9401 tok/s)
+step    6/10 | train loss 5.063675 | norm -1.0000 | lr 1.00e-04 | (28.82 ms | 8882 tok/s)
+step    7/10 | train loss 4.845804 | norm -1.0000 | lr 1.00e-04 | (29.77 ms | 8600 tok/s)
+step    8/10 | train loss 4.899837 | norm -1.0000 | lr 1.00e-04 | (30.75 ms | 8326 tok/s)
+step    9/10 | train loss 5.097769 | norm -1.0000 | lr 1.00e-04 | (32.71 ms | 7826 tok/s)
+step   10/10 | train loss 5.221752 | norm -1.0000 | lr 1.00e-04 | (34.11 ms | 7505 tok/s)
+final 9 iters Latency avg: 29.135ms
+final 9 iters Throughput avg: 8864 tok/s
+peak memory consumption: 1229 MiB
+==========================================
+Running: gpt2_1_lora_fp32
+==========================================
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+Running pytorch 2.9.0+cu130
+using device: cuda
+total desired batch size: 256
+=> calculated gradient accumulation steps: 1
+loading weights from pretrained gpt: gpt2
+Applying LoRA with rank=8, alpha=16.0
+Target modules: c_attn,attn.c_proj
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+DataLoader: total number of tokens: 305,260 across 1 files
+step    1/10 | train loss 5.356192 | norm -1.0000 | lr 1.00e-04 | (249.94 ms | 1024 tok/s)
+step    2/10 | train loss 5.144085 | norm -1.0000 | lr 1.00e-04 | (25.79 ms | 9926 tok/s)
+step    3/10 | train loss 4.849667 | norm -1.0000 | lr 1.00e-04 | (24.89 ms | 10284 tok/s)
+step    4/10 | train loss 4.976917 | norm -1.0000 | lr 1.00e-04 | (24.63 ms | 10395 tok/s)
+step    5/10 | train loss 4.895231 | norm -1.0000 | lr 1.00e-04 | (25.64 ms | 9983 tok/s)
+step    6/10 | train loss 5.197305 | norm -1.0000 | lr 1.00e-04 | (25.99 ms | 9851 tok/s)
+step    7/10 | train loss 5.058922 | norm -1.0000 | lr 1.00e-04 | (26.04 ms | 9830 tok/s)
+step    8/10 | train loss 5.261158 | norm -1.0000 | lr 1.00e-04 | (26.65 ms | 9605 tok/s)
+step    9/10 | train loss 5.313335 | norm -1.0000 | lr 1.00e-04 | (27.15 ms | 9430 tok/s)
+step   10/10 | train loss 5.574057 | norm -1.0000 | lr 1.00e-04 | (27.15 ms | 9429 tok/s)
+final 9 iters Latency avg: 25.992ms
+final 9 iters Throughput avg: 9859 tok/s
+peak memory consumption: 912 MiB
+==========================================
+Running: gpt2_1_lora_bfloat16
+==========================================
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+Running pytorch 2.9.0+cu130
+using device: cuda
+total desired batch size: 256
+=> calculated gradient accumulation steps: 1
+loading weights from pretrained gpt: gpt2
+Applying LoRA with rank=8, alpha=16.0
+Target modules: c_attn,attn.c_proj
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+DataLoader: total number of tokens: 305,260 across 1 files
+step    1/10 | train loss 5.317617 | norm -1.0000 | lr 1.00e-04 | (316.77 ms | 808 tok/s)
+step    2/10 | train loss 5.141785 | norm -1.0000 | lr 1.00e-04 | (29.52 ms | 8672 tok/s)
+step    3/10 | train loss 4.852446 | norm -1.0000 | lr 1.00e-04 | (28.09 ms | 9112 tok/s)
+step    4/10 | train loss 4.996541 | norm -1.0000 | lr 1.00e-04 | (28.03 ms | 9133 tok/s)
+step    5/10 | train loss 4.891045 | norm -1.0000 | lr 1.00e-04 | (27.94 ms | 9163 tok/s)
+step    6/10 | train loss 5.180059 | norm -1.0000 | lr 1.00e-04 | (28.27 ms | 9055 tok/s)
+step    7/10 | train loss 5.061461 | norm -1.0000 | lr 1.00e-04 | (29.13 ms | 8788 tok/s)
+step    8/10 | train loss 5.248371 | norm -1.0000 | lr 1.00e-04 | (29.58 ms | 8653 tok/s)
+step    9/10 | train loss 5.296886 | norm -1.0000 | lr 1.00e-04 | (29.88 ms | 8568 tok/s)
+step   10/10 | train loss 5.556162 | norm -1.0000 | lr 1.00e-04 | (30.42 ms | 8416 tok/s)
+final 9 iters Latency avg: 28.985ms
+final 9 iters Throughput avg: 8840 tok/s
+peak memory consumption: 1096 MiB
+==========================================
+Running: gpt2_2 (fp32)
+==========================================
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+Running pytorch 2.9.0+cu130
+using device: cuda
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+loading weights from pretrained gpt: gpt2
+DataLoader: total number of tokens: 305,260 across 1 files
+padded vocab size from 50257 to 50304
+wrote gpt2_124M.bin
+padded vocab size from 50257 to 50304
+wrote gpt2_124M_bf16.bin
+padded vocab size in reference grads from 50257 to 50304
+wrote gpt2_124M_debug_state.bin
+step    1/10 | train loss 5.219546 | norm -1.0000 | lr 1.00e-04 | (293.94 ms | 17419 tok/s)
+step    2/10 | train loss 5.110856 | norm -1.0000 | lr 1.00e-04 | (255.30 ms | 20055 tok/s)
+step    3/10 | train loss 5.022462 | norm -1.0000 | lr 1.00e-04 | (255.42 ms | 20045 tok/s)
+step    4/10 | train loss 4.687327 | norm -1.0000 | lr 1.00e-04 | (255.49 ms | 20040 tok/s)
+step    5/10 | train loss 4.798818 | norm -1.0000 | lr 1.00e-04 | (255.46 ms | 20042 tok/s)
+step    6/10 | train loss 4.736455 | norm -1.0000 | lr 1.00e-04 | (255.52 ms | 20038 tok/s)
+step    7/10 | train loss 4.794770 | norm -1.0000 | lr 1.00e-04 | (255.34 ms | 20051 tok/s)
+step    8/10 | train loss 4.686357 | norm -1.0000 | lr 1.00e-04 | (255.18 ms | 20064 tok/s)
+step    9/10 | train loss 4.795805 | norm -1.0000 | lr 1.00e-04 | (255.25 ms | 20059 tok/s)
+step   10/10 | train loss 4.800703 | norm -1.0000 | lr 1.00e-04 | (255.43 ms | 20044 tok/s)
+final 9 iters Latency avg: 255.377ms
+final 9 iters Throughput avg: 20049 tok/s
+peak memory consumption: 9809 MiB
+==========================================
+Running: gpt2_2_bfloat16
+==========================================
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+Running pytorch 2.9.0+cu130
+using device: cuda
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+loading weights from pretrained gpt: gpt2
+DataLoader: total number of tokens: 305,260 across 1 files
+padded vocab size from 50257 to 50304
+wrote gpt2_124M.bin
+padded vocab size from 50257 to 50304
+wrote gpt2_124M_bf16.bin
+padded vocab size in reference grads from 50257 to 50304
+wrote gpt2_124M_debug_state.bin
+step    1/10 | train loss 5.212681 | norm -1.0000 | lr 1.00e-04 | (214.15 ms | 23909 tok/s)
+step    2/10 | train loss 5.070554 | norm -1.0000 | lr 1.00e-04 | (77.59 ms | 65991 tok/s)
+step    3/10 | train loss 4.988791 | norm -1.0000 | lr 1.00e-04 | (75.36 ms | 67940 tok/s)
+step    4/10 | train loss 4.658298 | norm -1.0000 | lr 1.00e-04 | (75.26 ms | 68035 tok/s)
+step    5/10 | train loss 4.760767 | norm -1.0000 | lr 1.00e-04 | (75.16 ms | 68119 tok/s)
+step    6/10 | train loss 4.701412 | norm -1.0000 | lr 1.00e-04 | (75.17 ms | 68111 tok/s)
+step    7/10 | train loss 4.747152 | norm -1.0000 | lr 1.00e-04 | (75.15 ms | 68134 tok/s)
+step    8/10 | train loss 4.647466 | norm -1.0000 | lr 1.00e-04 | (75.00 ms | 68266 tok/s)
+step    9/10 | train loss 4.766385 | norm -1.0000 | lr 1.00e-04 | (75.72 ms | 67616 tok/s)
+step   10/10 | train loss 4.758210 | norm -1.0000 | lr 1.00e-04 | (75.11 ms | 68164 tok/s)
+final 9 iters Latency avg: 75.502ms
+final 9 iters Throughput avg: 67820 tok/s
+peak memory consumption: 8375 MiB
+==========================================
+Running: gpt2_2_lora_fp32
+==========================================
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+Running pytorch 2.9.0+cu130
+using device: cuda
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+loading weights from pretrained gpt: gpt2
+Applying LoRA with rank=8, alpha=16.0
+Target modules: c_attn,attn.c_proj
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+DataLoader: total number of tokens: 305,260 across 1 files
+step    1/10 | train loss 5.219546 | norm -1.0000 | lr 1.00e-04 | (410.30 ms | 12479 tok/s)
+step    2/10 | train loss 5.143064 | norm -1.0000 | lr 1.00e-04 | (190.00 ms | 26947 tok/s)
+step    3/10 | train loss 5.074578 | norm -1.0000 | lr 1.00e-04 | (189.59 ms | 27006 tok/s)
+step    4/10 | train loss 4.774481 | norm -1.0000 | lr 1.00e-04 | (189.56 ms | 27010 tok/s)
+step    5/10 | train loss 4.900561 | norm -1.0000 | lr 1.00e-04 | (189.56 ms | 27011 tok/s)
+step    6/10 | train loss 4.886528 | norm -1.0000 | lr 1.00e-04 | (189.52 ms | 27016 tok/s)
+step    7/10 | train loss 4.977918 | norm -1.0000 | lr 1.00e-04 | (189.46 ms | 27025 tok/s)
+step    8/10 | train loss 4.925590 | norm -1.0000 | lr 1.00e-04 | (189.50 ms | 27019 tok/s)
+step    9/10 | train loss 4.957023 | norm -1.0000 | lr 1.00e-04 | (189.48 ms | 27021 tok/s)
+step   10/10 | train loss 5.033326 | norm -1.0000 | lr 1.00e-04 | (189.47 ms | 27023 tok/s)
+final 9 iters Latency avg: 189.569ms
+final 9 iters Throughput avg: 27009 tok/s
+peak memory consumption: 7844 MiB
+==========================================
+Running: gpt2_2_lora_bfloat16
+==========================================
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+Running pytorch 2.9.0+cu130
+using device: cuda
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+loading weights from pretrained gpt: gpt2
+Applying LoRA with rank=8, alpha=16.0
+Target modules: c_attn,attn.c_proj
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+DataLoader: total number of tokens: 305,260 across 1 files
+step    1/10 | train loss 5.212681 | norm -1.0000 | lr 1.00e-04 | (364.70 ms | 14039 tok/s)
+step    2/10 | train loss 5.141438 | norm -1.0000 | lr 1.00e-04 | (76.59 ms | 66848 tok/s)
+step    3/10 | train loss 5.071906 | norm -1.0000 | lr 1.00e-04 | (75.58 ms | 67744 tok/s)
+step    4/10 | train loss 4.770213 | norm -1.0000 | lr 1.00e-04 | (67.72 ms | 75610 tok/s)
+step    5/10 | train loss 4.900402 | norm -1.0000 | lr 1.00e-04 | (67.69 ms | 75644 tok/s)
+step    6/10 | train loss 4.879103 | norm -1.0000 | lr 1.00e-04 | (67.62 ms | 75713 tok/s)
+step    7/10 | train loss 4.967781 | norm -1.0000 | lr 1.00e-04 | (67.37 ms | 75996 tok/s)
+step    8/10 | train loss 4.916763 | norm -1.0000 | lr 1.00e-04 | (67.52 ms | 75829 tok/s)
+step    9/10 | train loss 4.955421 | norm -1.0000 | lr 1.00e-04 | (67.56 ms | 75782 tok/s)
+step   10/10 | train loss 5.024861 | norm -1.0000 | lr 1.00e-04 | (67.55 ms | 75800 tok/s)
+final 9 iters Latency avg: 69.466ms
+final 9 iters Throughput avg: 73885 tok/s
+peak memory consumption: 6854 MiB
+==========================================
+Running: gpt2_3 (fp32, 8 GPUs)
+==========================================
+W0428 02:59:26.981000 3587406 site-packages/torch/distributed/run.py:803] 
+W0428 02:59:26.981000 3587406 site-packages/torch/distributed/run.py:803] *****************************************
+W0428 02:59:26.981000 3587406 site-packages/torch/distributed/run.py:803] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0428 02:59:26.981000 3587406 site-packages/torch/distributed/run.py:803] *****************************************
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+Running pytorch 2.9.0+cu130
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+using device: cuda:7
+using device: cuda:3
+using device: cuda:2using device: cuda:1
+
+using device: cuda:4
+using device: cuda:0
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+using device: cuda:5
+using device: cuda:6
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+DataLoader: total number of tokens: 305,260 across 1 files
+padded vocab size from 50257 to 50304
+wrote gpt2_124M.bin
+padded vocab size from 50257 to 50304
+wrote gpt2_124M_bf16.bin
+padded vocab size in reference grads from 50257 to 50304
+wrote gpt2_124M_debug_state.bin
+step    1/10 | train loss 5.219545 | norm -1.0000 | lr 1.00e-04 | (325.54 ms | 15728 tok/s)
+step    2/10 | train loss 5.110857 | norm -1.0000 | lr 1.00e-04 | (59.89 ms | 85487 tok/s)
+step    3/10 | train loss 5.022463 | norm -1.0000 | lr 1.00e-04 | (55.87 ms | 91644 tok/s)
+step    4/10 | train loss 4.687329 | norm -1.0000 | lr 1.00e-04 | (50.22 ms | 101949 tok/s)
+step    5/10 | train loss 4.798820 | norm -1.0000 | lr 1.00e-04 | (46.74 ms | 109542 tok/s)
+step    6/10 | train loss 4.736459 | norm -1.0000 | lr 1.00e-04 | (46.14 ms | 110956 tok/s)
+step    7/10 | train loss 4.794774 | norm -1.0000 | lr 1.00e-04 | (46.07 ms | 111143 tok/s)
+step    8/10 | train loss 4.686362 | norm -1.0000 | lr 1.00e-04 | (46.23 ms | 110749 tok/s)
+step    9/10 | train loss 4.795811 | norm -1.0000 | lr 1.00e-04 | (46.11 ms | 111027 tok/s)
+step   10/10 | train loss 4.800710 | norm -1.0000 | lr 1.00e-04 | (46.45 ms | 110224 tok/s)
+final 9 iters Latency avg: 49.303ms
+final 9 iters Throughput avg: 104747 tok/s
+peak memory consumption: 2643 MiB
+==========================================
+Running: gpt2_3_bfloat16 (8 GPUs)
+==========================================
+W0428 02:59:46.242000 3588373 site-packages/torch/distributed/run.py:803] 
+W0428 02:59:46.242000 3588373 site-packages/torch/distributed/run.py:803] *****************************************
+W0428 02:59:46.242000 3588373 site-packages/torch/distributed/run.py:803] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0428 02:59:46.242000 3588373 site-packages/torch/distributed/run.py:803] *****************************************
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+Running pytorch 2.9.0+cu130
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+using device: cuda:5
+using device: cuda:7
+using device: cuda:2
+using device: cuda:4
+using device: cuda:0
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+using device: cuda:3
+using device: cuda:6
+using device: cuda:1
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+DataLoader: total number of tokens: 305,260 across 1 files
+padded vocab size from 50257 to 50304
+wrote gpt2_124M.bin
+padded vocab size from 50257 to 50304
+wrote gpt2_124M_bf16.bin
+padded vocab size in reference grads from 50257 to 50304
+wrote gpt2_124M_debug_state.bin
+step    1/10 | train loss 5.212680 | norm -1.0000 | lr 1.00e-04 | (382.51 ms | 13385 tok/s)
+step    2/10 | train loss 5.071065 | norm -1.0000 | lr 1.00e-04 | (57.00 ms | 89823 tok/s)
+step    3/10 | train loss 4.988435 | norm -1.0000 | lr 1.00e-04 | (44.39 ms | 115346 tok/s)
+step    4/10 | train loss 4.663025 | norm -1.0000 | lr 1.00e-04 | (43.01 ms | 119034 tok/s)
+step    5/10 | train loss 4.758558 | norm -1.0000 | lr 1.00e-04 | (42.87 ms | 119423 tok/s)
+step    6/10 | train loss 4.704734 | norm -1.0000 | lr 1.00e-04 | (42.47 ms | 120565 tok/s)
+step    7/10 | train loss 4.748997 | norm -1.0000 | lr 1.00e-04 | (41.54 ms | 123241 tok/s)
+step    8/10 | train loss 4.645998 | norm -1.0000 | lr 1.00e-04 | (42.39 ms | 120786 tok/s)
+step    9/10 | train loss 4.767230 | norm -1.0000 | lr 1.00e-04 | (45.34 ms | 112929 tok/s)
+step   10/10 | train loss 4.757314 | norm -1.0000 | lr 1.00e-04 | (44.39 ms | 115330 tok/s)
+final 9 iters Latency avg: 44.823ms
+final 9 iters Throughput avg: 115164 tok/s
+peak memory consumption: 2685 MiB
+==========================================
+Running: gpt2_3_lora_fp32 (8 GPUs)
+==========================================
+W0428 03:00:05.309000 3589412 site-packages/torch/distributed/run.py:803] 
+W0428 03:00:05.309000 3589412 site-packages/torch/distributed/run.py:803] *****************************************
+W0428 03:00:05.309000 3589412 site-packages/torch/distributed/run.py:803] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0428 03:00:05.309000 3589412 site-packages/torch/distributed/run.py:803] *****************************************
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+Running pytorch 2.9.0+cu130
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+using device: cuda:4
+using device: cuda:6
+using device: cuda:1
+using device: cuda:3
+using device: cuda:5
+using device: cuda:2
+using device: cuda:7
+using device: cuda:0
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+Applying LoRA with rank=8, alpha=16.0
+Target modules: c_attn,attn.c_proj
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+DataLoader: total number of tokens: 305,260 across 1 files
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+step    1/10 | train loss 5.219545 | norm -1.0000 | lr 1.00e-04 | (323.75 ms | 15814 tok/s)
+step    2/10 | train loss 5.143064 | norm -1.0000 | lr 1.00e-04 | (40.51 ms | 126385 tok/s)
+step    3/10 | train loss 5.074578 | norm -1.0000 | lr 1.00e-04 | (39.22 ms | 130553 tok/s)
+step    4/10 | train loss 4.774481 | norm -1.0000 | lr 1.00e-04 | (39.15 ms | 130764 tok/s)
+step    5/10 | train loss 4.900560 | norm -1.0000 | lr 1.00e-04 | (39.25 ms | 130452 tok/s)
+step    6/10 | train loss 4.886528 | norm -1.0000 | lr 1.00e-04 | (38.30 ms | 133674 tok/s)
+step    7/10 | train loss 4.977918 | norm -1.0000 | lr 1.00e-04 | (40.24 ms | 127243 tok/s)
+step    8/10 | train loss 4.925590 | norm -1.0000 | lr 1.00e-04 | (40.65 ms | 125947 tok/s)
+step    9/10 | train loss 4.957023 | norm -1.0000 | lr 1.00e-04 | (38.90 ms | 131616 tok/s)
+step   10/10 | train loss 5.033326 | norm -1.0000 | lr 1.00e-04 | (40.17 ms | 127463 tok/s)
+final 9 iters Latency avg: 39.599ms
+final 9 iters Throughput avg: 129344 tok/s
+peak memory consumption: 1461 MiB
+==========================================
+Running: gpt2_3_lora_bfloat16 (8 GPUs)
+==========================================
+W0428 03:00:20.335000 3590204 site-packages/torch/distributed/run.py:803] 
+W0428 03:00:20.335000 3590204 site-packages/torch/distributed/run.py:803] *****************************************
+W0428 03:00:20.335000 3590204 site-packages/torch/distributed/run.py:803] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0428 03:00:20.335000 3590204 site-packages/torch/distributed/run.py:803] *****************************************
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+Running pytorch 2.9.0+cu130
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1617: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  _C._set_float32_matmul_precision(precision)
+using device: cuda:4
+using device: cuda:0
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+using device: cuda:6
+using device: cuda:3
+using device: cuda:1
+using device: cuda:2
+using device: cuda:5
+using device: cuda:7
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+Applying LoRA with rank=8, alpha=16.0
+Target modules: c_attn,attn.c_proj
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+DataLoader: total number of tokens: 305,260 across 1 files
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+trainable params: 442,368 || all params: 124,882,176 || trainable%: 0.3542
+step    1/10 | train loss 5.212680 | norm -1.0000 | lr 1.00e-04 | (391.25 ms | 13086 tok/s)
+step    2/10 | train loss 5.141438 | norm -1.0000 | lr 1.00e-04 | (37.86 ms | 135223 tok/s)
+step    3/10 | train loss 5.071906 | norm -1.0000 | lr 1.00e-04 | (36.64 ms | 139755 tok/s)
+step    4/10 | train loss 4.770212 | norm -1.0000 | lr 1.00e-04 | (39.54 ms | 129503 tok/s)
+step    5/10 | train loss 4.900342 | norm -1.0000 | lr 1.00e-04 | (38.80 ms | 131947 tok/s)
+step    6/10 | train loss 4.879103 | norm -1.0000 | lr 1.00e-04 | (39.74 ms | 128846 tok/s)
+step    7/10 | train loss 4.967722 | norm -1.0000 | lr 1.00e-04 | (40.04 ms | 127877 tok/s)
+step    8/10 | train loss 4.916804 | norm -1.0000 | lr 1.00e-04 | (40.90 ms | 125171 tok/s)
+step    9/10 | train loss 4.955956 | norm -1.0000 | lr 1.00e-04 | (42.01 ms | 121869 tok/s)
+step   10/10 | train loss 5.024831 | norm -1.0000 | lr 1.00e-04 | (44.34 ms | 115472 tok/s)
+final 9 iters Latency avg: 39.986ms
+final 9 iters Throughput avg: 128407 tok/s
+peak memory consumption: 1556 MiB
+==========================================
+Running: llama3_1 (fp32)
+==========================================
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+Running pytorch 2.9.0+cu130
+using device: cuda
+total desired batch size: 256
+=> calculated gradient accumulation steps: 1
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+DataLoader: total number of tokens: 276,224 across 1 files
+step    1/10 | train loss 4.899450 | norm -1.0000 | lr 1.00e-05 | (427.29 ms | 599 tok/s)
+step    2/10 | train loss 4.086945 | norm -1.0000 | lr 1.00e-05 | (195.54 ms | 1309 tok/s)
+step    3/10 | train loss 3.874061 | norm -1.0000 | lr 1.00e-05 | (195.10 ms | 1312 tok/s)
+step    4/10 | train loss 3.917661 | norm -1.0000 | lr 1.00e-05 | (195.37 ms | 1310 tok/s)
+step    5/10 | train loss 3.868911 | norm -1.0000 | lr 1.00e-05 | (195.37 ms | 1310 tok/s)
+step    6/10 | train loss 3.945994 | norm -1.0000 | lr 1.00e-05 | (195.01 ms | 1313 tok/s)
+step    7/10 | train loss 4.028148 | norm -1.0000 | lr 1.00e-05 | (194.98 ms | 1313 tok/s)
+step    8/10 | train loss 3.513877 | norm -1.0000 | lr 1.00e-05 | (195.13 ms | 1312 tok/s)
+step    9/10 | train loss 3.602719 | norm -1.0000 | lr 1.00e-05 | (195.38 ms | 1310 tok/s)
+step   10/10 | train loss 3.716988 | norm -1.0000 | lr 1.00e-05 | (194.98 ms | 1313 tok/s)
+final 9 iters Latency avg: 195.207ms
+final 9 iters Throughput avg: 1311 tok/s
+peak memory consumption: 28601 MiB
+==========================================
+Running: llama3_1_bfloat16
+==========================================
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+Running pytorch 2.9.0+cu130
+using device: cuda
+total desired batch size: 256
+=> calculated gradient accumulation steps: 1
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+DataLoader: total number of tokens: 276,224 across 1 files
+step    1/10 | train loss 4.901106 | norm -1.0000 | lr 1.00e-05 | (503.84 ms | 508 tok/s)
+step    2/10 | train loss 4.547561 | norm -1.0000 | lr 1.00e-05 | (117.51 ms | 2178 tok/s)
+step    3/10 | train loss 4.140634 | norm -1.0000 | lr 1.00e-05 | (117.82 ms | 2173 tok/s)
+step    4/10 | train loss 4.326704 | norm -1.0000 | lr 1.00e-05 | (118.93 ms | 2153 tok/s)
+step    5/10 | train loss 3.963202 | norm -1.0000 | lr 1.00e-05 | (120.62 ms | 2122 tok/s)
+step    6/10 | train loss 3.978629 | norm -1.0000 | lr 1.00e-05 | (123.01 ms | 2081 tok/s)
+step    7/10 | train loss 4.032981 | norm -1.0000 | lr 1.00e-05 | (124.57 ms | 2055 tok/s)
+step    8/10 | train loss 3.496320 | norm -1.0000 | lr 1.00e-05 | (126.03 ms | 2031 tok/s)
+step    9/10 | train loss 3.622627 | norm -1.0000 | lr 1.00e-05 | (127.47 ms | 2008 tok/s)
+step   10/10 | train loss 3.709588 | norm -1.0000 | lr 1.00e-05 | (128.72 ms | 1989 tok/s)
+final 9 iters Latency avg: 122.743ms
+final 9 iters Throughput avg: 2088 tok/s
+peak memory consumption: 28601 MiB
+==========================================
+Running: llama3_1_lora_fp32
+==========================================
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+Running pytorch 2.9.0+cu130
+using device: cuda
+total desired batch size: 256
+=> calculated gradient accumulation steps: 1
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+Applying LoRA with rank=8, alpha=16.0
+Target modules: c_attn,attn.c_proj
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+DataLoader: total number of tokens: 276,224 across 1 files
+step    1/10 | train loss 4.899450 | norm -1.0000 | lr 1.00e-05 | (369.55 ms | 693 tok/s)
+step    2/10 | train loss 4.868546 | norm -1.0000 | lr 1.00e-05 | (98.34 ms | 2603 tok/s)
+step    3/10 | train loss 4.770338 | norm -1.0000 | lr 1.00e-05 | (94.18 ms | 2718 tok/s)
+step    4/10 | train loss 5.010627 | norm -1.0000 | lr 1.00e-05 | (94.01 ms | 2723 tok/s)
+step    5/10 | train loss 4.922275 | norm -1.0000 | lr 1.00e-05 | (93.92 ms | 2726 tok/s)
+step    6/10 | train loss 4.973804 | norm -1.0000 | lr 1.00e-05 | (93.97 ms | 2724 tok/s)
+step    7/10 | train loss 4.883524 | norm -1.0000 | lr 1.00e-05 | (93.91 ms | 2726 tok/s)
+step    8/10 | train loss 4.800914 | norm -1.0000 | lr 1.00e-05 | (94.01 ms | 2723 tok/s)
+step    9/10 | train loss 4.702590 | norm -1.0000 | lr 1.00e-05 | (93.92 ms | 2726 tok/s)
+step   10/10 | train loss 4.320537 | norm -1.0000 | lr 1.00e-05 | (93.99 ms | 2724 tok/s)
+final 9 iters Latency avg: 94.473ms
+final 9 iters Throughput avg: 2710 tok/s
+peak memory consumption: 6897 MiB
+==========================================
+Running: llama3_1_lora_bfloat16
+==========================================
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+Running pytorch 2.9.0+cu130
+using device: cuda
+total desired batch size: 256
+=> calculated gradient accumulation steps: 1
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+Applying LoRA with rank=8, alpha=16.0
+Target modules: c_attn,attn.c_proj
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+DataLoader: total number of tokens: 276,224 across 1 files
+step    1/10 | train loss 4.901106 | norm -1.0000 | lr 1.00e-05 | (422.71 ms | 606 tok/s)
+step    2/10 | train loss 4.872866 | norm -1.0000 | lr 1.00e-05 | (57.95 ms | 4418 tok/s)
+step    3/10 | train loss 4.769873 | norm -1.0000 | lr 1.00e-05 | (55.07 ms | 4649 tok/s)
+step    4/10 | train loss 5.017920 | norm -1.0000 | lr 1.00e-05 | (56.66 ms | 4518 tok/s)
+step    5/10 | train loss 4.932207 | norm -1.0000 | lr 1.00e-05 | (57.31 ms | 4467 tok/s)
+step    6/10 | train loss 4.982221 | norm -1.0000 | lr 1.00e-05 | (57.58 ms | 4446 tok/s)
+step    7/10 | train loss 4.890018 | norm -1.0000 | lr 1.00e-05 | (59.03 ms | 4337 tok/s)
+step    8/10 | train loss 4.809040 | norm -1.0000 | lr 1.00e-05 | (60.14 ms | 4257 tok/s)
+step    9/10 | train loss 4.713573 | norm -1.0000 | lr 1.00e-05 | (62.78 ms | 4078 tok/s)
+step   10/10 | train loss 4.326195 | norm -1.0000 | lr 1.00e-05 | (63.35 ms | 4041 tok/s)
+final 9 iters Latency avg: 58.875ms
+final 9 iters Throughput avg: 4357 tok/s
+peak memory consumption: 8924 MiB
+==========================================
+Running: llama3_2 (fp32)
+==========================================
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+Running pytorch 2.9.0+cu130
+using device: cuda
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+DataLoader: total number of tokens: 276,224 across 1 files
+step    1/10 | train loss 4.726650 | norm -1.0000 | lr 1.00e-05 | (2450.27 ms | 2090 tok/s)
+step    2/10 | train loss 4.117748 | norm -1.0000 | lr 1.00e-05 | (2228.89 ms | 2297 tok/s)
+step    3/10 | train loss 3.613298 | norm -1.0000 | lr 1.00e-05 | (2228.08 ms | 2298 tok/s)
+step    4/10 | train loss 3.654213 | norm -1.0000 | lr 1.00e-05 | (2228.35 ms | 2298 tok/s)
+step    5/10 | train loss 3.519631 | norm -1.0000 | lr 1.00e-05 | (2228.26 ms | 2298 tok/s)
+step    6/10 | train loss 3.483855 | norm -1.0000 | lr 1.00e-05 | (2227.96 ms | 2298 tok/s)
+step    7/10 | train loss 3.432098 | norm -1.0000 | lr 1.00e-05 | (2228.57 ms | 2297 tok/s)
+step    8/10 | train loss 3.572625 | norm -1.0000 | lr 1.00e-05 | (2228.07 ms | 2298 tok/s)
+step    9/10 | train loss 3.578134 | norm -1.0000 | lr 1.00e-05 | (2228.28 ms | 2298 tok/s)
+step   10/10 | train loss 3.383961 | norm -1.0000 | lr 1.00e-05 | (2228.27 ms | 2298 tok/s)
+final 9 iters Latency avg: 2228.304ms
+final 9 iters Throughput avg: 2298 tok/s
+peak memory consumption: 44647 MiB
+==========================================
+Running: llama3_2_bfloat16
+==========================================
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+Running pytorch 2.9.0+cu130
+using device: cuda
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+DataLoader: total number of tokens: 276,224 across 1 files
+step    1/10 | train loss 4.727599 | norm -1.0000 | lr 1.00e-05 | (628.51 ms | 8146 tok/s)
+step    2/10 | train loss 4.376256 | norm -1.0000 | lr 1.00e-05 | (344.81 ms | 14849 tok/s)
+step    3/10 | train loss 3.780883 | norm -1.0000 | lr 1.00e-05 | (344.37 ms | 14868 tok/s)
+step    4/10 | train loss 3.847778 | norm -1.0000 | lr 1.00e-05 | (344.85 ms | 14847 tok/s)
+step    5/10 | train loss 3.561925 | norm -1.0000 | lr 1.00e-05 | (344.89 ms | 14845 tok/s)
+step    6/10 | train loss 3.512629 | norm -1.0000 | lr 1.00e-05 | (344.24 ms | 14873 tok/s)
+step    7/10 | train loss 3.464871 | norm -1.0000 | lr 1.00e-05 | (344.74 ms | 14852 tok/s)
+step    8/10 | train loss 3.591827 | norm -1.0000 | lr 1.00e-05 | (344.54 ms | 14860 tok/s)
+step    9/10 | train loss 3.605977 | norm -1.0000 | lr 1.00e-05 | (343.87 ms | 14889 tok/s)
+step   10/10 | train loss 3.409961 | norm -1.0000 | lr 1.00e-05 | (344.17 ms | 14877 tok/s)
+final 9 iters Latency avg: 344.498ms
+final 9 iters Throughput avg: 14862 tok/s
+peak memory consumption: 39305 MiB
+==========================================
+Running: llama3_2_lora_fp32
+==========================================
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+Running pytorch 2.9.0+cu130
+using device: cuda
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+Applying LoRA with rank=8, alpha=16.0
+Target modules: c_attn,attn.c_proj
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+DataLoader: total number of tokens: 276,224 across 1 files
+step    1/10 | train loss 4.726650 | norm -1.0000 | lr 1.00e-05 | (1725.36 ms | 2967 tok/s)
+step    2/10 | train loss 4.578903 | norm -1.0000 | lr 1.00e-05 | (1502.92 ms | 3407 tok/s)
+step    3/10 | train loss 4.217411 | norm -1.0000 | lr 1.00e-05 | (1502.42 ms | 3408 tok/s)
+step    4/10 | train loss 4.375905 | norm -1.0000 | lr 1.00e-05 | (1502.37 ms | 3408 tok/s)
+step    5/10 | train loss 4.413909 | norm -1.0000 | lr 1.00e-05 | (1502.38 ms | 3408 tok/s)
+step    6/10 | train loss 4.446319 | norm -1.0000 | lr 1.00e-05 | (1502.28 ms | 3408 tok/s)
+step    7/10 | train loss 4.510068 | norm -1.0000 | lr 1.00e-05 | (1502.24 ms | 3408 tok/s)
+step    8/10 | train loss 4.406633 | norm -1.0000 | lr 1.00e-05 | (1502.28 ms | 3408 tok/s)
+step    9/10 | train loss 4.425780 | norm -1.0000 | lr 1.00e-05 | (1502.19 ms | 3408 tok/s)
+step   10/10 | train loss 4.382312 | norm -1.0000 | lr 1.00e-05 | (1502.41 ms | 3408 tok/s)
+final 9 iters Latency avg: 1502.388ms
+final 9 iters Throughput avg: 3408 tok/s
+peak memory consumption: 28633 MiB
+==========================================
+Running: llama3_2_lora_bfloat16
+==========================================
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+Running pytorch 2.9.0+cu130
+using device: cuda
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+Applying LoRA with rank=8, alpha=16.0
+Target modules: c_attn,attn.c_proj
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+DataLoader: total number of tokens: 276,224 across 1 files
+step    1/10 | train loss 4.727599 | norm -1.0000 | lr 1.00e-05 | (576.41 ms | 8883 tok/s)
+step    2/10 | train loss 4.581890 | norm -1.0000 | lr 1.00e-05 | (230.74 ms | 22189 tok/s)
+step    3/10 | train loss 4.221289 | norm -1.0000 | lr 1.00e-05 | (230.39 ms | 22224 tok/s)
+step    4/10 | train loss 4.380143 | norm -1.0000 | lr 1.00e-05 | (230.35 ms | 22227 tok/s)
+step    5/10 | train loss 4.419139 | norm -1.0000 | lr 1.00e-05 | (229.64 ms | 22296 tok/s)
+step    6/10 | train loss 4.454590 | norm -1.0000 | lr 1.00e-05 | (230.55 ms | 22208 tok/s)
+step    7/10 | train loss 4.519429 | norm -1.0000 | lr 1.00e-05 | (230.01 ms | 22260 tok/s)
+step    8/10 | train loss 4.414991 | norm -1.0000 | lr 1.00e-05 | (230.29 ms | 22233 tok/s)
+step    9/10 | train loss 4.434306 | norm -1.0000 | lr 1.00e-05 | (229.68 ms | 22292 tok/s)
+step   10/10 | train loss 4.389911 | norm -1.0000 | lr 1.00e-05 | (229.71 ms | 22289 tok/s)
+final 9 iters Latency avg: 230.151ms
+final 9 iters Throughput avg: 22246 tok/s
+peak memory consumption: 24579 MiB
+==========================================
+Running: llama3_3 (fp32, 8 GPUs)
+==========================================
+W0428 03:02:33.309000 3596200 site-packages/torch/distributed/run.py:803] 
+W0428 03:02:33.309000 3596200 site-packages/torch/distributed/run.py:803] *****************************************
+W0428 03:02:33.309000 3596200 site-packages/torch/distributed/run.py:803] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0428 03:02:33.309000 3596200 site-packages/torch/distributed/run.py:803] *****************************************
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+Running pytorch 2.9.0+cu130
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+using device: cuda:3
+using device: cuda:0
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+using device: cuda:6
+using device: cuda:2
+using device: cuda:5
+using device: cuda:1
+using device: cuda:7
+using device: cuda:4
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+DataLoader: total number of tokens: 276,224 across 1 files
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+step    1/10 | train loss 4.726650 | norm -1.0000 | lr 1.00e-05 | (961.25 ms | 5326 tok/s)
+step    2/10 | train loss 4.117748 | norm -1.0000 | lr 1.00e-05 | (367.55 ms | 13930 tok/s)
+step    3/10 | train loss 3.613298 | norm -1.0000 | lr 1.00e-05 | (395.24 ms | 12954 tok/s)
+step    4/10 | train loss 3.654213 | norm -1.0000 | lr 1.00e-05 | (397.25 ms | 12889 tok/s)
+step    5/10 | train loss 3.519631 | norm -1.0000 | lr 1.00e-05 | (397.07 ms | 12895 tok/s)
+step    6/10 | train loss 3.483854 | norm -1.0000 | lr 1.00e-05 | (398.00 ms | 12864 tok/s)
+step    7/10 | train loss 3.432098 | norm -1.0000 | lr 1.00e-05 | (397.05 ms | 12895 tok/s)
+step    8/10 | train loss 3.572626 | norm -1.0000 | lr 1.00e-05 | (397.55 ms | 12879 tok/s)
+step    9/10 | train loss 3.578134 | norm -1.0000 | lr 1.00e-05 | (397.19 ms | 12891 tok/s)
+step   10/10 | train loss 3.383962 | norm -1.0000 | lr 1.00e-05 | (396.97 ms | 12898 tok/s)
+final 9 iters Latency avg: 393.762ms
+final 9 iters Throughput avg: 13010 tok/s
+peak memory consumption: 34318 MiB
+==========================================
+Running: llama3_3_bfloat16 (8 GPUs)
+==========================================
+W0428 03:02:56.454000 3597319 site-packages/torch/distributed/run.py:803] 
+W0428 03:02:56.454000 3597319 site-packages/torch/distributed/run.py:803] *****************************************
+W0428 03:02:56.454000 3597319 site-packages/torch/distributed/run.py:803] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0428 03:02:56.454000 3597319 site-packages/torch/distributed/run.py:803] *****************************************
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+Running pytorch 2.9.0+cu130
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+using device: cuda:2
+using device: cuda:1
+using device: cuda:5
+using device: cuda:6
+using device: cuda:3
+using device: cuda:7
+using device: cuda:4
+using device: cuda:0
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+DataLoader: total number of tokens: 276,224 across 1 files
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+step    1/10 | train loss 4.727335 | norm -1.0000 | lr 1.00e-05 | (696.40 ms | 7352 tok/s)
+step    2/10 | train loss 4.375316 | norm -1.0000 | lr 1.00e-05 | (161.45 ms | 31714 tok/s)
+step    3/10 | train loss 3.781656 | norm -1.0000 | lr 1.00e-05 | (194.38 ms | 26340 tok/s)
+step    4/10 | train loss 3.849656 | norm -1.0000 | lr 1.00e-05 | (195.10 ms | 26242 tok/s)
+step    5/10 | train loss 3.563741 | norm -1.0000 | lr 1.00e-05 | (195.25 ms | 26223 tok/s)
+step    6/10 | train loss 3.512921 | norm -1.0000 | lr 1.00e-05 | (195.18 ms | 26232 tok/s)
+step    7/10 | train loss 3.465203 | norm -1.0000 | lr 1.00e-05 | (194.64 ms | 26304 tok/s)
+step    8/10 | train loss 3.590934 | norm -1.0000 | lr 1.00e-05 | (195.21 ms | 26228 tok/s)
+step    9/10 | train loss 3.605348 | norm -1.0000 | lr 1.00e-05 | (204.40 ms | 25049 tok/s)
+step   10/10 | train loss 3.408991 | norm -1.0000 | lr 1.00e-05 | (197.29 ms | 25951 tok/s)
+final 9 iters Latency avg: 192.546ms
+final 9 iters Throughput avg: 26698 tok/s
+peak memory consumption: 34320 MiB
+==========================================
+Running: llama3_3_lora_fp32 (8 GPUs)
+==========================================
+W0428 03:03:14.968000 3598136 site-packages/torch/distributed/run.py:803] 
+W0428 03:03:14.968000 3598136 site-packages/torch/distributed/run.py:803] *****************************************
+W0428 03:03:14.968000 3598136 site-packages/torch/distributed/run.py:803] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0428 03:03:14.968000 3598136 site-packages/torch/distributed/run.py:803] *****************************************
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+Running pytorch 2.9.0+cu130
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+using device: cuda:1
+using device: cuda:3
+using device: cuda:0
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+using device: cuda:4using device: cuda:7
+
+using device: cuda:6
+using device: cuda:2
+using device: cuda:5
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+Applying LoRA with rank=8, alpha=16.0
+Target modules: c_attn,attn.c_proj
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+DataLoader: total number of tokens: 276,224 across 1 files
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+step    1/10 | train loss 4.726650 | norm -1.0000 | lr 1.00e-05 | (517.72 ms | 9889 tok/s)
+step    2/10 | train loss 4.578904 | norm -1.0000 | lr 1.00e-05 | (230.93 ms | 22172 tok/s)
+step    3/10 | train loss 4.217411 | norm -1.0000 | lr 1.00e-05 | (203.52 ms | 25157 tok/s)
+step    4/10 | train loss 4.375905 | norm -1.0000 | lr 1.00e-05 | (203.43 ms | 25169 tok/s)
+step    5/10 | train loss 4.413909 | norm -1.0000 | lr 1.00e-05 | (203.36 ms | 25177 tok/s)
+step    6/10 | train loss 4.446319 | norm -1.0000 | lr 1.00e-05 | (203.41 ms | 25171 tok/s)
+step    7/10 | train loss 4.510068 | norm -1.0000 | lr 1.00e-05 | (203.54 ms | 25155 tok/s)
+step    8/10 | train loss 4.406633 | norm -1.0000 | lr 1.00e-05 | (203.33 ms | 25181 tok/s)
+step    9/10 | train loss 4.425781 | norm -1.0000 | lr 1.00e-05 | (203.66 ms | 25139 tok/s)
+step   10/10 | train loss 4.382312 | norm -1.0000 | lr 1.00e-05 | (203.25 ms | 25191 tok/s)
+final 9 iters Latency avg: 206.492ms
+final 9 iters Throughput avg: 24835 tok/s
+peak memory consumption: 8615 MiB
+==========================================
+Running: llama3_3_lora_bfloat16 (8 GPUs)
+==========================================
+W0428 03:03:33.412000 3599080 site-packages/torch/distributed/run.py:803] 
+W0428 03:03:33.412000 3599080 site-packages/torch/distributed/run.py:803] *****************************************
+W0428 03:03:33.412000 3599080 site-packages/torch/distributed/run.py:803] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0428 03:03:33.412000 3599080 site-packages/torch/distributed/run.py:803] *****************************************
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+Running pytorch 2.9.0+cu130
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/backends/__init__.py:46: UserWarning: Please use the new API settings to control TF32 behavior, such as torch.backends.cudnn.conv.fp32_precision = 'tf32' or torch.backends.cuda.matmul.fp32_precision = 'ieee'. Old settings, e.g, torch.backends.cuda.matmul.allow_tf32 = True, torch.backends.cudnn.allow_tf32 = True, allowTF32CuDNN() and allowTF32CuBLAS() will be deprecated after Pytorch 2.9. Please see https://pytorch.org/docs/main/notes/cuda.html#tensorfloat-32-tf32-on-ampere-and-later-devices (Triggered internally at /pytorch/aten/src/ATen/Context.cpp:80.)
+  self.setter(val)
+using device: cuda:7
+using device: cuda:1
+using device: cuda:5
+using device: cuda:4
+using device: cuda:0
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+using device: cuda:6
+using device: cuda:2
+using device: cuda:3
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+/opt/miniconda3/envs/pytorch_env/lib/python3.11/site-packages/torch/__init__.py:1275: UserWarning: torch.set_default_tensor_type() is deprecated as of PyTorch 2.1, please use torch.set_default_dtype() and torch.set_default_device() as alternatives. (Triggered internally at /pytorch/torch/csrc/tensor/python_tensor.cpp:434.)
+  _C._set_default_tensor_type(t)
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+Applying LoRA with rank=8, alpha=16.0
+Target modules: c_attn,attn.c_proj
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+DataLoader: total number of tokens: 276,224 across 1 files
+write tokenizer from huggingface: wrote llama3_tokenizer.bin with 128256 tokens.
+trainable params: 1,179,648 || all params: 1,499,662,336 || trainable%: 0.0787
+step    1/10 | train loss 4.727335 | norm -1.0000 | lr 1.00e-05 | (442.87 ms | 11561 tok/s)
+step    2/10 | train loss 4.581985 | norm -1.0000 | lr 1.00e-05 | (71.21 ms | 71902 tok/s)
+step    3/10 | train loss 4.220349 | norm -1.0000 | lr 1.00e-05 | (61.04 ms | 83882 tok/s)
+step    4/10 | train loss 4.381255 | norm -1.0000 | lr 1.00e-05 | (61.76 ms | 82906 tok/s)
+step    5/10 | train loss 4.419393 | norm -1.0000 | lr 1.00e-05 | (64.50 ms | 79375 tok/s)
+step    6/10 | train loss 4.454503 | norm -1.0000 | lr 1.00e-05 | (65.58 ms | 78077 tok/s)
+step    7/10 | train loss 4.518961 | norm -1.0000 | lr 1.00e-05 | (67.61 ms | 75729 tok/s)
+step    8/10 | train loss 4.414945 | norm -1.0000 | lr 1.00e-05 | (69.82 ms | 73336 tok/s)
+step    9/10 | train loss 4.434572 | norm -1.0000 | lr 1.00e-05 | (69.60 ms | 73566 tok/s)
+step   10/10 | train loss 4.391344 | norm -1.0000 | lr 1.00e-05 | (66.91 ms | 76522 tok/s)
+final 9 iters Latency avg: 66.446ms
+final 9 iters Throughput avg: 77255 tok/s
+peak memory consumption: 10170 MiB
+==========================================
+All training jobs finished.
+==========================================
