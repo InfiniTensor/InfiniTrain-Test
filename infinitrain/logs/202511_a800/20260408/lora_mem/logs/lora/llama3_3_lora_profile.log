@@ -1,0 +1,52 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DPROFILE_MODE=ON .. && make -j
+[COMMAND] ./llama3 --input_bin /data/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype=float32 --nthread_per_process=8 --num_iteration=10 --batch_size=10 --total_batch_size=5120 --lora_rank=8 --lora_alpha=16.0 --lora_target_modules=c_attn,attn.c_proj
+===== LoRA Model Summary (Rank 3) ======
+Total parameters:     1499662336
+Trainable parameters: 1179648 (0.0786609%)
+Frozen parameters:    1498482688
+========================================
+===== LoRA Model Summary (Rank 7) ======
+Total parameters:     1499662336
+Trainable parameters: 1179648 (0.0786609%)
+Frozen parameters:    1498482688
+========================================
+===== LoRA Model Summary (Rank 5) ======
+Total parameters:     1499662336
+Trainable parameters: 1179648 (0.0786609%)
+Frozen parameters:    1498482688
+========================================
+===== LoRA Model Summary (Rank 2) ======
+Total parameters:     1499662336
+Trainable parameters: 1179648 (0.0786609%)
+Frozen parameters:    1498482688
+========================================
+===== LoRA Model Summary (Rank 4) ======
+Total parameters:     1499662336
+Trainable parameters: 1179648 (0.0786609%)
+Frozen parameters:    1498482688
+========================================
+===== LoRA Model Summary (Rank 6) ======
+Total parameters:     1499662336
+Trainable parameters: 1179648 (0.0786609%)
+Frozen parameters:    1498482688
+========================================
+===== LoRA Model Summary (Rank 1) ======
+Total parameters:     1499662336
+Trainable parameters: 1179648 (0.0786609%)
+Frozen parameters:    1498482688
+========================================
+===== LoRA Model Summary (Rank 0) ======
+Total parameters:     1499662336
+Trainable parameters: 1179648 (0.0786609%)
+Frozen parameters:    1498482688
+========================================
+E20260408 07:22:52.389462 140410936598528 main.cc:393] step    1/10 | train loss 4.726651 | lr 1.00e-05 | (1626.46 ms | 3148 tok/s | peak used: 15787 MB | peak reserved: 15904 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 07:22:53.452697 140410936598528 main.cc:393] step    2/10 | train loss 4.579563 | lr 1.00e-05 | (1062.26 ms | 4820 tok/s | peak used: 15787 MB | peak reserved: 15904 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 07:22:54.473700 140410936598528 main.cc:393] step    3/10 | train loss 4.218554 | lr 1.00e-05 | (1019.86 ms | 5020 tok/s | peak used: 15787 MB | peak reserved: 15904 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 07:22:55.248207 140410936598528 main.cc:393] step    4/10 | train loss 4.377601 | lr 1.00e-05 | (774.45 ms | 6611 tok/s | peak used: 15787 MB | peak reserved: 15904 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 07:22:55.964063 140410936598528 main.cc:393] step    5/10 | train loss 4.416306 | lr 1.00e-05 | (715.80 ms | 7153 tok/s | peak used: 15787 MB | peak reserved: 15904 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 07:22:56.849444 140410936598528 main.cc:393] step    6/10 | train loss 4.449708 | lr 1.00e-05 | (885.33 ms | 5783 tok/s | peak used: 15787 MB | peak reserved: 15904 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 07:22:57.656913 140410936598528 main.cc:393] step    7/10 | train loss 4.514152 | lr 1.00e-05 | (807.42 ms | 6341 tok/s | peak used: 15787 MB | peak reserved: 15904 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 07:22:58.472548 140410936598528 main.cc:393] step    8/10 | train loss 4.411066 | lr 1.00e-05 | (815.57 ms | 6278 tok/s | peak used: 15787 MB | peak reserved: 15904 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 07:22:59.191923 140410936598528 main.cc:393] step    9/10 | train loss 4.429902 | lr 1.00e-05 | (719.32 ms | 7118 tok/s | peak used: 15787 MB | peak reserved: 15904 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 07:22:59.927642 140410936598528 main.cc:393] step   10/10 | train loss 4.387337 | lr 1.00e-05 | (735.67 ms | 6960 tok/s | peak used: 15787 MB | peak reserved: 15904 MB, DP=8, TP=1, SP=1, PP=1)

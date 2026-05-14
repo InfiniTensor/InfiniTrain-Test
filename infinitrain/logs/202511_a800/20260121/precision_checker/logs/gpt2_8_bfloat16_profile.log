@@ -1,0 +1,12 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DPROFILE_MODE=ON .. && make -j
+[COMMAND] NCCL_LAUNCH_MODE=GROUP ./gpt2 --input_bin /data/shared/InfiniTrain-dev/data/llmc/gpt2/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/gpt2/gpt2_124M.bin --device cuda --dtype bfloat16 --nthread_per_process 8 --num_iteration 10 --batch_size 40 --total_batch_size 5120 --tensor_parallel 2 --sequence_parallel true --pipeline_parallel 2 --virtual_pipeline_parallel 2
+E20260121 09:49:42.679910 140243701309440 main.cc:351] step    1/10 | train loss 5.211551 | lr 1.00e-04 | (763.24 ms | 6708 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:43.112882 140243701309440 main.cc:351] step    2/10 | train loss 5.067973 | lr 1.00e-04 | (432.10 ms | 11849 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:43.467081 140243701309440 main.cc:351] step    3/10 | train loss 4.993602 | lr 1.00e-04 | (354.10 ms | 14459 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:43.806840 140243701309440 main.cc:351] step    4/10 | train loss 4.664671 | lr 1.00e-04 | (339.66 ms | 15074 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:44.140195 140243701309440 main.cc:351] step    5/10 | train loss 4.762918 | lr 1.00e-04 | (333.27 ms | 15363 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:44.518056 140243701309440 main.cc:351] step    6/10 | train loss 4.707539 | lr 1.00e-04 | (377.78 ms | 13553 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:44.869588 140243701309440 main.cc:351] step    7/10 | train loss 4.748694 | lr 1.00e-04 | (351.40 ms | 14570 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:45.199307 140243701309440 main.cc:351] step    8/10 | train loss 4.649760 | lr 1.00e-04 | (329.62 ms | 15533 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:45.521295 140243701309440 main.cc:351] step    9/10 | train loss 4.764467 | lr 1.00e-04 | (321.90 ms | 15905 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:45.837297 140243701309440 main.cc:351] step   10/10 | train loss 4.760240 | lr 1.00e-04 | (315.92 ms | 16207 tok/s, DP=2, TP=2, SP=2, PP=2)

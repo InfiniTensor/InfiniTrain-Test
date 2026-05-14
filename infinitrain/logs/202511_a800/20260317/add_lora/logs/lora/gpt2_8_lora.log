@@ -1,0 +1,52 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON .. && make -j
+[COMMAND] ./gpt2 --input_bin /data/shared/InfiniTrain-dev/data/llmc/gpt2/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/gpt2/gpt2_124M.bin --device cuda --dtype=float32 --nthread_per_process=8 --num_iteration=10 --batch_size=40 --total_batch_size=5120 --tensor_parallel=2 --sequence_parallel=true --pipeline_parallel=2 --virtual_pipeline_parallel=2 --lora_rank=4 --lora_alpha=8.0 --lora_target_modules=c_fc,c_proj
+===== LoRA Model Summary (Rank 1) ======
+Total parameters:     41518848
+Trainable parameters: 138240 (0.332957%)
+Frozen parameters:    41380608
+========================================
+===== LoRA Model Summary (Rank 2) ======
+Total parameters:     41518848
+Trainable parameters: 138240 (0.332957%)
+Frozen parameters:    41380608
+========================================
+===== LoRA Model Summary (Rank 0) ======
+Total parameters:     41518848
+Trainable parameters: 138240 (0.332957%)
+Frozen parameters:    41380608
+========================================
+===== LoRA Model Summary (Rank 3) ======
+Total parameters:     41518848
+Trainable parameters: 138240 (0.332957%)
+Frozen parameters:    41380608
+========================================
+===== LoRA Model Summary (Rank 6) ======
+Total parameters:     40733952
+Trainable parameters: 138240 (0.339373%)
+Frozen parameters:    40595712
+========================================
+===== LoRA Model Summary (Rank 7) ======
+Total parameters:     40733952
+Trainable parameters: 138240 (0.339373%)
+Frozen parameters:    40595712
+========================================
+===== LoRA Model Summary (Rank 5) ======
+Total parameters:     40733952
+Trainable parameters: 138240 (0.339373%)
+Frozen parameters:    40595712
+========================================
+===== LoRA Model Summary (Rank 4) ======
+Total parameters:     40733952
+Trainable parameters: 138240 (0.339373%)
+Frozen parameters:    40595712
+========================================
+E20260316 06:20:09.905976 140337452392448 main.cc:424] step    1/10 | train loss 5.219545 | lr 1.00e-04 | (418.34 ms | 12239 tok/s | peak used:  2321 MB | peak reserved:  2464 MB, DP=2, TP=2, SP=2, PP=2)
+E20260316 06:20:10.045742 140337452392448 main.cc:424] step    2/10 | train loss 5.143066 | lr 1.00e-04 | (139.37 ms | 36736 tok/s | peak used:  2336 MB | peak reserved:  2560 MB, DP=2, TP=2, SP=2, PP=2)
+E20260316 06:20:10.181946 140337452392448 main.cc:424] step    3/10 | train loss 5.074584 | lr 1.00e-04 | (136.16 ms | 37603 tok/s | peak used:  2351 MB | peak reserved:  2592 MB, DP=2, TP=2, SP=2, PP=2)
+E20260316 06:20:10.317688 140337452392448 main.cc:424] step    4/10 | train loss 4.774491 | lr 1.00e-04 | (135.69 ms | 37732 tok/s | peak used:  2366 MB | peak reserved:  2592 MB, DP=2, TP=2, SP=2, PP=2)
+E20260316 06:20:10.453494 140337452392448 main.cc:424] step    5/10 | train loss 4.900575 | lr 1.00e-04 | (135.76 ms | 37713 tok/s | peak used:  2381 MB | peak reserved:  2592 MB, DP=2, TP=2, SP=2, PP=2)
+E20260316 06:20:10.589205 140337452392448 main.cc:424] step    6/10 | train loss 4.886543 | lr 1.00e-04 | (135.67 ms | 37740 tok/s | peak used:  2396 MB | peak reserved:  2624 MB, DP=2, TP=2, SP=2, PP=2)
+E20260316 06:20:10.724939 140337452392448 main.cc:424] step    7/10 | train loss 4.977937 | lr 1.00e-04 | (135.69 ms | 37734 tok/s | peak used:  2411 MB | peak reserved:  2656 MB, DP=2, TP=2, SP=2, PP=2)
+E20260316 06:20:10.861210 140337452392448 main.cc:424] step    8/10 | train loss 4.925619 | lr 1.00e-04 | (136.23 ms | 37584 tok/s | peak used:  2426 MB | peak reserved:  2656 MB, DP=2, TP=2, SP=2, PP=2)
+E20260316 06:20:10.997269 140337452392448 main.cc:424] step    9/10 | train loss 4.957046 | lr 1.00e-04 | (136.01 ms | 37643 tok/s | peak used:  2441 MB | peak reserved:  2656 MB, DP=2, TP=2, SP=2, PP=2)
+E20260316 06:20:11.133158 140337452392448 main.cc:424] step   10/10 | train loss 5.033356 | lr 1.00e-04 | (135.85 ms | 37688 tok/s | peak used:  2456 MB | peak reserved:  2688 MB, DP=2, TP=2, SP=2, PP=2)

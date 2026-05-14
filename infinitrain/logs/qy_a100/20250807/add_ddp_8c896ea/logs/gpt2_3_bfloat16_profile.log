@@ -1,0 +1,14 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DPROFILE_MODE=ON .. && make -j
+[COMMAND] ./gpt2 --input_bin ../../data/llmc/gpt2/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath ../../data/llmc/gpt2/gpt2_124M.bin --device cuda --data_parallel=true --batch_size 80 --total_batch_size 5120 --num_iteration 10 --dtype bfloat16
+E20250807 02:01:14.088671 140401812205568 net.cc:282] magic: 20240326 version: 3 block_size: 1024 vocab_size: 50257 n_layer: 12 n_head: 12 n_embd: 768 padded_vocab_size: 50304
+E20250807 02:01:14.807699 140401812205568 distributed_data_parallel.cc:123] ThreadDDP module created with 8 devices
+E20250807 02:01:18.243741 140401812205568 main.cc:230] step    1/10 | train loss 5.207031 | lr 1.00e-04 | (3292.42 ms | 1555 tok/s)
+E20250807 02:01:19.282169 140401812205568 main.cc:230] step    2/10 | train loss 5.136719 | lr 1.00e-04 | (1038.28 ms | 4931 tok/s)
+E20250807 02:01:20.301022 140401812205568 main.cc:230] step    3/10 | train loss 5.062500 | lr 1.00e-04 | (1018.74 ms | 5026 tok/s)
+E20250807 02:01:21.284204 140401812205568 main.cc:230] step    4/10 | train loss 4.753906 | lr 1.00e-04 | (983.09 ms | 5208 tok/s)
+E20250807 02:01:22.278053 140401812205568 main.cc:230] step    5/10 | train loss 4.882812 | lr 1.00e-04 | (993.78 ms | 5152 tok/s)
+E20250807 02:01:24.861371 140401812205568 main.cc:230] step    6/10 | train loss 4.855469 | lr 1.00e-04 | (2583.25 ms | 1982 tok/s)
+E20250807 02:01:25.877000 140401812205568 main.cc:230] step    7/10 | train loss 4.941406 | lr 1.00e-04 | (1015.54 ms | 5042 tok/s)
+E20250807 02:01:26.848075 140401812205568 main.cc:230] step    8/10 | train loss 4.886719 | lr 1.00e-04 | (971.01 ms | 5273 tok/s)
+E20250807 02:01:27.838992 140401812205568 main.cc:230] step    9/10 | train loss 4.933594 | lr 1.00e-04 | (990.86 ms | 5167 tok/s)
+E20250807 02:01:28.830157 140401812205568 main.cc:230] step   10/10 | train loss 4.996094 | lr 1.00e-04 | (991.11 ms | 5166 tok/s)

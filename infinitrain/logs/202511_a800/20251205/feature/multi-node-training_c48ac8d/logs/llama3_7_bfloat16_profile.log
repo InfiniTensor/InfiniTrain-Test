@@ -1,0 +1,12 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DPROFILE_MODE=ON .. && make -j
+[COMMAND] NCCL_LAUNCH_MODE=GROUP ./llama3 --input_bin /data/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype bfloat16 --nthread_per_process 8 --num_iteration 10 --batch_size 40 --total_batch_size 5120 --tensor_parallel 2 --sequence_parallel true --pipeline_parallel 2
+E20251205 03:46:59.388935 140075216138240 main.cc:311] step    1/10 | train loss 4.727484 | lr 1.00e-05 | (4504.99 ms | 1137 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251205 03:47:00.726684 140075216138240 main.cc:311] step    2/10 | train loss 4.376870 | lr 1.00e-05 | (1335.87 ms | 3833 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251205 03:47:02.041953 140075216138240 main.cc:311] step    3/10 | train loss 3.787846 | lr 1.00e-05 | (1315.15 ms | 3893 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251205 03:47:03.338799 140075216138240 main.cc:311] step    4/10 | train loss 3.851039 | lr 1.00e-05 | (1296.73 ms | 3948 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251205 03:47:06.741299 140075216138240 main.cc:311] step    5/10 | train loss 3.572573 | lr 1.00e-05 | (3402.38 ms | 1505 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251205 03:47:08.077277 140075216138240 main.cc:311] step    6/10 | train loss 3.514581 | lr 1.00e-05 | (1335.81 ms | 3833 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251205 03:47:09.391302 140075216138240 main.cc:311] step    7/10 | train loss 3.466246 | lr 1.00e-05 | (1313.89 ms | 3897 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251205 03:47:10.826815 140075216138240 main.cc:311] step    8/10 | train loss 3.594446 | lr 1.00e-05 | (1435.39 ms | 3567 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251205 03:47:14.142399 140075216138240 main.cc:311] step    9/10 | train loss 3.610747 | lr 1.00e-05 | (3315.43 ms | 1544 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251205 03:47:15.502448 140075216138240 main.cc:311] step   10/10 | train loss 3.410702 | lr 1.00e-05 | (1359.91 ms | 3765 tok/s, DP=2, TP=2, SP=2, PP=2)

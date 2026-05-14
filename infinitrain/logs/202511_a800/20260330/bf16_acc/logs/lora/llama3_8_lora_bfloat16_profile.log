@@ -1,0 +1,52 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DPROFILE_MODE=ON .. && make -j
+[COMMAND] ./llama3 --input_bin /data/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype=bfloat16 --nthread_per_process=8 --num_iteration=10 --batch_size=40 --total_batch_size=5120 --tensor_parallel=2 --sequence_parallel=true --pipeline_parallel=2 --virtual_pipeline_parallel=2 --lora_rank=16 --lora_alpha=32.0 --lora_target_modules=c_fc,c_proj
+===== LoRA Model Summary (Rank 0) ======
+Total parameters:     376602624
+Trainable parameters: 1966080 (0.522057%)
+Frozen parameters:    374636544
+========================================
+===== LoRA Model Summary (Rank 1) ======
+Total parameters:     376602624
+Trainable parameters: 1966080 (0.522057%)
+Frozen parameters:    374636544
+========================================
+===== LoRA Model Summary (Rank 3) ======
+Total parameters:     376602624
+Trainable parameters: 1966080 (0.522057%)
+Frozen parameters:    374636544
+========================================
+===== LoRA Model Summary (Rank 2) ======
+Total parameters:     376602624
+Trainable parameters: 1966080 (0.522057%)
+Frozen parameters:    374636544
+========================================
+===== LoRA Model Summary (Rank 5) ======
+Total parameters:     376604672
+Trainable parameters: 1966080 (0.522054%)
+Frozen parameters:    374638592
+========================================
+===== LoRA Model Summary (Rank 6) ======
+Total parameters:     376604672
+Trainable parameters: 1966080 (0.522054%)
+Frozen parameters:    374638592
+========================================
+===== LoRA Model Summary (Rank 7) ======
+Total parameters:     376604672
+Trainable parameters: 1966080 (0.522054%)
+Frozen parameters:    374638592
+========================================
+===== LoRA Model Summary (Rank 4) ======
+Total parameters:     376604672
+Trainable parameters: 1966080 (0.522054%)
+Frozen parameters:    374638592
+========================================
+E20260402 07:46:23.442068 140120019673088 main.cc:393] step    1/10 | train loss 4.727484 | lr 1.00e-05 | (1684.57 ms | 3039 tok/s | peak used:  8902 MB | peak reserved:  8992 MB, DP=2, TP=2, SP=2, PP=2)
+E20260402 07:46:25.054326 140120019673088 main.cc:393] step    2/10 | train loss 4.579124 | lr 1.00e-05 | (1611.44 ms | 3177 tok/s | peak used:  9656 MB | peak reserved:  9728 MB, DP=2, TP=2, SP=2, PP=2)
+E20260402 07:46:26.488582 140120019673088 main.cc:393] step    3/10 | train loss 4.215576 | lr 1.00e-05 | (1434.18 ms | 3570 tok/s | peak used:  9696 MB | peak reserved:  9760 MB, DP=2, TP=2, SP=2, PP=2)
+E20260402 07:46:28.074971 140120019673088 main.cc:393] step    4/10 | train loss 4.371112 | lr 1.00e-05 | (1586.32 ms | 3228 tok/s | peak used:  9736 MB | peak reserved:  9824 MB, DP=2, TP=2, SP=2, PP=2)
+E20260402 07:46:29.435304 140120019673088 main.cc:393] step    5/10 | train loss 4.404678 | lr 1.00e-05 | (1360.20 ms | 3764 tok/s | peak used:  9776 MB | peak reserved:  9856 MB, DP=2, TP=2, SP=2, PP=2)
+E20260402 07:46:30.928070 140120019673088 main.cc:393] step    6/10 | train loss 4.432362 | lr 1.00e-05 | (1492.64 ms | 3430 tok/s | peak used:  9816 MB | peak reserved:  9888 MB, DP=2, TP=2, SP=2, PP=2)
+E20260402 07:46:32.286848 140120019673088 main.cc:393] step    7/10 | train loss 4.489937 | lr 1.00e-05 | (1358.66 ms | 3768 tok/s | peak used:  9856 MB | peak reserved:  9920 MB, DP=2, TP=2, SP=2, PP=2)
+E20260402 07:46:33.857517 140120019673088 main.cc:393] step    8/10 | train loss 4.383359 | lr 1.00e-05 | (1570.56 ms | 3260 tok/s | peak used:  9896 MB | peak reserved:  9952 MB, DP=2, TP=2, SP=2, PP=2)
+E20260402 07:46:35.076098 140120019673088 main.cc:393] step    9/10 | train loss 4.400065 | lr 1.00e-05 | (1218.39 ms | 4202 tok/s | peak used:  9936 MB | peak reserved: 10016 MB, DP=2, TP=2, SP=2, PP=2)
+E20260402 07:46:36.409789 140120019673088 main.cc:393] step   10/10 | train loss 4.352011 | lr 1.00e-05 | (1333.52 ms | 3839 tok/s | peak used:  9976 MB | peak reserved: 10048 MB, DP=2, TP=2, SP=2, PP=2)

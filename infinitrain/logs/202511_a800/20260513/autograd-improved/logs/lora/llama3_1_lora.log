@@ -1,0 +1,17 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON .. && make -j
+[COMMAND] ./llama3 --input_bin /data/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype=float32 --lora_rank=8 --lora_alpha=16.0 --lora_target_modules=c_attn,attn.c_proj
+===== LoRA Model Summary (Rank 0) ======
+Total parameters:     1499662336
+Trainable parameters: 1179648 (0.0786609%)
+Frozen parameters:    1498482688
+========================================
+E20260428 12:16:07.224641 140137025490944 main.cc:394] step    1/10 | train loss 4.899448 | lr 1.00e-05 | (158.59 ms | 1614 tok/s | peak used:  6946 MB | peak reserved:  6976 MB, DP=1, TP=1, SP=1, PP=1)
+E20260428 12:16:07.347472 140137025490944 main.cc:394] step    2/10 | train loss 4.868531 | lr 1.00e-05 | (122.50 ms | 2090 tok/s | peak used:  6946 MB | peak reserved:  6976 MB, DP=1, TP=1, SP=1, PP=1)
+E20260428 12:16:07.455660 140137025490944 main.cc:394] step    3/10 | train loss 4.770335 | lr 1.00e-05 | (108.14 ms | 2367 tok/s | peak used:  6946 MB | peak reserved:  7008 MB, DP=1, TP=1, SP=1, PP=1)
+E20260428 12:16:07.563391 140137025490944 main.cc:394] step    4/10 | train loss 5.010679 | lr 1.00e-05 | (107.69 ms | 2377 tok/s | peak used:  6946 MB | peak reserved:  7008 MB, DP=1, TP=1, SP=1, PP=1)
+E20260428 12:16:07.671312 140137025490944 main.cc:394] step    5/10 | train loss 4.922022 | lr 1.00e-05 | (107.88 ms | 2373 tok/s | peak used:  6946 MB | peak reserved:  7008 MB, DP=1, TP=1, SP=1, PP=1)
+E20260428 12:16:07.779329 140137025490944 main.cc:394] step    6/10 | train loss 4.973588 | lr 1.00e-05 | (107.98 ms | 2371 tok/s | peak used:  6946 MB | peak reserved:  7008 MB, DP=1, TP=1, SP=1, PP=1)
+E20260428 12:16:07.887412 140137025490944 main.cc:394] step    7/10 | train loss 4.883343 | lr 1.00e-05 | (108.04 ms | 2369 tok/s | peak used:  6946 MB | peak reserved:  7040 MB, DP=1, TP=1, SP=1, PP=1)
+E20260428 12:16:07.995387 140137025490944 main.cc:394] step    8/10 | train loss 4.801155 | lr 1.00e-05 | (107.94 ms | 2372 tok/s | peak used:  6946 MB | peak reserved:  7040 MB, DP=1, TP=1, SP=1, PP=1)
+E20260428 12:16:08.103328 140137025490944 main.cc:394] step    9/10 | train loss 4.703104 | lr 1.00e-05 | (107.90 ms | 2372 tok/s | peak used:  6946 MB | peak reserved:  7040 MB, DP=1, TP=1, SP=1, PP=1)
+E20260428 12:16:08.211293 140137025490944 main.cc:394] step   10/10 | train loss 4.320406 | lr 1.00e-05 | (107.93 ms | 2372 tok/s | peak used:  6946 MB | peak reserved:  7040 MB, DP=1, TP=1, SP=1, PP=1)

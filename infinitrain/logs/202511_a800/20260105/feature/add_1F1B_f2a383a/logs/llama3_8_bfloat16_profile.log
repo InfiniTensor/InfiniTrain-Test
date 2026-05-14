@@ -1,0 +1,14 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DPROFILE_MODE=ON .. && make -j
+[COMMAND] NCCL_LAUNCH_MODE=GROUP ./llama3 --input_bin ../../data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath ../../data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype bfloat16 --nthread_per_process 8 --num_iteration 10 --batch_size 40 --total_batch_size 5120 --tensor_parallel 2 --sequence_parallel true --pipeline_parallel 2 --virtual_pipeline_parallel 2
+E20260104 10:21:56.606807 139643546738688 main.cc:318] step    1/10 | train loss 4.727484 | lr 1.00e-05 | (1561.09 ms | 3280 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:21:57.972828 139643546738688 main.cc:318] step    2/10 | train loss 4.376984 | lr 1.00e-05 | (1365.15 ms | 3751 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:21:59.253741 139643546738688 main.cc:318] step    3/10 | train loss 3.787574 | lr 1.00e-05 | (1280.83 ms | 3997 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:22:00.505993 139643546738688 main.cc:318] step    4/10 | train loss 3.850784 | lr 1.00e-05 | (1252.14 ms | 4089 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:22:01.751775 139643546738688 main.cc:318] step    5/10 | train loss 3.574616 | lr 1.00e-05 | (1245.67 ms | 4110 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:22:03.082872 139643546738688 main.cc:318] step    6/10 | train loss 3.515478 | lr 1.00e-05 | (1331.00 ms | 3847 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:22:04.350779 139643546738688 main.cc:318] step    7/10 | train loss 3.467067 | lr 1.00e-05 | (1267.80 ms | 4039 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:22:05.621410 139643546738688 main.cc:318] step    8/10 | train loss 3.593802 | lr 1.00e-05 | (1270.56 ms | 4030 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:22:06.873728 139643546738688 main.cc:318] step    9/10 | train loss 3.610624 | lr 1.00e-05 | (1252.26 ms | 4089 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:22:08.142763 139643546738688 main.cc:318] step   10/10 | train loss 3.411134 | lr 1.00e-05 | (1268.97 ms | 4035 tok/s, DP=2, TP=2, SP=2, PP=2)
+[node24:78750:0:78758] Caught signal 11 (Segmentation fault: address not mapped to object at address 0x7effc87d9070)
+./run_models_and_profile.bash: line 86: 78750 Segmentation fault      (core dumped) NCCL_LAUNCH_MODE=GROUP ./llama3 --input_bin ../../data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath ../../data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype bfloat16 --nthread_per_process 8 --num_iteration 10 --batch_size 40 --total_batch_size 5120 --tensor_parallel 2 --sequence_parallel true --pipeline_parallel 2 --virtual_pipeline_parallel 2

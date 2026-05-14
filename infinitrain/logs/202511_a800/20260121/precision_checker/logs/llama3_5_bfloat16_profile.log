@@ -1,0 +1,12 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DPROFILE_MODE=ON .. && make -j
+[COMMAND] NCCL_LAUNCH_MODE=GROUP ./llama3 --input_bin /data/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype bfloat16 --nthread_per_process 8 --num_iteration 10 --batch_size 40 --total_batch_size 5120 --tensor_parallel 4 --sequence_parallel true
+E20260121 09:46:00.219366 140579446956032 main.cc:326] step    1/10 | train loss 4.726684 | lr 1.00e-05 | (2251.04 ms | 2275 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20260121 09:46:01.812269 140579446956032 main.cc:326] step    2/10 | train loss 4.376019 | lr 1.00e-05 | (1591.83 ms | 3216 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20260121 09:46:03.485829 140579446956032 main.cc:326] step    3/10 | train loss 3.786400 | lr 1.00e-05 | (1672.22 ms | 3062 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20260121 09:46:05.352380 140579446956032 main.cc:326] step    4/10 | train loss 3.850222 | lr 1.00e-05 | (1866.35 ms | 2743 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20260121 09:46:07.393191 140579446956032 main.cc:326] step    5/10 | train loss 3.574007 | lr 1.00e-05 | (2040.61 ms | 2509 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20260121 09:46:09.226402 140579446956032 main.cc:326] step    6/10 | train loss 3.514476 | lr 1.00e-05 | (1833.01 ms | 2793 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20260121 09:46:11.285586 140579446956032 main.cc:326] step    7/10 | train loss 3.467105 | lr 1.00e-05 | (2058.99 ms | 2487 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20260121 09:46:13.018688 140579446956032 main.cc:326] step    8/10 | train loss 3.594541 | lr 1.00e-05 | (1732.91 ms | 2955 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20260121 09:46:14.879192 140579446956032 main.cc:326] step    9/10 | train loss 3.611248 | lr 1.00e-05 | (1860.30 ms | 2752 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20260121 09:46:16.655433 140579446956032 main.cc:326] step   10/10 | train loss 3.411095 | lr 1.00e-05 | (1776.04 ms | 2883 tok/s, DP=2, TP=4, SP=4, PP=1)

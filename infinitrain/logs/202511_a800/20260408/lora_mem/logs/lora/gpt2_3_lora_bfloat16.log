@@ -1,0 +1,52 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON .. && make -j
+[COMMAND] ./gpt2 --input_bin /data/shared/InfiniTrain-dev/data/llmc/gpt2/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/gpt2/gpt2_124M.bin --device cuda --dtype=bfloat16 --nthread_per_process=8 --num_iteration=10 --batch_size=10 --total_batch_size=5120 --lora_rank=8 --lora_alpha=16.0 --lora_target_modules=c_attn,attn.c_proj
+===== LoRA Model Summary (Rank 4) ======
+Total parameters:     163479552
+Trainable parameters: 442368 (0.270595%)
+Frozen parameters:    163037184
+========================================
+===== LoRA Model Summary (Rank 6) ======
+Total parameters:     163479552
+Trainable parameters: 442368 (0.270595%)
+Frozen parameters:    163037184
+========================================
+===== LoRA Model Summary (Rank 5) ======
+Total parameters:     163479552
+Trainable parameters: 442368 (0.270595%)
+Frozen parameters:    163037184
+========================================
+===== LoRA Model Summary (Rank 7) ======
+Total parameters:     163479552
+Trainable parameters: 442368 (0.270595%)
+Frozen parameters:    163037184
+========================================
+===== LoRA Model Summary (Rank 0) ======
+Total parameters:     163479552
+Trainable parameters: 442368 (0.270595%)
+Frozen parameters:    163037184
+========================================
+===== LoRA Model Summary (Rank 2) ======
+Total parameters:     163479552
+Trainable parameters: 442368 (0.270595%)
+Frozen parameters:    163037184
+========================================
+===== LoRA Model Summary (Rank 3) ======
+Total parameters:     163479552
+Trainable parameters: 442368 (0.270595%)
+Frozen parameters:    163037184
+========================================
+===== LoRA Model Summary (Rank 1) ======
+Total parameters:     163479552
+Trainable parameters: 442368 (0.270595%)
+Frozen parameters:    163037184
+========================================
+E20260408 06:46:57.534045 139728573669376 main.cc:424] step    1/10 | train loss 5.213315 | lr 1.00e-04 | (356.10 ms | 14378 tok/s | peak used:  2610 MB | peak reserved:  2784 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 06:46:57.738451 139728573669376 main.cc:424] step    2/10 | train loss 5.137891 | lr 1.00e-04 | (203.16 ms | 25201 tok/s | peak used:  2616 MB | peak reserved:  2880 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 06:46:57.898137 139728573669376 main.cc:424] step    3/10 | train loss 5.071234 | lr 1.00e-04 | (159.61 ms | 32078 tok/s | peak used:  2616 MB | peak reserved:  2944 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 06:46:58.029682 139728573669376 main.cc:424] step    4/10 | train loss 4.767666 | lr 1.00e-04 | (131.50 ms | 38937 tok/s | peak used:  2616 MB | peak reserved:  3040 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 06:46:58.149159 139728573669376 main.cc:424] step    5/10 | train loss 4.892332 | lr 1.00e-04 | (119.42 ms | 42873 tok/s | peak used:  2616 MB | peak reserved:  3104 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 06:46:58.261601 139728573669376 main.cc:424] step    6/10 | train loss 4.875926 | lr 1.00e-04 | (112.40 ms | 45553 tok/s | peak used:  2616 MB | peak reserved:  3136 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 06:46:58.374066 139728573669376 main.cc:424] step    7/10 | train loss 4.961828 | lr 1.00e-04 | (112.42 ms | 45543 tok/s | peak used:  2616 MB | peak reserved:  3168 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 06:46:58.486362 139728573669376 main.cc:424] step    8/10 | train loss 4.919353 | lr 1.00e-04 | (112.25 ms | 45612 tok/s | peak used:  2616 MB | peak reserved:  3168 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 06:46:58.597434 139728573669376 main.cc:424] step    9/10 | train loss 4.958927 | lr 1.00e-04 | (111.03 ms | 46115 tok/s | peak used:  2616 MB | peak reserved:  3200 MB, DP=8, TP=1, SP=1, PP=1)
+E20260408 06:46:58.703337 139728573669376 main.cc:424] step   10/10 | train loss 5.024334 | lr 1.00e-04 | (105.86 ms | 48366 tok/s | peak used:  2616 MB | peak reserved:  3264 MB, DP=8, TP=1, SP=1, PP=1)

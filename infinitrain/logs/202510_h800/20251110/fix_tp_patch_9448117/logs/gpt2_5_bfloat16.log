@@ -1,0 +1,12 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON .. && make -j
+[COMMAND] ./gpt2 --input_bin ../../data/llmc/gpt2/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath ../../data/llmc/gpt2/gpt2_124M.bin --device cuda --dtype bfloat16 --nthread_per_process 8 --num_iteration 10 --batch_size 40 --total_batch_size 5120 --tensor_parallel 4 --sequence_parallel true
+E20251110 08:24:37.786723 139777774972928 main.cc:284] step    1/10 | train loss 5.208000 | lr 1.00e-04 | (734.37 ms | 6972 tok/s, DP=2, TP=4, SP=4)
+E20251110 08:24:37.868255 139777774972928 main.cc:284] step    2/10 | train loss 5.073094 | lr 1.00e-04 | (81.19 ms | 63065 tok/s, DP=2, TP=4, SP=4)
+E20251110 08:24:37.949459 139777774972928 main.cc:284] step    3/10 | train loss 4.989872 | lr 1.00e-04 | (81.16 ms | 63082 tok/s, DP=2, TP=4, SP=4)
+E20251110 08:24:38.030821 139777774972928 main.cc:284] step    4/10 | train loss 4.663564 | lr 1.00e-04 | (81.32 ms | 62959 tok/s, DP=2, TP=4, SP=4)
+E20251110 08:24:38.107837 139777774972928 main.cc:284] step    5/10 | train loss 4.760536 | lr 1.00e-04 | (76.98 ms | 66512 tok/s, DP=2, TP=4, SP=4)
+E20251110 08:24:38.184195 139777774972928 main.cc:284] step    6/10 | train loss 4.703430 | lr 1.00e-04 | (76.32 ms | 67084 tok/s, DP=2, TP=4, SP=4)
+E20251110 08:24:38.260585 139777774972928 main.cc:284] step    7/10 | train loss 4.752300 | lr 1.00e-04 | (76.35 ms | 67057 tok/s, DP=2, TP=4, SP=4)
+E20251110 08:24:38.337953 139777774972928 main.cc:284] step    8/10 | train loss 4.648378 | lr 1.00e-04 | (77.33 ms | 66210 tok/s, DP=2, TP=4, SP=4)
+E20251110 08:24:38.414973 139777774972928 main.cc:284] step    9/10 | train loss 4.767520 | lr 1.00e-04 | (76.98 ms | 66509 tok/s, DP=2, TP=4, SP=4)
+E20251110 08:24:38.490338 139777774972928 main.cc:284] step   10/10 | train loss 4.757992 | lr 1.00e-04 | (75.33 ms | 67970 tok/s, DP=2, TP=4, SP=4)

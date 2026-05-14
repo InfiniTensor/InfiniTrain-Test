@@ -1,0 +1,13 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DPROFILE_MODE=ON .. && make -j
+[COMMAND] ./llama3 --input_bin ../../data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath ../../data/llmc/llama3/llama3.1_1B_fp32.bin --device cuda --data_parallel=true --batch_size 40 --total_batch_size 2560 --num_iteration 10 --dtype bfloat16
+E20250723 02:28:09.887132 139663921283072 data_parallel.cc:72] DataParallel module created with 8 devices
+E20250723 02:28:43.261299 139663921283072 main.cc:210] step    1/10 | train loss 4.812500 | lr 1.00e-05 | (33126.11 ms | 77 tok/s)
+E20250723 02:29:15.521605 139663921283072 main.cc:210] step    2/10 | train loss 4.375000 | lr 1.00e-05 | (32260.16 ms | 79 tok/s)
+E20250723 02:29:47.638688 139663921283072 main.cc:210] step    3/10 | train loss 4.218750 | lr 1.00e-05 | (32116.96 ms | 80 tok/s)
+E20250723 02:30:19.854058 139663921283072 main.cc:210] step    4/10 | train loss 4.156250 | lr 1.00e-05 | (32215.25 ms | 79 tok/s)
+E20250723 02:30:51.991743 139663921283072 main.cc:210] step    5/10 | train loss 3.718750 | lr 1.00e-05 | (32137.57 ms | 80 tok/s)
+E20250723 02:31:24.129095 139663921283072 main.cc:210] step    6/10 | train loss 3.687500 | lr 1.00e-05 | (32137.23 ms | 80 tok/s)
+E20250723 02:31:48.146075 139663921283072 main.cc:210] step    7/10 | train loss 3.765625 | lr 1.00e-05 | (24016.85 ms | 107 tok/s)
+E20250723 02:32:19.836990 139663921283072 main.cc:210] step    8/10 | train loss 3.875000 | lr 1.00e-05 | (31690.80 ms | 81 tok/s)
+E20250723 02:32:50.682659 139663921283072 main.cc:210] step    9/10 | train loss 3.640625 | lr 1.00e-05 | (30845.56 ms | 83 tok/s)
+E20250723 02:33:21.526040 139663921283072 main.cc:210] step   10/10 | train loss 3.703125 | lr 1.00e-05 | (30843.28 ms | 83 tok/s)

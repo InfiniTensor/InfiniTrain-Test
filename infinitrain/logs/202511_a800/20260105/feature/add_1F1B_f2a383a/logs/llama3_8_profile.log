@@ -1,0 +1,12 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DPROFILE_MODE=ON .. && make -j
+[COMMAND] NCCL_LAUNCH_MODE=GROUP ./llama3 --input_bin ../../data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath ../../data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype float32 --nthread_per_process 8 --num_iteration 10 --batch_size 40 --total_batch_size 5120 --tensor_parallel 2 --sequence_parallel true --pipeline_parallel 2 --virtual_pipeline_parallel 2
+E20260104 10:21:08.039190 140454221815808 main.cc:318] step    1/10 | train loss 4.726650 | lr 1.00e-05 | (1417.84 ms | 3611 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:21:09.424987 140454221815808 main.cc:318] step    2/10 | train loss 4.117778 | lr 1.00e-05 | (1384.81 ms | 3697 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:21:10.865096 140454221815808 main.cc:318] step    3/10 | train loss 3.613284 | lr 1.00e-05 | (1440.01 ms | 3556 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:21:12.263631 140454221815808 main.cc:318] step    4/10 | train loss 3.654181 | lr 1.00e-05 | (1398.43 ms | 3661 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:21:13.646164 140454221815808 main.cc:318] step    5/10 | train loss 3.519578 | lr 1.00e-05 | (1382.45 ms | 3704 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:21:15.065138 140454221815808 main.cc:318] step    6/10 | train loss 3.483852 | lr 1.00e-05 | (1418.90 ms | 3608 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:21:16.457252 140454221815808 main.cc:318] step    7/10 | train loss 3.432098 | lr 1.00e-05 | (1392.05 ms | 3678 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:21:17.830075 140454221815808 main.cc:318] step    8/10 | train loss 3.572618 | lr 1.00e-05 | (1372.76 ms | 3730 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:21:19.196928 140454221815808 main.cc:318] step    9/10 | train loss 3.578167 | lr 1.00e-05 | (1366.77 ms | 3746 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260104 10:21:20.549552 140454221815808 main.cc:318] step   10/10 | train loss 3.383950 | lr 1.00e-05 | (1352.55 ms | 3785 tok/s, DP=2, TP=2, SP=2, PP=2)

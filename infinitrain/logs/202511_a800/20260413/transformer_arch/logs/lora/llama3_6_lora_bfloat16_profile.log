@@ -1,0 +1,52 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DPROFILE_MODE=ON .. && make -j
+[COMMAND] ./llama3 --input_bin /data/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype=bfloat16 --nthread_per_process=8 --num_iteration=10 --batch_size=10 --total_batch_size=5120 --pipeline_parallel=8 --lora_rank=16 --lora_alpha=32.0 --lora_target_modules=c_attn,attn.c_proj,c_fc
+===== LoRA Model Summary (Rank 1) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 4) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 5) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 2) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 6) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 3) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 0) ======
+Total parameters:     384933888
+Trainable parameters: 622592 (0.16174%)
+Frozen parameters:    384311296
+========================================
+===== LoRA Model Summary (Rank 7) ======
+Total parameters:     384935936
+Trainable parameters: 622592 (0.161739%)
+Frozen parameters:    384313344
+========================================
+E20260410 13:48:33.530557 139816352063488 main.cc:394] step    1/10 | train loss 4.727344 | lr 1.00e-05 | (1171.57 ms | 4370 tok/s | peak used: 10711 MB | peak reserved: 10752 MB, DP=1, TP=1, SP=1, PP=8)
+E20260410 13:48:35.482289 139816352063488 main.cc:394] step    2/10 | train loss 4.581014 | lr 1.00e-05 | (1951.42 ms | 2624 tok/s | peak used: 10791 MB | peak reserved: 10848 MB, DP=1, TP=1, SP=1, PP=8)
+E20260410 13:48:37.191480 139816352063488 main.cc:394] step    3/10 | train loss 4.219296 | lr 1.00e-05 | (1709.12 ms | 2996 tok/s | peak used: 10871 MB | peak reserved: 10912 MB, DP=1, TP=1, SP=1, PP=8)
+E20260410 13:48:38.806849 139816352063488 main.cc:394] step    4/10 | train loss 4.377988 | lr 1.00e-05 | (1615.31 ms | 3170 tok/s | peak used: 10951 MB | peak reserved: 10976 MB, DP=1, TP=1, SP=1, PP=8)
+E20260410 13:48:40.403307 139816352063488 main.cc:394] step    5/10 | train loss 4.414437 | lr 1.00e-05 | (1596.41 ms | 3207 tok/s | peak used: 11031 MB | peak reserved: 11072 MB, DP=1, TP=1, SP=1, PP=8)
+E20260410 13:48:41.944072 139816352063488 main.cc:394] step    6/10 | train loss 4.446486 | lr 1.00e-05 | (1540.71 ms | 3323 tok/s | peak used: 11111 MB | peak reserved: 11168 MB, DP=1, TP=1, SP=1, PP=8)
+E20260410 13:48:43.443935 139816352063488 main.cc:394] step    7/10 | train loss 4.509100 | lr 1.00e-05 | (1499.81 ms | 3414 tok/s | peak used: 11191 MB | peak reserved: 11232 MB, DP=1, TP=1, SP=1, PP=8)
+E20260410 13:48:44.934300 139816352063488 main.cc:394] step    8/10 | train loss 4.403794 | lr 1.00e-05 | (1490.31 ms | 3436 tok/s | peak used: 11271 MB | peak reserved: 11328 MB, DP=1, TP=1, SP=1, PP=8)
+E20260410 13:48:46.370737 139816352063488 main.cc:394] step    9/10 | train loss 4.421290 | lr 1.00e-05 | (1436.38 ms | 3565 tok/s | peak used: 11351 MB | peak reserved: 11392 MB, DP=1, TP=1, SP=1, PP=8)
+E20260410 13:48:48.065369 139816352063488 main.cc:394] step   10/10 | train loss 4.374747 | lr 1.00e-05 | (1694.58 ms | 3021 tok/s | peak used: 11431 MB | peak reserved: 11488 MB, DP=1, TP=1, SP=1, PP=8)

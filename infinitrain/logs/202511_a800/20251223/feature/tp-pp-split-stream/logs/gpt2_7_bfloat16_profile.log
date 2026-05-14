@@ -1,0 +1,12 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DPROFILE_MODE=ON .. && make -j
+[COMMAND] NCCL_LAUNCH_MODE=GROUP ./gpt2 --input_bin  /data/shared/InfiniTrain-dev/data/llmc/gpt2/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/gpt2/gpt2_124M.bin --device cuda --dtype bfloat16 --nthread_per_process 8 --num_iteration 10 --batch_size 40 --total_batch_size 5120 --tensor_parallel 2 --sequence_parallel true --pipeline_parallel 2
+E20251222 14:59:40.765191 139839504621568 main.cc:334] step    1/10 | train loss 5.211551 | lr 1.00e-04 | (603.79 ms | 8480 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251222 14:59:41.167673 139839504621568 main.cc:334] step    2/10 | train loss 5.067993 | lr 1.00e-04 | (398.14 ms | 12860 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251222 14:59:41.493005 139839504621568 main.cc:334] step    3/10 | train loss 4.993062 | lr 1.00e-04 | (325.28 ms | 15741 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251222 14:59:41.814243 139839504621568 main.cc:334] step    4/10 | train loss 4.662622 | lr 1.00e-04 | (321.18 ms | 15941 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251222 14:59:42.125495 139839504621568 main.cc:334] step    5/10 | train loss 4.760777 | lr 1.00e-04 | (311.21 ms | 16452 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251222 14:59:42.444265 139839504621568 main.cc:334] step    6/10 | train loss 4.710211 | lr 1.00e-04 | (318.73 ms | 16064 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251222 14:59:42.755854 139839504621568 main.cc:334] step    7/10 | train loss 4.752561 | lr 1.00e-04 | (311.54 ms | 16434 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251222 14:59:43.078943 139839504621568 main.cc:334] step    8/10 | train loss 4.650494 | lr 1.00e-04 | (323.04 ms | 15849 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251222 14:59:43.382932 139839504621568 main.cc:334] step    9/10 | train loss 4.766093 | lr 1.00e-04 | (303.94 ms | 16845 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20251222 14:59:43.700523 139839504621568 main.cc:334] step   10/10 | train loss 4.756397 | lr 1.00e-04 | (317.55 ms | 16124 tok/s, DP=2, TP=2, SP=2, PP=2)

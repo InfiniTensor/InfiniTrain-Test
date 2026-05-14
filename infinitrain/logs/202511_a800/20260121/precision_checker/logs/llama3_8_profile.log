@@ -1,0 +1,12 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DPROFILE_MODE=ON .. && make -j
+[COMMAND] NCCL_LAUNCH_MODE=GROUP ./llama3 --input_bin /data/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype float32 --nthread_per_process 8 --num_iteration 10 --batch_size 40 --total_batch_size 5120 --tensor_parallel 2 --sequence_parallel true --pipeline_parallel 2 --virtual_pipeline_parallel 2
+E20260121 09:49:18.123935 140550254600192 main.cc:326] step    1/10 | train loss 4.726650 | lr 1.00e-05 | (1448.08 ms | 3536 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:19.545498 140550254600192 main.cc:326] step    2/10 | train loss 4.117779 | lr 1.00e-05 | (1419.70 ms | 3606 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:20.959555 140550254600192 main.cc:326] step    3/10 | train loss 3.613284 | lr 1.00e-05 | (1413.96 ms | 3621 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:22.372119 140550254600192 main.cc:326] step    4/10 | train loss 3.654181 | lr 1.00e-05 | (1412.46 ms | 3625 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:23.737026 140550254600192 main.cc:326] step    5/10 | train loss 3.519579 | lr 1.00e-05 | (1364.81 ms | 3751 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:25.164633 140550254600192 main.cc:326] step    6/10 | train loss 3.483851 | lr 1.00e-05 | (1427.50 ms | 3587 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:26.527384 140550254600192 main.cc:326] step    7/10 | train loss 3.432098 | lr 1.00e-05 | (1362.65 ms | 3757 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:27.911236 140550254600192 main.cc:326] step    8/10 | train loss 3.572618 | lr 1.00e-05 | (1383.76 ms | 3700 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:29.236701 140550254600192 main.cc:326] step    9/10 | train loss 3.578166 | lr 1.00e-05 | (1325.38 ms | 3863 tok/s, DP=2, TP=2, SP=2, PP=2)
+E20260121 09:49:30.615918 140550254600192 main.cc:326] step   10/10 | train loss 3.383950 | lr 1.00e-05 | (1379.13 ms | 3712 tok/s, DP=2, TP=2, SP=2, PP=2)

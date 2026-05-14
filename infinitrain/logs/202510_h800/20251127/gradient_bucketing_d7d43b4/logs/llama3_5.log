@@ -1,0 +1,12 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON .. && make -j
+[COMMAND] NCCL_LAUNCH_MODE=GROUP ./llama3 --input_bin ../../data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath ../../data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype float32 --nthread_per_process 8 --num_iteration 10 --batch_size 40 --total_batch_size 5120 --tensor_parallel 4 --sequence_parallel true
+E20251127 05:19:43.631944 139863491866624 main.cc:303] step    1/10 | train loss 4.726650 | lr 1.00e-05 | (430.33 ms | 11898 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20251127 05:19:43.934547 139863491866624 main.cc:303] step    2/10 | train loss 4.117794 | lr 1.00e-05 | (302.34 ms | 16935 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20251127 05:19:44.233849 139863491866624 main.cc:303] step    3/10 | train loss 3.613280 | lr 1.00e-05 | (299.24 ms | 17110 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20251127 05:19:44.532181 139863491866624 main.cc:303] step    4/10 | train loss 3.654168 | lr 1.00e-05 | (298.27 ms | 17165 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20251127 05:19:44.829141 139863491866624 main.cc:303] step    5/10 | train loss 3.519567 | lr 1.00e-05 | (296.90 ms | 17245 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20251127 05:19:45.126938 139863491866624 main.cc:303] step    6/10 | train loss 3.483843 | lr 1.00e-05 | (297.75 ms | 17196 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20251127 05:19:45.423157 139863491866624 main.cc:303] step    7/10 | train loss 3.432088 | lr 1.00e-05 | (296.17 ms | 17288 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20251127 05:19:45.719240 139863491866624 main.cc:303] step    8/10 | train loss 3.572620 | lr 1.00e-05 | (296.03 ms | 17295 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20251127 05:19:46.018899 139863491866624 main.cc:303] step    9/10 | train loss 3.578188 | lr 1.00e-05 | (299.62 ms | 17088 tok/s, DP=2, TP=4, SP=4, PP=1)
+E20251127 05:19:46.316018 139863491866624 main.cc:303] step   10/10 | train loss 3.383954 | lr 1.00e-05 | (297.08 ms | 17235 tok/s, DP=2, TP=4, SP=4, PP=1)
