@@ -534,6 +534,65 @@ def print0(*args, **kwargs):
     if int(os.environ.get("RANK", 0)) == 0:
         print(*args, **kwargs)
 
+SUPPORTED_LR_DECAY_STYLES = {"none", "constant", "linear", "cosine", "inverse-square-root"}
+
+def build_training_lr_schedule(args):
+    if args.lr_decay_style not in SUPPORTED_LR_DECAY_STYLES:
+        raise ValueError(f"unsupported lr_decay_style: {args.lr_decay_style}")
+    if args.learning_rate <= 0.0:
+        raise ValueError("learning_rate must be > 0")
+    if args.lr_decay_style == "none":
+        return lambda step: args.learning_rate
+
+    lr_decay_iters = args.lr_decay_iters if args.lr_decay_iters > 0 else args.num_iterations
+    if args.lr_warmup_init < 0.0:
+        raise ValueError("lr_warmup_init must be >= 0")
+    if args.min_lr < 0.0:
+        raise ValueError("min_lr must be >= 0")
+    if args.learning_rate < args.min_lr:
+        raise ValueError("learning_rate must be >= min_lr")
+    if args.lr_warmup_init > args.learning_rate:
+        raise ValueError("lr_warmup_init must be <= learning_rate")
+    if args.lr_warmup_iters < 0:
+        raise ValueError("lr_warmup_iters must be >= 0")
+    if lr_decay_iters <= 0:
+        raise ValueError("lr_decay_iters must be > 0")
+    if args.lr_warmup_iters >= lr_decay_iters:
+        raise ValueError("lr_warmup_iters must be < lr_decay_iters")
+
+    args.lr_decay_iters = lr_decay_iters
+    decay_iters_after_warmup = lr_decay_iters - args.lr_warmup_iters
+
+    def get_lr(step):
+        if args.lr_warmup_iters > 0 and step < args.lr_warmup_iters:
+            warmup_ratio = step / args.lr_warmup_iters
+            return args.lr_warmup_init + (args.learning_rate - args.lr_warmup_init) * warmup_ratio
+
+        decay_step = step - args.lr_warmup_iters
+        if args.lr_decay_style == "constant":
+            return args.learning_rate
+        if args.lr_decay_style == "linear":
+            if decay_step >= decay_iters_after_warmup:
+                return args.min_lr
+            decay_ratio = decay_step / decay_iters_after_warmup
+            return args.learning_rate + (args.min_lr - args.learning_rate) * decay_ratio
+        if args.lr_decay_style == "cosine":
+            if decay_step > decay_iters_after_warmup:
+                return args.min_lr
+            decay_ratio = decay_step / decay_iters_after_warmup
+            coeff = 0.5 * (math.cos(math.pi * decay_ratio) + 1.0)
+            return args.min_lr + coeff * (args.learning_rate - args.min_lr)
+        if args.lr_decay_style == "inverse-square-root":
+            global_step = decay_step + args.lr_warmup_iters
+            if global_step > lr_decay_iters:
+                return args.min_lr
+            warmup = max(args.lr_warmup_iters, 1)
+            current = max(global_step, 1)
+            return max(args.min_lr, args.learning_rate * math.sqrt(warmup) / math.sqrt(current))
+        raise AssertionError(f"unsupported lr_decay_style: {args.lr_decay_style}")
+
+    return get_lr
+
 if __name__ == "__main__":
     import time
     import argparse
@@ -556,9 +615,17 @@ if __name__ == "__main__":
     parser.add_argument("--num_iterations", type=int, default=10, help="number of iterations to run")
     parser.add_argument("--inference_only", type=int, default=0, help="only run inference")
     # optimization
-    parser.add_argument("--learning_rate", type=float, default=1e-4, help="learning rate warmup iterations")
-    parser.add_argument("--warmup_iters", type=int, default=0, help="learning rate warmup iterations")
-    parser.add_argument("--learning_rate_decay_frac", type=float, default=1.0, help="learning rate warmup iterations")
+    parser.add_argument("--learning_rate", "--lr", dest="learning_rate", type=float, default=1e-4, help="peak learning rate")
+    parser.add_argument("--min_lr", "--min-lr", dest="min_lr", type=float, default=0.0, help="minimum learning rate")
+    parser.add_argument("--lr_decay_style", "--lr-decay-style", dest="lr_decay_style", type=str, default="constant",
+                        choices=sorted(SUPPORTED_LR_DECAY_STYLES),
+                        help="none|constant|linear|cosine|inverse-square-root")
+    parser.add_argument("--lr_warmup_iters", "--lr-warmup-iters", dest="lr_warmup_iters", type=int, default=0,
+                        help="number of linear warmup iterations")
+    parser.add_argument("--lr_warmup_init", "--lr-warmup-init", dest="lr_warmup_init", type=float, default=0.0,
+                        help="initial learning rate at the start of warmup")
+    parser.add_argument("--lr_decay_iters", "--lr-decay-iters", dest="lr_decay_iters", type=int, default=0,
+                        help="number of iterations to decay LR over (0 = num_iterations)")
     parser.add_argument("--weight_decay", type=float, default=0.0, help="weight decay")
     parser.add_argument("--grad_clip", type=float, default=1.0, help="maximum gradient magnitude")
     # evaluation
@@ -765,21 +832,7 @@ if __name__ == "__main__":
     #                                            device_type=device, zero_stage=zero_stage)
     optimizer = torch.optim.SGD(raw_model.parameters(), lr=args.learning_rate)
     # optimizer = torch.optim.Adam(raw_model.parameters(), lr=args.learning_rate, betas=(0.9, 0.999))
-
-    # # learning rate decay scheduler (cosine with warmup)
-    # def get_lr(it):
-    #     min_lr = args.learning_rate * args.learning_rate_decay_frac
-    #     # 1) linear warmup for warmup_iters steps
-    #     if it < args.warmup_iters:
-    #         return args.learning_rate * (it+1) / args.warmup_iters
-    #     # 2) if it > lr_decay_iters, return min learning rate
-    #     if it > args.num_iterations:
-    #         return min_lr
-    #     # 3) in between, use cosine decay down to min learning rate
-    #     decay_ratio = (it - args.warmup_iters) / (args.num_iterations - args.warmup_iters)
-    #     assert 0 <= decay_ratio <= 1
-    #     coeff = 0.5 * (1.0 + math.cos(math.pi * decay_ratio)) # coeff starts at 1 and goes to 0
-    #     return min_lr + coeff * (args.learning_rate - min_lr)
+    get_lr = build_training_lr_schedule(args)
 
     # create the logging directory if it does not exist
     logfile = None
@@ -876,8 +929,7 @@ if __name__ == "__main__":
         lossf = lossf.item()
         # norm = torch.nn.utils.clip_grad_norm_(model.parameters(), args.grad_clip)
         # determine and set the learning rate for this iteration
-        # lr = get_lr(step)
-        lr = args.learning_rate
+        lr = get_lr(step)
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr
         # step the optimizer
