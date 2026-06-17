@@ -107,6 +107,28 @@ class LarkCLI:
         self.dry_run = dry_run
         self.yes = yes
         self.verbose = verbose
+        self._yes_support_cache: dict[tuple[str, ...], bool] = {}
+
+    def supports_yes(self, args: list[str]) -> bool:
+        command_path = tuple(arg for arg in args if not arg.startswith("--"))
+        for index, arg in enumerate(args):
+            if arg.startswith("--"):
+                command_path = tuple(args[:index])
+                break
+        if command_path in self._yes_support_cache:
+            return self._yes_support_cache[command_path]
+
+        proc = subprocess.run(
+            ["lark-cli", *command_path, "--help"],
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        help_text = f"{proc.stdout}\n{proc.stderr}"
+        supported = "--yes" in help_text
+        self._yes_support_cache[command_path] = supported
+        return supported
 
     def run_json(
         self,
@@ -119,7 +141,7 @@ class LarkCLI:
         cmd = ["lark-cli", *args]
         if self.identity and "--as" not in cmd:
             cmd.extend(["--as", self.identity])
-        if high_risk and self.yes and "--yes" not in cmd:
+        if high_risk and self.yes and "--yes" not in cmd and self.supports_yes(args):
             cmd.append("--yes")
 
         if write and self.dry_run:
