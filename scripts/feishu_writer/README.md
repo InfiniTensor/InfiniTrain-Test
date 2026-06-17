@@ -10,16 +10,16 @@
 
 下面介绍运行方式。在此之前，默认你已经拿到可用的 `APP_ID` 和 `APP_SECRET`，并已按本文末尾“附录：Lark-cli 配置”安装飞书 CLI 并完成本地授权。
 
-## 路径约定
+### 路径约定
 
-`InfiniTrain-Test` 是这套 writer 脚本和 token 配置的测试仓库；benchmark、logs、profile logs 和 `test_config.json` 仍然在实际的 `InfiniTrain` 仓库里。因此运行脚本时，需要把 `INFINITRAIN_ROOT` 显式指向本机实际的 `InfiniTrain` repo，再从本机实际的 `InfiniTrain-Test` repo 运行脚本：
+benchmark、logs、profile logs 和 `test_config.json` 仍然在实际的 `InfiniTrain` 仓库里。因此运行脚本时，需要事先配置：
 
 ```bash
 export INFINITRAIN_ROOT=/path/to/your/InfiniTrain
 cd /path/to/your/InfiniTrain-Test
 ```
 
-脚本里的数据路径都会从 `INFINITRAIN_ROOT` 解析，例如默认会读取 `$INFINITRAIN_ROOT/scripts/logs`、`$INFINITRAIN_ROOT/scripts/profile_logs` 和 `$INFINITRAIN_ROOT/scripts/test_config.json`。飞书 token 配置跟 writer 代码放在 `InfiniTrain-Test/scripts/feishu_writer/token.json`，provisioning 的默认输出也写到 `InfiniTrain-Test/scripts/feishu_writer/new_token.json`。未设置 `INFINITRAIN_ROOT` 时脚本会直接停止，避免误把 `InfiniTrain-Test` 当作数据根目录。
+未设置 `INFINITRAIN_ROOT` 时脚本会直接停止，避免误把 `InfiniTrain-Test` 当作数据根目录。
 
 ### 1. 手动运行脚本
 
@@ -174,6 +174,7 @@ python3 scripts/feishu_writer/write_to_feishu_sheet.py scripts/feishu_writer/tok
 - `--template-title MODEL=TITLE`：覆盖复制出来的新表标题。默认使用模型名，例如 `GPT2`、`LLAMA3`。
 - `--dry-run`：只打印计划，不创建飞书资源，也不写 token JSON。
 - `--yes`：允许创建飞书资源、授权、写 token JSON。
+  脚本会自动检测当前 `lark-cli` 子命令是否支持 `--yes`，仅在支持时透传给底层 CLI；不支持该 flag 的子命令仍会执行。
 
 权限参数：
 
