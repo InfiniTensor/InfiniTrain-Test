@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Provision Feishu spreadsheets for InfiniTrain benchmark tags.
+"""Provision Feishu spreadsheets for InfiniTrain benchmark tags and models.
 
 This script creates/reuses:
   root machine folder -> tag folder -> model spreadsheet copies
@@ -9,11 +9,10 @@ write_to_feishu_sheet.py script can run unchanged.
 """
 
 import argparse
-import datetime as dt
 import json
 import os
 from pathlib import Path
-import socket
+import shlex
 import subprocess
 import sys
 import tempfile
@@ -25,7 +24,7 @@ DEFAULT_ROOT_FOLDER_URL = (
     "https://gxtctab8no8.feishu.cn/drive/folder/"
     f"{DEFAULT_ROOT_FOLDER_TOKEN}"
 )
-DEFAULT_LOG_GLOB = "*.log"
+DEFAULT_TEMPLATE_TOKEN = "X5mJskjzSh2mo3tzuERccAYxnib"
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_INFINITRAIN_ROOT = SCRIPT_DIR.parents[1]
 WRITER_REPO_ROOT = SCRIPT_DIR.parents[1]
@@ -68,19 +67,6 @@ def resolve_path_from_writer_repo(path_value: str | Path) -> Path:
         return path.resolve()
     return (WRITER_REPO_ROOT / path).resolve()
 
-DEFAULT_MODEL_TEMPLATES = {
-    "GPT2": {
-        "template_token": "X5mJskjzSh2mo3tzuERccAYxnib",
-        "doc_type": "sheet",
-        "title": "GPT2",
-    },
-    "LLAMA3": {
-        "template_token": "NtT3syaRThyGXDtQyzdcpiyfnXd",
-        "doc_type": "sheet",
-        "title": "LLAMA3",
-    },
-}
-
 PROVISION_KEY = "FEISHU_PROVISION"
 TAG_CONFIGS_KEY = "TAG_SPREADSHEET_CONFIGS"
 MODEL_TOKENS_KEY = "MODEL_SPREADSHEET_TOKEN"
@@ -102,10 +88,9 @@ class CLIError(RuntimeError):
 
 
 class LarkCLI:
-    def __init__(self, identity: str, dry_run: bool, yes: bool, verbose: bool):
+    def __init__(self, identity: str, dry_run: bool, verbose: bool):
         self.identity = identity
         self.dry_run = dry_run
-        self.yes = yes
         self.verbose = verbose
         self._yes_support_cache: dict[tuple[str, ...], bool] = {}
 
@@ -141,18 +126,17 @@ class LarkCLI:
         cmd = ["lark-cli", *args]
         if self.identity and "--as" not in cmd:
             cmd.extend(["--as", self.identity])
-        if high_risk and self.yes and "--yes" not in cmd and self.supports_yes(args):
+        if (
+            high_risk
+            and not self.dry_run
+            and "--yes" not in cmd
+            and self.supports_yes(args)
+        ):
             cmd.append("--yes")
 
         if write and self.dry_run:
             print(f"[dry-run] {' '.join(cmd)}")
             return None
-
-        if write and not self.yes:
-            raise SystemExit(
-                "Refusing to perform Feishu write operations without --yes. "
-                "Run once with --dry-run to inspect the plan, then rerun with --yes."
-            )
 
         if self.verbose:
             print(f"[cmd] {' '.join(cmd)}")
@@ -222,20 +206,6 @@ def parse_csv(value: str | None) -> list[str] | None:
     return [item for item in items if item]
 
 
-def parse_key_value(values: list[str]) -> dict[str, str]:
-    result: dict[str, str] = {}
-    for raw in values:
-        if "=" not in raw:
-            raise SystemExit(f"Expected KEY=VALUE, got: {raw}")
-        key, value = raw.split("=", 1)
-        key = key.strip()
-        value = value.strip()
-        if not key or not value:
-            raise SystemExit(f"Expected non-empty KEY=VALUE, got: {raw}")
-        result[normalize_model_key(key)] = value
-    return result
-
-
 def normalize_model_key(value: str) -> str:
     compact = value.strip().replace("-", "").replace("_", "")
     return compact.upper()
@@ -259,96 +229,30 @@ def discover_tags(test_config: dict[str, Any]) -> list[str]:
     return tags
 
 
-def model_log_prefix(model: str) -> str:
-    return f"{normalize_model_key(model).lower()}_"
-
-
-def has_model_logs(tag_dir: Path, model_prefixes: list[str]) -> bool:
-    if not tag_dir.exists() or not tag_dir.is_dir():
-        return False
-    for log_file in tag_dir.glob(DEFAULT_LOG_GLOB):
-        name = log_file.name.lower()
-        if any(name.startswith(prefix) for prefix in model_prefixes):
-            return True
-    return False
-
-
-def discover_log_tags(log_dir: Path, model_prefixes: list[str]) -> list[str]:
-    """Discover benchmark tags from scripts/logs/<tag>/<model>_*.log."""
-    if not log_dir.exists():
+def discover_models(test_config: dict[str, Any]) -> list[str]:
+    variables = test_config.get("variables", {})
+    if not isinstance(variables, dict):
         return []
-    tags: list[str] = []
-    for child in sorted(log_dir.iterdir()):
-        if not child.is_dir():
-            continue
-        if has_model_logs(child, model_prefixes):
-            tags.append(child.name)
-    return tags
 
-
-def warn_missing_log_tags(tags: list[str], log_dir: Path, model_prefixes: list[str]) -> None:
-    for tag in tags:
-        tag_dir = log_dir / tag
-        if not has_model_logs(tag_dir, model_prefixes):
-            print(
-                f"[warn] no local model logs found under {tag_dir}; "
-                "continuing provisioning anyway"
-            )
-
-
-def normalize_templates(token_config: dict[str, Any]) -> dict[str, dict[str, str]]:
-    provision = token_config.get(PROVISION_KEY, {})
-    raw_templates = (
-        provision.get("model_templates")
-        or token_config.get("MODEL_TEMPLATES")
-        or {}
-    )
-    templates: dict[str, dict[str, str]] = {
-        model: dict(values) for model, values in DEFAULT_MODEL_TEMPLATES.items()
+    input_models = {
+        key[: -len("_INPUT_BIN")]
+        for key in variables
+        if key.endswith("_INPUT_BIN")
     }
-
-    for raw_model, raw_value in raw_templates.items():
-        model = normalize_model_key(raw_model)
-        base = dict(templates.get(model, {}))
-        if isinstance(raw_value, str):
-            templates[model] = {
-                "template_token": raw_value,
-                "doc_type": base.get("doc_type", "sheet"),
-                "title": base.get("title", model),
-            }
-        elif isinstance(raw_value, dict):
-            template_token = (
-                raw_value.get("template_token")
-                or raw_value.get("token")
-                or raw_value.get("spreadsheet_token")
-            )
-            if not template_token:
-                raise SystemExit(f"Missing template token for model {raw_model}")
-            templates[model] = {
-                "template_token": template_token,
-                "doc_type": raw_value.get("doc_type", "sheet"),
-                "title": raw_value.get("title") or base.get("title") or model,
-            }
-        else:
-            raise SystemExit(f"Unsupported template config for model {raw_model}")
-
-    return templates
+    filepath_models = {
+        key[: -len("_LLMC_FILEPATH")]
+        for key in variables
+        if key.endswith("_LLMC_FILEPATH")
+    }
+    return sorted(normalize_model_key(model) for model in input_models & filepath_models)
 
 
-def apply_template_overrides(
-    templates: dict[str, dict[str, str]],
-    token_overrides: dict[str, str],
-    title_overrides: dict[str, str],
-) -> dict[str, dict[str, str]]:
-    merged = {model: dict(values) for model, values in templates.items()}
-    for model, token in token_overrides.items():
-        merged.setdefault(model, {"doc_type": "sheet"})
-        merged[model]["template_token"] = token
-        merged[model].setdefault("title", model)
-    for model, title in title_overrides.items():
-        merged.setdefault(model, {"doc_type": "sheet"})
-        merged[model]["title"] = title
-    return merged
+def template_for_model(model: str) -> dict[str, str]:
+    return {
+        "template_token": DEFAULT_TEMPLATE_TOKEN,
+        "doc_type": "sheet",
+        "title": model,
+    }
 
 
 def collect_file_items(value: Any) -> list[dict[str, Any]]:
@@ -490,9 +394,6 @@ class Provisioner:
         created = extract_created_file(response)
         return created["token"]
 
-    def template_title(self, model: str, template: dict[str, str]) -> str:
-        return template.get("title") or model
-
     def ensure_spreadsheet(
         self,
         tag_folder_token: str,
@@ -629,10 +530,20 @@ def write_tag_configs(
     token_config.pop(MODEL_TOKENS_KEY, None)
 
 
+def writer_command(token_file_path: Path) -> str:
+    writer_path = SCRIPT_DIR / "write_to_feishu_sheet.py"
+    cwd = Path.cwd()
+    writer_arg = os.path.relpath(writer_path, cwd)
+    token_arg = os.path.relpath(token_file_path, cwd)
+    return (
+        f"python {shlex.quote(writer_arg)} "
+        f"{shlex.quote(token_arg)}"
+    )
+
+
 def main() -> int:
     scripts_dir = INFINITRAIN_ROOT / "scripts"
     writer_scripts_dir = SCRIPT_DIR
-    default_log_dir = scripts_dir / "logs"
     default_token_file = writer_scripts_dir / "token.json"
     default_new_token_file = writer_scripts_dir / "new_token.json"
     parser = argparse.ArgumentParser(
@@ -649,15 +560,6 @@ def main() -> int:
         help="Path to seed token JSON in the writer repo. Relative paths are resolved from InfiniTrain-Test.",
     )
     parser.add_argument(
-        "--log-dir",
-        default=str(default_log_dir),
-        help=(
-            "Directory containing run logs. New-machine tag discovery uses "
-            "subdirectories under this path. Relative paths are resolved from "
-            "the actual InfiniTrain repo in INFINITRAIN_ROOT. Default: scripts/logs."
-        ),
-    )
-    parser.add_argument(
         "--output-token-file",
         help=(
             "Where to write the provisioned token JSON in the writer repo. "
@@ -667,26 +569,34 @@ def main() -> int:
     )
     parser.add_argument(
         "--new-machine",
-        action="store_true",
+        default="",
+        metavar="NAME",
         help=(
-            "Create a fresh per-machine token file from the seed token config. "
-            "Existing tag spreadsheet tokens and machine folder state are ignored."
+            "Create a fresh machine folder named NAME and provision every "
+            "tag/model pair declared by test_config.json."
         ),
     )
     parser.add_argument(
-        "--tags",
+        "--new-tags",
+        default="",
+        metavar="TAG1,TAG2",
         help=(
-            "Comma-separated tag list. Default: tags with model logs under "
-            "scripts/logs for --new-machine, otherwise all test_config tags."
+            "Provision the comma-separated test_config.json tags in the "
+            "existing machine folder."
         ),
     )
-    parser.add_argument("--models", help="Comma-separated model list. Default: all configured templates.")
+    parser.add_argument(
+        "--new-model",
+        default="",
+        metavar="MODEL",
+        help=(
+            "Provision MODEL in every tag folder recorded by the input token "
+            "file. MODEL must be declared by test_config.json."
+        ),
+    )
     parser.add_argument("--root-folder-token")
     parser.add_argument("--root-folder-url", default=DEFAULT_ROOT_FOLDER_URL)
     parser.add_argument("--machine-folder-token")
-    parser.add_argument("--machine-folder-name")
-    parser.add_argument("--template-token", action="append", default=[], metavar="MODEL=TOKEN")
-    parser.add_argument("--template-title", action="append", default=[], metavar="MODEL=TITLE")
     parser.add_argument("--as", dest="identity", default="user", choices=["user", "bot"])
     parser.add_argument("--permission-member-type")
     parser.add_argument("--permission-member-id")
@@ -695,24 +605,36 @@ def main() -> int:
     parser.add_argument("--skip-permission", action="store_true")
     parser.add_argument("--grant-existing", action="store_true")
     parser.add_argument("--skip-template-check", action="store_true")
-    parser.add_argument("--no-update-token", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--yes", action="store_true", help="Allow Feishu writes and token.json updates.")
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
     validate_infinitrain_root()
 
     test_config_path = resolve_path_from_root(args.test_config)
     token_file_path = resolve_path_from_writer_repo(args.token_file)
-    log_dir = resolve_path_from_root(args.log_dir)
+    new_machine_name = args.new_machine.strip()
+    requested_tags = list(dict.fromkeys(parse_csv(args.new_tags) or []))
+    new_model = (
+        normalize_model_key(args.new_model)
+        if args.new_model.strip()
+        else ""
+    )
+    mode_count = sum(
+        bool(value)
+        for value in (new_machine_name, requested_tags, new_model)
+    )
+    if mode_count != 1:
+        parser.error(
+            "exactly one mode is required: "
+            "--new-machine NAME, --new-tags TAG1,TAG2, or --new-model MODEL"
+        )
+
     output_token_file_path = (
         resolve_path_from_writer_repo(args.output_token_file)
         if args.output_token_file
-        else (default_new_token_file if args.new_machine else token_file_path)
+        else (default_new_token_file if new_machine_name else token_file_path)
     )
-    requested_tags = parse_csv(args.tags)
-    needs_test_config = not requested_tags and not args.new_machine
-    test_config = load_json(test_config_path) if needs_test_config else None
+    test_config = load_json(test_config_path)
     token_config = load_json(token_file_path)
     original_token_config = json.dumps(
         token_config,
@@ -721,51 +643,75 @@ def main() -> int:
     )
 
     print(f"[root] {INFINITRAIN_ROOT_ENV}={INFINITRAIN_ROOT}")
+    provision = token_config.setdefault(PROVISION_KEY, {})
 
-    if args.new_machine:
+    if new_machine_name:
         print(
             "[new-machine] ignoring existing machine folder, tag folders, "
             "and TAG_SPREADSHEET_CONFIGS from the seed token config"
         )
         token_config[TAG_CONFIGS_KEY] = []
         token_config.pop(MODEL_TOKENS_KEY, None)
-        provision = token_config.setdefault(PROVISION_KEY, {})
         provision.pop("machine_folder_token", None)
         provision.pop("machine_folder_name", None)
         provision["tag_folders"] = {}
 
-    templates = apply_template_overrides(
-        normalize_templates(token_config),
-        parse_key_value(args.template_token),
-        parse_key_value(args.template_title),
-    )
-    selected_models = [normalize_model_key(m) for m in (parse_csv(args.models) or list(templates))]
-    missing_models = [model for model in selected_models if model not in templates]
-    if missing_models:
+    provision.pop("model_templates", None)
+    token_config.pop("MODEL_TEMPLATES", None)
+
+    configured_models = discover_models(test_config)
+    if not configured_models:
         raise SystemExit(
-            "Missing model template config for: "
-            + ", ".join(missing_models)
-            + ". Use --template-token MODEL=TOKEN."
+            "No models found in test_config.json. Expected matching "
+            "<MODEL>_INPUT_BIN and <MODEL>_LLMC_FILEPATH variables."
         )
-    model_prefixes = [model_log_prefix(model) for model in selected_models]
+    if new_model and new_model not in configured_models:
+        raise SystemExit(
+            f"Model not found in test_config.json: {new_model}"
+        )
+    selected_models = [new_model] if new_model else configured_models
+    templates = {
+        model: template_for_model(model)
+        for model in selected_models
+    }
 
-    if requested_tags:
-        selected_tags = requested_tags
-        warn_missing_log_tags(selected_tags, log_dir, model_prefixes)
-    elif args.new_machine:
-        selected_tags = discover_log_tags(log_dir, model_prefixes)
-        if not selected_tags:
+    configured_tags = discover_tags(test_config)
+    tag_folders = provision.setdefault("tag_folders", {})
+    if new_machine_name:
+        if not configured_tags:
+            raise SystemExit("No test_group tags found in test_config.json.")
+        selected_tags = configured_tags
+    elif requested_tags:
+        if not configured_tags:
+            raise SystemExit("No test_group tags found in test_config.json.")
+        unknown_tags = [tag for tag in requested_tags if tag not in configured_tags]
+        if unknown_tags:
             raise SystemExit(
-                f"No test group tags with model logs found under {log_dir}. "
-                "Run benchmarks first or pass --tags explicitly."
+                "Tags not found in test_config.json: " + ", ".join(unknown_tags)
             )
-        print(f"[new-machine] discovered tags from {log_dir}: {selected_tags}")
+        selected_tags = requested_tags
     else:
-        selected_tags = discover_tags(test_config or {})
-    if not selected_tags:
-        raise SystemExit("No test_group tags found.")
+        if not isinstance(tag_folders, dict) or not tag_folders:
+            raise SystemExit(
+                "Cannot provision a new model without "
+                "FEISHU_PROVISION.tag_folders in the input token file."
+            )
+        invalid_tag_folders = [
+            tag
+            for tag, folder_token in tag_folders.items()
+            if not isinstance(folder_token, str) or not folder_token
+        ]
+        if invalid_tag_folders:
+            raise SystemExit(
+                "Missing folder token for tags: " + ", ".join(invalid_tag_folders)
+            )
+        selected_tags = list(tag_folders)
 
-    provision = token_config.setdefault(PROVISION_KEY, {})
+    print(
+        f"[test-config] selected tags={selected_tags}, "
+        f"models={selected_models}"
+    )
+
     root_folder_token = (
         args.root_folder_token
         or provision.get("root_folder_token")
@@ -773,11 +719,6 @@ def main() -> int:
         or DEFAULT_ROOT_FOLDER_TOKEN
     )
     machine_folder_token = args.machine_folder_token or provision.get("machine_folder_token")
-    machine_folder_name = (
-        args.machine_folder_name
-        or provision.get("machine_folder_name")
-        or f"{dt.datetime.now():%Y%m} {socket.gethostname()}"
-    )
 
     permission_cfg = provision.get("permission", {})
     permission_member_type = (
@@ -796,18 +737,25 @@ def main() -> int:
             "or APP_ID in token.json."
         )
 
-    cli = LarkCLI(args.identity, args.dry_run, args.yes, args.verbose)
+    cli = LarkCLI(args.identity, args.dry_run, args.verbose)
     provisioner = Provisioner(cli)
 
-    if not machine_folder_token:
-        machine_folder_token = provisioner.ensure_folder(root_folder_token, machine_folder_name)
-    else:
+    if new_machine_name:
+        machine_folder_token = provisioner.ensure_folder(
+            root_folder_token,
+            new_machine_name,
+        )
+        provision["root_folder_token"] = root_folder_token
+        provision["machine_folder_token"] = machine_folder_token
+        provision["machine_folder_name"] = new_machine_name
+    elif requested_tags:
+        if not machine_folder_token:
+            raise SystemExit(
+                "--new-tags requires --machine-folder-token or "
+                "FEISHU_PROVISION.machine_folder_token in the input token file."
+            )
         print(f"[exists] machine folder token: {machine_folder_token}")
 
-    provision["root_folder_token"] = root_folder_token
-    provision["machine_folder_token"] = machine_folder_token
-    provision["machine_folder_name"] = machine_folder_name
-    provision["model_templates"] = templates
     provision["permission"] = {
         "member_type": permission_member_type,
         "member_id": permission_member_id,
@@ -815,14 +763,7 @@ def main() -> int:
     }
     if args.permission_collaborator_type:
         provision["permission"]["type"] = args.permission_collaborator_type
-    tag_folders = provision.setdefault("tag_folders", {})
-
-    model_titles = {
-        model: provisioner.template_title(model, templates[model])
-        for model in selected_models
-    }
-    for model, title in model_titles.items():
-        provision["model_templates"][model]["title"] = title
+    model_titles = {model: model for model in selected_models}
 
     tokens_by_tag = tag_config_map(token_config)
     changed = False
@@ -832,6 +773,8 @@ def main() -> int:
         tag_folder_token = tag_folders.get(tag)
         if tag_folder_token:
             print(f"[exists] tag folder {tag}: {tag_folder_token}")
+        elif new_model:
+            raise SystemExit(f"Missing tag folder token for {tag}")
         else:
             tag_folder_token = provisioner.ensure_folder(machine_folder_token, tag)
             tag_folders[tag] = tag_folder_token
@@ -839,6 +782,34 @@ def main() -> int:
 
         model_tokens = tokens_by_tag.setdefault(tag, {})
         for model in selected_models:
+            if new_model:
+                previous_token = model_tokens.get(model)
+                spreadsheet_token, copied = provisioner.ensure_spreadsheet(
+                    tag_folder_token,
+                    model,
+                    templates[model],
+                    model_titles[model],
+                )
+                model_tokens[model] = spreadsheet_token
+                if previous_token != spreadsheet_token:
+                    changed = True
+
+                if copied and not args.skip_permission:
+                    provisioner.grant_permission(
+                        spreadsheet_token,
+                        permission_member_type,
+                        permission_member_id,
+                        args.permission_perm or permission_cfg.get("perm") or "edit",
+                        args.permission_collaborator_type,
+                    )
+                if (
+                    copied
+                    and not args.skip_template_check
+                    and not spreadsheet_token.startswith("DRYRUN_")
+                ):
+                    provisioner.check_template_sheet(spreadsheet_token)
+                continue
+
             existing_token = model_tokens.get(model)
             if existing_token:
                 print(f"[exists] token.json {tag}/{model}: {existing_token}")
@@ -876,9 +847,7 @@ def main() -> int:
 
     write_tag_configs(token_config, tokens_by_tag, selected_tags)
 
-    if args.no_update_token:
-        print("\n[skip] token.json update disabled")
-    elif args.dry_run:
+    if args.dry_run:
         print(f"\n[dry-run] {output_token_file_path} would be written")
     elif changed or original_token_config != json.dumps(
         token_config,
@@ -890,7 +859,13 @@ def main() -> int:
     else:
         print("\n[ok] token.json already up to date")
 
-    print("\nProvisioning complete. You can run write_to_feishu_sheet.py next.")
+    print("\nProvisioning complete.")
+    if args.dry_run:
+        print("After running provisioning without --dry-run, run:")
+        print(f"  {writer_command(output_token_file_path)}")
+    else:
+        print("Next, run:")
+        print(f"  {writer_command(output_token_file_path)}")
     return 0
 
 
