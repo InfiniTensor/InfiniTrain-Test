@@ -21,8 +21,8 @@ REQUEST_RETRY_TIMES=3
 REQUEST_RETRY_DELAY=10
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-DEFAULT_INFINITRAIN_ROOT = SCRIPT_DIR.parents[1]
-WRITER_REPO_ROOT = SCRIPT_DIR.parents[1]
+DEFAULT_INFINITRAIN_ROOT = SCRIPT_DIR.parents[2]
+WRITER_REPO_ROOT = SCRIPT_DIR.parents[2]
 INFINITRAIN_ROOT_ENV = "INFINITRAIN_ROOT"
 INFINITRAIN_ROOT_IS_EXPLICIT = bool(os.environ.get(INFINITRAIN_ROOT_ENV))
 
@@ -605,7 +605,7 @@ def main():
         'config_file',
         nargs='?',
         default=str(DEFAULT_TOKEN_FILE),
-        help='Path to JSON config file in the writer repo. Relative paths are resolved from InfiniTrain-Test. Default: scripts/feishu_writer/token.json'
+        help='Path to JSON config file in the writer repo. Relative paths are resolved from InfiniTrain-Test. Default: infinitrain/scripts/feishu_writer/token.json'
     )
     parser.add_argument(
         '--log-dir',
