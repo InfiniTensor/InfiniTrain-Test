@@ -26,8 +26,8 @@ DEFAULT_ROOT_FOLDER_URL = (
 )
 DEFAULT_TEMPLATE_TOKEN = "X5mJskjzSh2mo3tzuERccAYxnib"
 SCRIPT_DIR = Path(__file__).resolve().parent
-DEFAULT_INFINITRAIN_ROOT = SCRIPT_DIR.parents[1]
-WRITER_REPO_ROOT = SCRIPT_DIR.parents[1]
+DEFAULT_INFINITRAIN_ROOT = SCRIPT_DIR.parents[2]
+WRITER_REPO_ROOT = SCRIPT_DIR.parents[2]
 INFINITRAIN_ROOT_ENV = "INFINITRAIN_ROOT"
 INFINITRAIN_ROOT_IS_EXPLICIT = bool(os.environ.get(INFINITRAIN_ROOT_ENV))
 
@@ -563,7 +563,8 @@ def main() -> int:
         "--output-token-file",
         help=(
             "Where to write the provisioned token JSON in the writer repo. "
-            "Defaults to --token-file, or scripts/feishu_writer/new_token.json "
+            "Defaults to --token-file, or "
+            "infinitrain/scripts/feishu_writer/new_token.json "
             "when --new-machine is set."
         ),
     )

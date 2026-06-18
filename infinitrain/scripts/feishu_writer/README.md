@@ -1,6 +1,6 @@
 # 飞书 Writer 使用指南
 
-本文说明 `scripts/` 下飞书写入相关脚本的配置格式、参数和典型运行方式。
+本文说明 `infinitrain/scripts/` 下飞书写入相关脚本的配置格式、参数和典型运行方式。
 
 ## Quick Start
 
@@ -23,7 +23,7 @@ cd /path/to/your/InfiniTrain-Test
 
 ### 1. 手动运行脚本
 
-首先，最少保证 `scripts/feishu_writer/token.json` 中有：
+首先，最少保证 `infinitrain/scripts/feishu_writer/token.json` 中有：
 
 ```json
 {
@@ -38,18 +38,18 @@ cd /path/to/your/InfiniTrain-Test
 export INFINITRAIN_ROOT=/path/to/your/InfiniTrain
 cd /path/to/your/InfiniTrain-Test
 
-python3 scripts/feishu_writer/provision_feishu_sheets.py \
+python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
   --new-machine "202605 node1"
 ```
 
 `--new-machine` 的值就是新建的机器目录名。脚本会读取
 `$INFINITRAIN_ROOT/scripts/test_config.json`，为其中全部 test group tag 和模型创建
-`tag × model` 表格。运行输出默认写到 `scripts/feishu_writer/new_token.json`。
+`tag × model` 表格。运行输出默认写到 `infinitrain/scripts/feishu_writer/new_token.json`。
 
 如果中途因为权限或网络失败，补完权限后用 `--grant-existing` 恢复：
 
 ```bash
-python3 scripts/feishu_writer/provision_feishu_sheets.py \
+python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
   --new-machine "202605 node1" \
   --grant-existing
 ```
@@ -57,24 +57,24 @@ python3 scripts/feishu_writer/provision_feishu_sheets.py \
 #### 1.2 **新增 tag**
 
 ```bash
-python3 scripts/feishu_writer/provision_feishu_sheets.py \
+python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
   --new-tags new_tag
 ```
 
 如果 `token.json` 里没有机器目录 token，则需要显式传入：
 
 ```bash
-python3 scripts/feishu_writer/provision_feishu_sheets.py \
+python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
   --new-tags new_tag \
   --machine-folder-token <existing_machine_folder_token>
 ```
 
-运行成功后，新创建的 spreadsheet token 会自动写入 `token.json` 的 `TAG_SPREADSHEET_CONFIGS` 字段，后续不需要再手工粘贴。这个模式将默认原地更新 `scripts/feishu_writer/token.json`（不会生成 `new_token.json`；如果想输出到其他文件，可以额外传 `--output-token-file <path>`）。
+运行成功后，新创建的 spreadsheet token 会自动写入 `token.json` 的 `TAG_SPREADSHEET_CONFIGS` 字段，后续不需要再手工粘贴。这个模式将默认原地更新 `infinitrain/scripts/feishu_writer/token.json`（不会生成 `new_token.json`；如果想输出到其他文件，可以额外传 `--output-token-file <path>`）。
 
 #### 1.3 **新增模型**
 
 ```bash
-python3 scripts/feishu_writer/provision_feishu_sheets.py \
+python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
   --new-model NEW_MODEL
 ```
 
@@ -88,10 +88,10 @@ Provisioning 完成后，根据模式运行写入脚本：
 
 ```bash
 # 新增机器
-python3 scripts/feishu_writer/write_to_feishu_sheet.py scripts/feishu_writer/new_token.json
+python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/new_token.json
 
 # 已有机器新增 tag 或模型
-python3 scripts/feishu_writer/write_to_feishu_sheet.py scripts/feishu_writer/token.json
+python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/token.json
 ```
 
 ### 2. 利用 AI Agent
@@ -100,11 +100,11 @@ python3 scripts/feishu_writer/write_to_feishu_sheet.py scripts/feishu_writer/tok
 
 ## 文件说明
 
-- `scripts/feishu_writer/provision_feishu_sheets.py`：创建或复用飞书云盘目录、复制模型模板表、授权文档应用，并生成可直接给 writer 使用的 token JSON。
-- `scripts/feishu_writer/write_to_feishu_sheet.py`：读取本地 logs/profile reports，把 benchmark 结果写入已配置好的飞书表格。
-- `scripts/feishu_writer/token.json`：测试仓库中的本机真实运行配置，包含密钥，已被 Git 忽略。
-- `scripts/feishu_writer/new_token.json`：新增机器时默认生成到测试仓库的新配置文件，包含密钥，也已被 Git 忽略。
-- `scripts/feishu_writer/token.example.json`：安全的配置示例，不包含真实密钥。
+- `infinitrain/scripts/feishu_writer/provision_feishu_sheets.py`：创建或复用飞书云盘目录、复制模型模板表、授权文档应用，并生成可直接给 writer 使用的 token JSON。
+- `infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py`：读取本地 logs/profile reports，把 benchmark 结果写入已配置好的飞书表格。
+- `infinitrain/scripts/feishu_writer/token.json`：测试仓库中的本机真实运行配置，包含密钥，已被 Git 忽略。
+- `infinitrain/scripts/feishu_writer/new_token.json`：新增机器时默认生成到测试仓库的新配置文件，包含密钥，也已被 Git 忽略。
+- `infinitrain/scripts/feishu_writer/token.example.json`：安全的配置示例，不包含真实密钥。
 
 ## token.json 格式
 
@@ -160,9 +160,9 @@ python3 scripts/feishu_writer/write_to_feishu_sheet.py scripts/feishu_writer/tok
 常用参数：
 
 - `--test-config PATH`：测试配置 JSON，默认 `$INFINITRAIN_ROOT/scripts/test_config.json`。
-- `--token-file PATH`：输入的 seed token 配置，默认 `InfiniTrain-Test/scripts/feishu_writer/token.json`。
+- `--token-file PATH`：输入的 seed token 配置，默认 `InfiniTrain-Test/infinitrain/scripts/feishu_writer/token.json`。
 - `--output-token-file PATH`：输出的 token 配置路径，相对路径从 `InfiniTrain-Test` 解析。
-- `--new-machine "yyyymm name"`：新增机器模式，参数值同时作为新机器目录名。忽略输入 token 中已有的机器目录、tag 目录和 spreadsheet token，并为 `test_config.json` 中全部 `tag × model` 组合生成新配置。未指定 `--output-token-file` 时默认写入 `scripts/feishu_writer/new_token.json`。
+- `--new-machine "yyyymm name"`：新增机器模式，参数值同时作为新机器目录名。忽略输入 token 中已有的机器目录、tag 目录和 spreadsheet token，并为 `test_config.json` 中全部 `tag × model` 组合生成新配置。未指定 `--output-token-file` 时默认写入 `infinitrain/scripts/feishu_writer/new_token.json`。
 - `--new-tags tag1,tag2`：已有机器新增 tag 模式。tag 必须存在于 `test_config.json`，并为每个 tag 创建该配置声明的全部模型表格。
 - `--new-model MODEL`：已有机器新增模型模式。模型必须存在于 `test_config.json`；脚本根据输入 token 配置中的 `FEISHU_PROVISION.tag_folders` 对每个远端 tag 目录查找或创建同名 spreadsheet，并把远端 token 写回各 tag 的 `MODEL_SPREADSHEET_TOKEN`。
 - `--new-machine`、`--new-tags` 和 `--new-model` 必须且只能选择一种；全部为空或同时传入多个都会报错。
@@ -190,7 +190,7 @@ python3 scripts/feishu_writer/write_to_feishu_sheet.py scripts/feishu_writer/tok
 目标：在固定根目录下创建新机器目录，读取
 `$INFINITRAIN_ROOT/scripts/test_config.json` 中的 test group tag 和模型，为全部
 `tag × model` 组合创建目录及模型表格副本，给文档应用授权，并输出可直接使用的
-`scripts/feishu_writer/new_token.json`。
+`infinitrain/scripts/feishu_writer/new_token.json`。
 
 tag 来自 `test_groups[].tag`。模型来自 `variables` 中同时存在的
 `<MODEL>_INPUT_BIN` 和 `<MODEL>_LLMC_FILEPATH` 变量；当前配置会得到
@@ -199,7 +199,7 @@ tag 来自 `test_groups[].tag`。模型来自 `variables` 中同时存在的
 预览：
 
 ```bash
-python3 scripts/feishu_writer/provision_feishu_sheets.py \
+python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
   --new-machine "202605 new-machine" \
   --dry-run
 ```
@@ -207,7 +207,7 @@ python3 scripts/feishu_writer/provision_feishu_sheets.py \
 执行：
 
 ```bash
-python3 scripts/feishu_writer/provision_feishu_sheets.py \
+python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
   --new-machine "202605 new-machine"
 ```
 
@@ -216,56 +216,57 @@ python3 scripts/feishu_writer/provision_feishu_sheets.py \
 - 飞书云盘目录：固定根目录 -> `202605 new-machine`
 - 机器目录下：`test_config.json` 中每个 test group tag 一个子目录
 - 每个 tag 子目录下：配置中每个模型一个从模板复制出来的 spreadsheet
-- 本地配置：`scripts/feishu_writer/new_token.json`
+- 本地配置：`infinitrain/scripts/feishu_writer/new_token.json`
 
 后续直接写入，不需要人工粘贴 token：
 
 ```bash
-python3 scripts/feishu_writer/write_to_feishu_sheet.py scripts/feishu_writer/new_token.json
+python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/new_token.json
 ```
 
 如果执行过程中因为 scope 不足或网络中断停在半截，下一次重跑建议加 `--grant-existing`，这样已复制出来但尚未授权/检查的 spreadsheet 也会被补处理：
 
 ```bash
-python3 scripts/feishu_writer/provision_feishu_sheets.py \
+python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
   --new-machine "202605 new-machine" \
   --grant-existing
 ```
 
-如果希望新机器直接使用 `scripts/feishu_writer/token.json` 作为正式配置，可以指定输出路径：
+如果希望新机器直接使用 `infinitrain/scripts/feishu_writer/token.json` 作为正式配置，可以指定输出路径：
 
 ```bash
-python3 scripts/feishu_writer/provision_feishu_sheets.py \
+python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
   --new-machine "202605 new-machine" \
-  --output-token-file scripts/feishu_writer/token.json
+  --output-token-file infinitrain/scripts/feishu_writer/token.json
 ```
 
 ## 场景二：已有机器新增 tag
 
-目标：在当前机器目录下新增一个 tag 子目录，复制每个模型的模板表，授权，并把新 token 信息追加到现有 `scripts/feishu_writer/token.json`。
+目标：在当前机器目录下新增一个 tag 子目录，复制每个模型的模板表，授权，并把新 token 信息追加到现有 `infinitrain/scripts/feishu_writer/token.json`。
 
-先确保 `scripts/test_config.json` 已经包含新的 `test_group.tag`，然后执行：
+先确保 `$INFINITRAIN_ROOT/scripts/test_config.json` 已经包含新的
+`test_group.tag`，然后执行：
 
 ```bash
-python3 scripts/feishu_writer/provision_feishu_sheets.py --new-tags new_tag --dry-run
-python3 scripts/feishu_writer/provision_feishu_sheets.py --new-tags new_tag
+python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py --new-tags new_tag --dry-run
+python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py --new-tags new_tag
 ```
 
 `new_tag` 必须已存在于 `test_config.json` 的 `test_groups[].tag` 中。脚本不会读取
-`scripts/logs`；它会为该 tag 创建配置中声明的全部模型表格。
+`$INFINITRAIN_ROOT/scripts/logs`；它会为该 tag 创建配置中声明的全部模型表格。
 
-如果当前 `scripts/feishu_writer/token.json` 里还没有 `FEISHU_PROVISION.machine_folder_token`，第一次需要显式传入已有机器目录 token：
+如果当前 `infinitrain/scripts/feishu_writer/token.json` 里还没有 `FEISHU_PROVISION.machine_folder_token`，第一次需要显式传入已有机器目录 token：
 
 ```bash
-python3 scripts/feishu_writer/provision_feishu_sheets.py \
+python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
   --new-tags new_tag \
   --machine-folder-token <existing_machine_folder_token>
 ```
 
-这个流程会原地更新 `scripts/feishu_writer/token.json`。后续直接运行：
+这个流程会原地更新 `infinitrain/scripts/feishu_writer/token.json`。后续直接运行：
 
 ```bash
-python3 scripts/feishu_writer/write_to_feishu_sheet.py scripts/feishu_writer/token.json
+python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/token.json
 ```
 
 ## 场景三：已有机器新增 model
@@ -274,7 +275,7 @@ python3 scripts/feishu_writer/write_to_feishu_sheet.py scripts/feishu_writer/tok
 `<MODEL>_INPUT_BIN` 和 `<MODEL>_LLMC_FILEPATH`。然后预览：
 
 ```bash
-python3 scripts/feishu_writer/provision_feishu_sheets.py \
+python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
   --new-model NEWMODEL \
   --dry-run
 ```
@@ -282,7 +283,7 @@ python3 scripts/feishu_writer/provision_feishu_sheets.py \
 执行：
 
 ```bash
-python3 scripts/feishu_writer/provision_feishu_sheets.py \
+python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
   --new-model NEWMODEL
 ```
 
@@ -297,20 +298,20 @@ python3 scripts/feishu_writer/provision_feishu_sheets.py \
 ## write_to_feishu_sheet.py 用法
 
 ```bash
-python3 scripts/feishu_writer/write_to_feishu_sheet.py <token-config-json>
+python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py <token-config-json>
 ```
 
 示例：
 
 ```bash
-python3 scripts/feishu_writer/write_to_feishu_sheet.py scripts/feishu_writer/token.json
-python3 scripts/feishu_writer/write_to_feishu_sheet.py scripts/feishu_writer/new_token.json
+python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/token.json
+python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/new_token.json
 ```
 
 它会从这些目录发现本地数据：
 
-- `scripts/logs/<tag>/<model>_<testcase>.log`
-- `scripts/profile_logs/<tag>/<model>_<testcase>_profile_<model>.report.rank0`
+- `$INFINITRAIN_ROOT/scripts/logs/<tag>/<model>_<testcase>.log`
+- `$INFINITRAIN_ROOT/scripts/profile_logs/<tag>/<model>_<testcase>_profile_<model>.report.rank0`
 
 对每个已配置的 tag/model spreadsheet，它会：
 
@@ -323,7 +324,7 @@ python3 scripts/feishu_writer/write_to_feishu_sheet.py scripts/feishu_writer/new
 ## 安全检查
 
 - 可以先在对应模式命令中使用 `--dry-run` 预览；不带 `--dry-run` 时会直接执行并更新 token JSON。
-- 不要提交 `scripts/feishu_writer/token.json` 或 `scripts/feishu_writer/new_token*.json`。
+- 不要提交 `infinitrain/scripts/feishu_writer/token.json` 或 `infinitrain/scripts/feishu_writer/new_token*.json`。
 - 新增机器使用 `--new-machine "<name>"`。
 - 已有机器新增 tag 使用 `--new-tags <tag>`。
 - 已有机器新增 model 使用 `--new-model <model>`。
