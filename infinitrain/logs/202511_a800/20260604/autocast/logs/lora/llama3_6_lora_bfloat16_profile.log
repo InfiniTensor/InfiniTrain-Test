@@ -1,0 +1,52 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DPROFILE_MODE=ON .. && make -j
+[COMMAND] ./llama3 --input_bin /data/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype=bfloat16 --nthread_per_process=8 --num_iteration=10 --batch_size=10 --total_batch_size=5120 --pipeline_parallel=8 --lora_rank=16 --lora_alpha=32.0 --lora_target_modules=c_attn,attn.c_proj,c_fc
+===== LoRA Model Summary (Rank 4) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 2) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 6) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 1) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 5) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 3) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 0) ======
+Total parameters:     384933888
+Trainable parameters: 622592 (0.16174%)
+Frozen parameters:    384311296
+========================================
+===== LoRA Model Summary (Rank 7) ======
+Total parameters:     384935936
+Trainable parameters: 622592 (0.161739%)
+Frozen parameters:    384313344
+========================================
+E20260604 04:39:39.678187 140181222957056 main.cc:395] step    1/10 | train loss 4.727344 | lr 1.00e-05 | (803.31 ms | 6374 tok/s | peak used: 10711 MB | peak reserved: 10752 MB, DP=1, TP=1, SP=1, PP=8)
+E20260604 04:39:40.904320 140181222957056 main.cc:395] step    2/10 | train loss 4.580873 | lr 1.00e-05 | (1225.81 ms | 4177 tok/s | peak used: 10711 MB | peak reserved: 10752 MB, DP=1, TP=1, SP=1, PP=8)
+E20260604 04:39:41.952136 140181222957056 main.cc:395] step    3/10 | train loss 4.219248 | lr 1.00e-05 | (1047.73 ms | 4887 tok/s | peak used: 10711 MB | peak reserved: 10752 MB, DP=1, TP=1, SP=1, PP=8)
+E20260604 04:39:42.921461 140181222957056 main.cc:395] step    4/10 | train loss 4.377962 | lr 1.00e-05 | (969.25 ms | 5282 tok/s | peak used: 10711 MB | peak reserved: 10752 MB, DP=1, TP=1, SP=1, PP=8)
+E20260604 04:39:43.979313 140181222957056 main.cc:395] step    5/10 | train loss 4.414823 | lr 1.00e-05 | (1057.77 ms | 4840 tok/s | peak used: 10711 MB | peak reserved: 10752 MB, DP=1, TP=1, SP=1, PP=8)
+E20260604 04:39:44.992312 140181222957056 main.cc:395] step    6/10 | train loss 4.446229 | lr 1.00e-05 | (1012.91 ms | 5055 tok/s | peak used: 10711 MB | peak reserved: 10752 MB, DP=1, TP=1, SP=1, PP=8)
+E20260604 04:39:45.953040 140181222957056 main.cc:395] step    7/10 | train loss 4.508487 | lr 1.00e-05 | (960.65 ms | 5330 tok/s | peak used: 10711 MB | peak reserved: 10752 MB, DP=1, TP=1, SP=1, PP=8)
+E20260604 04:39:47.002021 140181222957056 main.cc:395] step    8/10 | train loss 4.403804 | lr 1.00e-05 | (1048.90 ms | 4881 tok/s | peak used: 10711 MB | peak reserved: 10752 MB, DP=1, TP=1, SP=1, PP=8)
+E20260604 04:39:47.992449 140181222957056 main.cc:395] step    9/10 | train loss 4.420332 | lr 1.00e-05 | (990.35 ms | 5170 tok/s | peak used: 10711 MB | peak reserved: 10752 MB, DP=1, TP=1, SP=1, PP=8)
+E20260604 04:39:49.111285 140181222957056 main.cc:395] step   10/10 | train loss 4.374136 | lr 1.00e-05 | (1118.76 ms | 4577 tok/s | peak used: 10711 MB | peak reserved: 10752 MB, DP=1, TP=1, SP=1, PP=8)

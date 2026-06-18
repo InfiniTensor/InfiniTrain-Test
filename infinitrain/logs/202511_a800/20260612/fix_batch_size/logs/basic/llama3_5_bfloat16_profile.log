@@ -1,0 +1,12 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DPROFILE_MODE=ON .. && make -j
+[COMMAND] ./llama3 --input_bin /data/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype=bfloat16 --nthread_per_process=8 --num_iteration=10 --batch_size=40 --total_batch_size=5120 --tensor_parallel=4 --sequence_parallel=true
+E20260611 06:49:17.193413 140171827716096 main.cc:395] step    1/10 | train loss 4.726684 | lr 1.00e-05 | (2218.47 ms | 2308 tok/s | peak used: 10013 MB | peak reserved: 10080 MB, DP=2, TP=4, SP=4, PP=1)
+E20260611 06:49:18.974097 140171827716096 main.cc:395] step    2/10 | train loss 4.375755 | lr 1.00e-05 | (1779.87 ms | 2877 tok/s | peak used: 10013 MB | peak reserved: 10080 MB, DP=2, TP=4, SP=4, PP=1)
+E20260611 06:49:20.807533 140171827716096 main.cc:395] step    3/10 | train loss 3.782635 | lr 1.00e-05 | (1833.22 ms | 2793 tok/s | peak used: 10013 MB | peak reserved: 10112 MB, DP=2, TP=4, SP=4, PP=1)
+E20260611 06:49:22.624283 140171827716096 main.cc:395] step    4/10 | train loss 3.848936 | lr 1.00e-05 | (1816.58 ms | 2818 tok/s | peak used: 10013 MB | peak reserved: 10112 MB, DP=2, TP=4, SP=4, PP=1)
+E20260611 06:49:24.422348 140171827716096 main.cc:395] step    5/10 | train loss 3.562461 | lr 1.00e-05 | (1797.89 ms | 2848 tok/s | peak used: 10013 MB | peak reserved: 10112 MB, DP=2, TP=4, SP=4, PP=1)
+E20260611 06:49:26.198048 140171827716096 main.cc:395] step    6/10 | train loss 3.512362 | lr 1.00e-05 | (1775.53 ms | 2884 tok/s | peak used: 10013 MB | peak reserved: 10112 MB, DP=2, TP=4, SP=4, PP=1)
+E20260611 06:49:28.025534 140171827716096 main.cc:395] step    7/10 | train loss 3.465287 | lr 1.00e-05 | (1827.30 ms | 2802 tok/s | peak used: 10013 MB | peak reserved: 10112 MB, DP=2, TP=4, SP=4, PP=1)
+E20260611 06:49:29.790512 140171827716096 main.cc:395] step    8/10 | train loss 3.592398 | lr 1.00e-05 | (1764.79 ms | 2901 tok/s | peak used: 10013 MB | peak reserved: 10112 MB, DP=2, TP=4, SP=4, PP=1)
+E20260611 06:49:31.571250 140171827716096 main.cc:395] step    9/10 | train loss 3.606913 | lr 1.00e-05 | (1780.56 ms | 2875 tok/s | peak used: 10013 MB | peak reserved: 10112 MB, DP=2, TP=4, SP=4, PP=1)
+E20260611 06:49:33.463651 140171827716096 main.cc:395] step   10/10 | train loss 3.409180 | lr 1.00e-05 | (1892.23 ms | 2706 tok/s | peak used: 10013 MB | peak reserved: 10112 MB, DP=2, TP=4, SP=4, PP=1)

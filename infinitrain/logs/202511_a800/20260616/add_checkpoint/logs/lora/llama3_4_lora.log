@@ -1,0 +1,60 @@
+[LAST_CMAKE] cmake -DBUILD_TEST=ON -DUSE_CUDA=ON -DUSE_NCCL=ON .. && make -j
+[COMMAND] ./llama3 --input_bin /data/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype float32 --nthread_per_process 8 --num_iteration 10 --batch_size 40 --total_batch_size 5120 --tensor_parallel 4 --lora_rank 4 --lora_alpha 8.0 --lora_target_modules c_attn,c_fc,c_proj
+===== LoRA Model Summary (Rank 3) ======
+Total parameters:     375539712
+Trainable parameters: 868352 (0.231228%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 4) ======
+Total parameters:     375539712
+Trainable parameters: 868352 (0.231228%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 7) ======
+Total parameters:     375539712
+Trainable parameters: 868352 (0.231228%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 1) ======
+Total parameters:     375539712
+Trainable parameters: 868352 (0.231228%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 2) ======
+Total parameters:     375539712
+Trainable parameters: 868352 (0.231228%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 6) ======
+Total parameters:     375539712
+Trainable parameters: 868352 (0.231228%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 0) ======
+Total parameters:     375539712
+Trainable parameters: 868352 (0.231228%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 5) ======
+Total parameters:     375539712
+Trainable parameters: 868352 (0.231228%)
+Frozen parameters:    374671360
+========================================
+E20260616 02:18:34.560551 140565890965504 main.cc:454] step    1/10 | train loss 4.726651 | lr 1.00e-05 | (817.21 ms | 6265 tok/s | peak used:  8685 MB | peak reserved:  8864 MB, DP=2, TP=4, SP=1, PP=1)
+E20260616 02:18:34.883600 140565890965504 main.cc:454] step    2/10 | train loss 4.576568 | lr 1.00e-05 | (321.93 ms | 15904 tok/s | peak used:  8685 MB | peak reserved:  8864 MB, DP=2, TP=4, SP=1, PP=1)
+E20260616 02:18:35.198454 140565890965504 main.cc:454] step    3/10 | train loss 4.213350 | lr 1.00e-05 | (314.79 ms | 16265 tok/s | peak used:  8685 MB | peak reserved:  8864 MB, DP=2, TP=4, SP=1, PP=1)
+E20260616 02:18:35.513047 140565890965504 main.cc:454] step    4/10 | train loss 4.370143 | lr 1.00e-05 | (314.54 ms | 16278 tok/s | peak used:  8685 MB | peak reserved:  8864 MB, DP=2, TP=4, SP=1, PP=1)
+E20260616 02:18:35.827890 140565890965504 main.cc:454] step    5/10 | train loss 4.405543 | lr 1.00e-05 | (314.80 ms | 16265 tok/s | peak used:  8685 MB | peak reserved:  8864 MB, DP=2, TP=4, SP=1, PP=1)
+E20260616 02:18:36.142519 140565890965504 main.cc:454] step    6/10 | train loss 4.435012 | lr 1.00e-05 | (314.58 ms | 16276 tok/s | peak used:  8685 MB | peak reserved:  8864 MB, DP=2, TP=4, SP=1, PP=1)
+E20260616 02:18:36.457430 140565890965504 main.cc:454] step    7/10 | train loss 4.495773 | lr 1.00e-05 | (314.86 ms | 16261 tok/s | peak used:  8685 MB | peak reserved:  8864 MB, DP=2, TP=4, SP=1, PP=1)
+E20260616 02:18:36.773081 140565890965504 main.cc:454] step    8/10 | train loss 4.392365 | lr 1.00e-05 | (315.60 ms | 16223 tok/s | peak used:  8685 MB | peak reserved:  8864 MB, DP=2, TP=4, SP=1, PP=1)
+E20260616 02:18:37.089184 140565890965504 main.cc:454] step    9/10 | train loss 4.410624 | lr 1.00e-05 | (316.04 ms | 16200 tok/s | peak used:  8685 MB | peak reserved:  8864 MB, DP=2, TP=4, SP=1, PP=1)
+E20260616 02:18:37.404715 140565890965504 main.cc:454] step   10/10 | train loss 4.365541 | lr 1.00e-05 | (315.48 ms | 16229 tok/s | peak used:  8685 MB | peak reserved:  8864 MB, DP=2, TP=4, SP=1, PP=1)
+E20260616 02:18:55.820703 140565890965504 checkpoint.cc:84] [CKPT] Save done: dir="./checkpoints/checkpoint_final/rank_000007"
+E20260616 02:18:56.864609 140566159417344 checkpoint.cc:84] [CKPT] Save done: dir="./checkpoints/checkpoint_final/rank_000003"
+E20260616 02:18:57.171856 140565958078464 checkpoint.cc:84] [CKPT] Save done: dir="./checkpoints/checkpoint_final/rank_000006"
+E20260616 02:18:58.006707 140566025191424 checkpoint.cc:84] [CKPT] Save done: dir="./checkpoints/checkpoint_final/rank_000005"
+E20260616 02:18:58.181672 140566092304384 checkpoint.cc:84] [CKPT] Save done: dir="./checkpoints/checkpoint_final/rank_000004"
+E20260616 02:18:58.232770 140566455119872 checkpoint.cc:84] [CKPT] Save done: dir="./checkpoints/checkpoint_final/rank_000000"
+E20260616 02:18:58.280154 140566388006912 checkpoint.cc:84] [CKPT] Save done: dir="./checkpoints/checkpoint_final/rank_000001"
+E20260616 02:18:58.313315 140566226530304 checkpoint.cc:84] [CKPT] Save done: dir="./checkpoints/checkpoint_final/rank_000002"

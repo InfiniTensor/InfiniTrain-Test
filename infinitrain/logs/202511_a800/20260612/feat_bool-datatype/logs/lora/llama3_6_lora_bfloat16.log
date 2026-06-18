@@ -1,0 +1,52 @@
+[LAST_CMAKE] cmake -DBUILD_TEST=ON -DUSE_CUDA=ON -DUSE_NCCL=ON .. && make -j
+[COMMAND] ./llama3 --input_bin /data/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype=bfloat16 --nthread_per_process=8 --num_iteration=10 --batch_size=10 --total_batch_size=5120 --pipeline_parallel=8 --lora_rank=16 --lora_alpha=32.0 --lora_target_modules=c_attn,attn.c_proj,c_fc
+===== LoRA Model Summary (Rank 3) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 2) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 5) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 4) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 6) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 1) ======
+Total parameters:     122265600
+Trainable parameters: 622592 (0.509213%)
+Frozen parameters:    121643008
+========================================
+===== LoRA Model Summary (Rank 0) ======
+Total parameters:     384933888
+Trainable parameters: 622592 (0.16174%)
+Frozen parameters:    384311296
+========================================
+===== LoRA Model Summary (Rank 7) ======
+Total parameters:     384935936
+Trainable parameters: 622592 (0.161739%)
+Frozen parameters:    384313344
+========================================
+E20260612 06:52:01.525137 140536967045120 main.cc:395] step    1/10 | train loss 4.727344 | lr 1.00e-05 | (256.13 ms | 19990 tok/s | peak used: 10711 MB | peak reserved: 10784 MB, DP=1, TP=1, SP=1, PP=8)
+E20260612 06:52:01.893153 140536967045120 main.cc:395] step    2/10 | train loss 4.581599 | lr 1.00e-05 | (367.65 ms | 13926 tok/s | peak used: 10711 MB | peak reserved: 10784 MB, DP=1, TP=1, SP=1, PP=8)
+E20260612 06:52:02.111760 140536967045120 main.cc:395] step    3/10 | train loss 4.219508 | lr 1.00e-05 | (218.50 ms | 23432 tok/s | peak used: 10711 MB | peak reserved: 10816 MB, DP=1, TP=1, SP=1, PP=8)
+E20260612 06:52:02.327646 140536967045120 main.cc:395] step    4/10 | train loss 4.378811 | lr 1.00e-05 | (215.82 ms | 23723 tok/s | peak used: 10711 MB | peak reserved: 10848 MB, DP=1, TP=1, SP=1, PP=8)
+E20260612 06:52:02.544327 140536967045120 main.cc:395] step    5/10 | train loss 4.414972 | lr 1.00e-05 | (216.62 ms | 23635 tok/s | peak used: 10711 MB | peak reserved: 10880 MB, DP=1, TP=1, SP=1, PP=8)
+E20260612 06:52:02.761234 140536967045120 main.cc:395] step    6/10 | train loss 4.446682 | lr 1.00e-05 | (216.83 ms | 23613 tok/s | peak used: 10711 MB | peak reserved: 10880 MB, DP=1, TP=1, SP=1, PP=8)
+E20260612 06:52:02.979436 140536967045120 main.cc:395] step    7/10 | train loss 4.508401 | lr 1.00e-05 | (218.13 ms | 23473 tok/s | peak used: 10711 MB | peak reserved: 10912 MB, DP=1, TP=1, SP=1, PP=8)
+E20260612 06:52:03.196018 140536967045120 main.cc:395] step    8/10 | train loss 4.403252 | lr 1.00e-05 | (216.52 ms | 23647 tok/s | peak used: 10711 MB | peak reserved: 10944 MB, DP=1, TP=1, SP=1, PP=8)
+E20260612 06:52:03.429807 140536967045120 main.cc:395] step    9/10 | train loss 4.420560 | lr 1.00e-05 | (233.74 ms | 21905 tok/s | peak used: 10711 MB | peak reserved: 11008 MB, DP=1, TP=1, SP=1, PP=8)
+E20260612 06:52:03.660127 140536967045120 main.cc:395] step   10/10 | train loss 4.374318 | lr 1.00e-05 | (230.27 ms | 22235 tok/s | peak used: 10711 MB | peak reserved: 11040 MB, DP=1, TP=1, SP=1, PP=8)

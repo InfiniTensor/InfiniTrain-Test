@@ -1,0 +1,52 @@
+[LAST_CMAKE] cmake -DBUILD_TEST=ON -DUSE_CUDA=ON -DUSE_NCCL=ON .. && make -j
+[COMMAND] ./llama3 --input_bin /data/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype=bfloat16 --nthread_per_process=8 --num_iteration=10 --batch_size=40 --total_batch_size=5120 --tensor_parallel=4 --lora_rank=16 --lora_alpha=32.0 --lora_target_modules=c_attn,c_fc,c_proj
+===== LoRA Model Summary (Rank 0) ======
+===== LoRA Model Summary (Rank 4) ======
+Total parameters:     378144768
+Trainable parameters: 3473408 (Total parameters:     378144768
+Trainable parameters: 3473408 (0.918539%)
+Frozen parameters:    374671360
+========================================
+0.918539%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 1) ======
+Total parameters:     378144768
+Trainable parameters: 3473408 (0.918539%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 7) ======
+Total parameters:     378144768
+Trainable parameters: 3473408 (0.918539%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 2) ======
+Total parameters:     378144768
+Trainable parameters: 3473408 (0.918539%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 5) ======
+Total parameters:     378144768
+Trainable parameters: 3473408 (0.918539%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 3) ======
+Total parameters:     378144768
+Trainable parameters: 3473408 (0.918539%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 6) ======
+Total parameters:     378144768
+Trainable parameters: 3473408 (0.918539%)
+Frozen parameters:    374671360
+========================================
+E20260612 06:50:23.574185 140167532748800 main.cc:395] step    1/10 | train loss 4.727302 | lr 1.00e-05 | (989.70 ms | 5173 tok/s | peak used:  7997 MB | peak reserved:  8128 MB, DP=2, TP=4, SP=1, PP=1)
+E20260612 06:50:23.962647 140167532748800 main.cc:395] step    2/10 | train loss 4.576075 | lr 1.00e-05 | (387.69 ms | 13206 tok/s | peak used:  8583 MB | peak reserved:  8736 MB, DP=2, TP=4, SP=1, PP=1)
+E20260612 06:50:24.222343 140167532748800 main.cc:395] step    3/10 | train loss 4.206528 | lr 1.00e-05 | (259.62 ms | 19721 tok/s | peak used:  8583 MB | peak reserved:  8736 MB, DP=2, TP=4, SP=1, PP=1)
+E20260612 06:50:24.448681 140167532748800 main.cc:395] step    4/10 | train loss 4.358928 | lr 1.00e-05 | (226.27 ms | 22628 tok/s | peak used:  8583 MB | peak reserved:  8736 MB, DP=2, TP=4, SP=1, PP=1)
+E20260612 06:50:24.665352 140167532748800 main.cc:395] step    5/10 | train loss 4.383126 | lr 1.00e-05 | (216.60 ms | 23638 tok/s | peak used:  8583 MB | peak reserved:  8736 MB, DP=2, TP=4, SP=1, PP=1)
+E20260612 06:50:24.867501 140167532748800 main.cc:395] step    6/10 | train loss 4.401481 | lr 1.00e-05 | (202.09 ms | 25335 tok/s | peak used:  8583 MB | peak reserved:  8736 MB, DP=2, TP=4, SP=1, PP=1)
+E20260612 06:50:25.070847 140167532748800 main.cc:395] step    7/10 | train loss 4.453148 | lr 1.00e-05 | (203.27 ms | 25189 tok/s | peak used:  8583 MB | peak reserved:  8736 MB, DP=2, TP=4, SP=1, PP=1)
+E20260612 06:50:25.275241 140167532748800 main.cc:395] step    8/10 | train loss 4.343106 | lr 1.00e-05 | (204.33 ms | 25058 tok/s | peak used:  8583 MB | peak reserved:  8736 MB, DP=2, TP=4, SP=1, PP=1)
+E20260612 06:50:25.481662 140167532748800 main.cc:395] step    9/10 | train loss 4.358614 | lr 1.00e-05 | (206.35 ms | 24812 tok/s | peak used:  8583 MB | peak reserved:  8736 MB, DP=2, TP=4, SP=1, PP=1)
+E20260612 06:50:25.688935 140167532748800 main.cc:395] step   10/10 | train loss 4.305613 | lr 1.00e-05 | (207.21 ms | 24709 tok/s | peak used:  8583 MB | peak reserved:  8736 MB, DP=2, TP=4, SP=1, PP=1)

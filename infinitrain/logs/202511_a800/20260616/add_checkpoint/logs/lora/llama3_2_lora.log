@@ -1,0 +1,18 @@
+[LAST_CMAKE] cmake -DBUILD_TEST=ON -DUSE_CUDA=ON -DUSE_NCCL=ON .. && make -j
+[COMMAND] ./llama3 --input_bin /data/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype float32 --num_iteration 10 --batch_size 80 --total_batch_size 5120 --lora_rank 8 --lora_alpha 16.0 --lora_target_modules c_attn,attn.c_proj
+===== LoRA Model Summary (Rank 0) ======
+Total parameters:     1499662336
+Trainable parameters: 1179648 (0.0786609%)
+Frozen parameters:    1498482688
+========================================
+E20260616 02:12:32.969767 140483739242496 main.cc:454] step    1/10 | train loss 4.726651 | lr 1.00e-05 | (1502.01 ms | 3409 tok/s | peak used: 29990 MB | peak reserved: 30208 MB, DP=1, TP=1, SP=1, PP=1)
+E20260616 02:12:34.613533 140483739242496 main.cc:454] step    2/10 | train loss 4.578913 | lr 1.00e-05 | (1643.45 ms | 3115 tok/s | peak used: 29990 MB | peak reserved: 30304 MB, DP=1, TP=1, SP=1, PP=1)
+E20260616 02:12:36.257307 140483739242496 main.cc:454] step    3/10 | train loss 4.217512 | lr 1.00e-05 | (1643.73 ms | 3115 tok/s | peak used: 29990 MB | peak reserved: 30464 MB, DP=1, TP=1, SP=1, PP=1)
+E20260616 02:12:37.901009 140483739242496 main.cc:454] step    4/10 | train loss 4.376009 | lr 1.00e-05 | (1643.65 ms | 3115 tok/s | peak used: 29990 MB | peak reserved: 30560 MB, DP=1, TP=1, SP=1, PP=1)
+E20260616 02:12:39.539609 140483739242496 main.cc:454] step    5/10 | train loss 4.414042 | lr 1.00e-05 | (1638.56 ms | 3125 tok/s | peak used: 29990 MB | peak reserved: 30592 MB, DP=1, TP=1, SP=1, PP=1)
+E20260616 02:12:41.178149 140483739242496 main.cc:454] step    6/10 | train loss 4.446438 | lr 1.00e-05 | (1638.50 ms | 3125 tok/s | peak used: 29990 MB | peak reserved: 30624 MB, DP=1, TP=1, SP=1, PP=1)
+E20260616 02:12:42.816787 140483739242496 main.cc:454] step    7/10 | train loss 4.510198 | lr 1.00e-05 | (1638.60 ms | 3125 tok/s | peak used: 29990 MB | peak reserved: 30720 MB, DP=1, TP=1, SP=1, PP=1)
+E20260616 02:12:44.455309 140483739242496 main.cc:454] step    8/10 | train loss 4.406853 | lr 1.00e-05 | (1638.47 ms | 3125 tok/s | peak used: 29990 MB | peak reserved: 30816 MB, DP=1, TP=1, SP=1, PP=1)
+E20260616 02:12:46.093857 140483739242496 main.cc:454] step    9/10 | train loss 4.425938 | lr 1.00e-05 | (1638.51 ms | 3125 tok/s | peak used: 29990 MB | peak reserved: 30816 MB, DP=1, TP=1, SP=1, PP=1)
+E20260616 02:12:47.732411 140483739242496 main.cc:454] step   10/10 | train loss 4.382525 | lr 1.00e-05 | (1638.51 ms | 3125 tok/s | peak used: 29990 MB | peak reserved: 30848 MB, DP=1, TP=1, SP=1, PP=1)
+E20260616 02:13:02.857505 140483739242496 checkpoint.cc:84] [CKPT] Save done: dir="./checkpoints/checkpoint_final"
