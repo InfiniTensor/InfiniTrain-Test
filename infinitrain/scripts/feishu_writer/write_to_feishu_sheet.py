@@ -37,6 +37,7 @@ def get_infinitrain_root() -> Path:
 INFINITRAIN_ROOT = get_infinitrain_root()
 SCRIPTS_DIR = INFINITRAIN_ROOT / "scripts"
 DEFAULT_TOKEN_FILE = SCRIPT_DIR / "token.json"
+DEFAULT_RUN_OUTPUT_DIR = SCRIPTS_DIR
 DEFAULT_LOG_DIR = SCRIPTS_DIR / "logs"
 DEFAULT_PROFILE_LOG_DIR = SCRIPTS_DIR / "profile_logs"
 
@@ -384,6 +385,66 @@ def parse_command_args(log_content: str, start_flag="--dtype"):
             return None
     return None
 
+def parse_metadata_lines(log_content: str):
+    """Parse run metadata lines written by run_models_and_profile.bash."""
+    key_map = {
+        "RUN_METADATA": "run_metadata",
+        "RUN_STARTED_AT": "run_started_at",
+        "GIT_BRANCH": "git_branch",
+        "GIT_COMMIT": "git_commit",
+        "GIT_COMMIT_SHORT": "git_commit_short",
+    }
+    metadata = {}
+    for line in log_content.splitlines():
+        match = re.match(r"^\[([A-Z_]+)\]\s*(.*)$", line)
+        if not match:
+            continue
+        key = key_map.get(match.group(1))
+        if key:
+            metadata[key] = match.group(2).strip()
+    return metadata
+
+def load_run_metadata(log_content: str):
+    """Load run metadata from the training log and its referenced metadata file."""
+    metadata = parse_metadata_lines(log_content)
+    metadata_file = metadata.get("run_metadata")
+    if metadata_file and os.path.exists(metadata_file):
+        try:
+            with open(metadata_file, 'r', encoding='utf-8') as f:
+                file_metadata = parse_metadata_lines(f.read())
+            file_metadata.update(metadata)
+            metadata = file_metadata
+        except OSError as exc:
+            print(f"Failed to read run metadata file {metadata_file}: {exc}")
+    return metadata
+
+def get_run_date(run_metadata):
+    """Get benchmark run date from metadata, falling back to today's date."""
+    started_at = run_metadata.get("run_started_at")
+    if started_at:
+        for fmt in ("%Y-%m-%d %H:%M:%S", "%Y%m%d_%H%M%S"):
+            try:
+                return datetime.strptime(started_at, fmt).date()
+            except ValueError:
+                pass
+        try:
+            return datetime.fromisoformat(started_at).date()
+        except ValueError:
+            pass
+    return datetime.now().date()
+
+def get_run_branch(run_metadata):
+    """Get benchmark branch from metadata, falling back to current git for old logs."""
+    return run_metadata.get("git_branch") or get_git_branch()
+
+def get_run_commit_id(run_metadata):
+    """Get benchmark commit id from metadata, falling back to current git for old logs."""
+    if run_metadata.get("git_commit_short"):
+        return run_metadata["git_commit_short"]
+    if run_metadata.get("git_commit"):
+        return run_metadata["git_commit"][:7]
+    return get_git_commit_id()
+
 def parse_training_log(log_content):
     """Parse training log to extract avg latency and throughput from step >= 2 and peak mem usage during whole time"""
     pattern_with_peak = (
@@ -540,6 +601,22 @@ def get_git_commit_id():
         return "unknown"
 
 
+def resolve_log_dirs(run_output_dir):
+    """Resolve training and profile log directories from a run output directory."""
+    run_output_dir = Path(run_output_dir)
+    log_dir = run_output_dir / "logs"
+    profile_log_dir = run_output_dir / "profile_logs"
+
+    if not log_dir.is_dir():
+        print(f"Training log directory does not exist: {log_dir}")
+        return None, None
+    if not profile_log_dir.is_dir():
+        print(f"Profile log directory does not exist: {profile_log_dir}")
+        return None, None
+
+    return log_dir, profile_log_dir
+
+
 def get_model_data(
     model_name,
     sheet_title,
@@ -553,11 +630,13 @@ def get_model_data(
 
     avg_latency, avg_throughput, peak_used_max, peak_reserved_max = None, None, None, None
     cmd_args = None
+    run_metadata = {}
 
     # Read training log
     if log_file_path.exists():
         with log_file_path.open('r', encoding='utf-8') as f:
             content = f.read()
+            run_metadata = load_run_metadata(content)
             result = parse_training_log(content)
             if result:
                 avg_latency, avg_throughput, peak_used_max, peak_reserved_max = result
@@ -584,9 +663,9 @@ def get_model_data(
     combined_df = combined_df.astype(object)
 
     # Fill first row's first $META_COLS columns with info
-    combined_df.iloc[0, 0] = FeishuSheetHandler.convert_to_feishu_date(datetime.now().date())
-    combined_df.iloc[0, 1] = get_git_branch()
-    combined_df.iloc[0, 2] = get_git_commit_id()
+    combined_df.iloc[0, 0] = FeishuSheetHandler.convert_to_feishu_date(get_run_date(run_metadata))
+    combined_df.iloc[0, 1] = get_run_branch(run_metadata)
+    combined_df.iloc[0, 2] = get_run_commit_id(run_metadata)
     if avg_latency is not None:
         combined_df.iloc[0, 3] = avg_latency
     if avg_throughput is not None:
@@ -609,20 +688,17 @@ def main():
     )
     parser.add_argument(
         '--log-dir',
-        default=str(DEFAULT_LOG_DIR),
-        help='Directory containing run logs. Relative paths are resolved from the actual InfiniTrain repo in INFINITRAIN_ROOT. Default: scripts/logs'
-    )
-    parser.add_argument(
-        '--profile-log-dir',
-        default=str(DEFAULT_PROFILE_LOG_DIR),
-        help='Directory containing profile reports. Relative paths are resolved from the actual InfiniTrain repo in INFINITRAIN_ROOT. Default: scripts/profile_logs'
+        default=str(DEFAULT_RUN_OUTPUT_DIR),
+        help='Run output directory containing logs/ and profile_logs/. Relative paths are resolved from the actual InfiniTrain repo in INFINITRAIN_ROOT. Default: scripts'
     )
     args = parser.parse_args()
     validate_infinitrain_root()
 
     config_file = resolve_path_from_writer_repo(args.config_file)
-    log_dir = resolve_path_from_root(args.log_dir)
-    profile_log_dir = resolve_path_from_root(args.profile_log_dir)
+    run_output_dir = resolve_path_from_root(args.log_dir)
+    log_dir, profile_log_dir = resolve_log_dirs(run_output_dir)
+    if not log_dir or not profile_log_dir:
+        return
 
     print(f"Using {INFINITRAIN_ROOT_ENV}: {INFINITRAIN_ROOT}")
 
