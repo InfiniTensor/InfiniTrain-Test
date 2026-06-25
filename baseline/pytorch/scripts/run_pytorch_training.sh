@@ -1,12 +1,5 @@
 #!/usr/bin/env bash
 set -euo pipefail
-source /opt/miniconda3/bin/activate pytorch_env
-export HF_HOME=/data/shared/InfiniTrain-dev/env/HuggingFace
-
-# Optional: set model cache directory
-export HF_HUB_CACHE=/data/shared/InfiniTrain-dev/env/HuggingFace/hub
-# Optional: force using local files
-export HF_HUB_OFFLINE=1
 
 # ---------- GPT-2 ----------
 echo "=========================================="
