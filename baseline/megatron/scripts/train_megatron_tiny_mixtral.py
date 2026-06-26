@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 """Run tiny Mixtral with Megatron-LM MoE for InfiniTrain loss validation.
 
-Install Megatron Core, or pass --megatron_path to use a local Megatron-LM checkout:
-    pip install megatron-core
+By default this runner imports Megatron Core from the repository submodule at
+third_party/Megatron-LM. Set MEGATRON_PATH or pass --megatron_path to use a
+different Megatron-LM checkout.
 
-Export an LLMC checkpoint aligned with InfiniTrain tiny_mixtral:
+The usual entry point is the companion shell script, which first writes a local
+LLMC checkpoint under baseline/megatron/models and then trains from it:
+    ./run_megatron_tiny_mixtral.sh
+
+Export an LLMC checkpoint manually:
     python3 train_megatron_tiny_mixtral.py \
         --num_iterations 0 \
-        --write_model_path /data/shared/InfiniTrain-dev/data/llmc/tiny_mixtral/tiny_mixtral_megatron_export.bin
+        --write_model_path ../models/tiny_mixtral_megatron_export.bin
 
-Train from the exported LLMC checkpoint:
+Train from the exported LLMC checkpoint manually:
     python3 train_megatron_tiny_mixtral.py \
-        --weights_path /data/shared/InfiniTrain-dev/data/llmc/tiny_mixtral/tiny_mixtral_megatron_export.bin \
-        --input_bin /data/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin \
+        --weights_path ../models/tiny_mixtral_megatron_export.bin \
+        --input_bin /data1/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin \
         --num_iterations 10 \
         --log_interval 1 \
         --print_timing
@@ -32,7 +37,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-DEFAULT_MEGATRON_PATH = os.environ.get("MEGATRON_PATH", "")
+REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
+DEFAULT_MEGATRON_PATH = os.environ.get("MEGATRON_PATH", str(REPO_ROOT / "third_party" / "Megatron-LM"))
 
 
 class RMSNorm(nn.Module):
@@ -193,18 +199,34 @@ def get_batch(tokens, batch_idx, batch_size, sequence_length, device):
     return torch.stack(xs).to(device), torch.stack(ys).to(device)
 
 
+def patch_nvrx_namespace_version():
+    try:
+        import nvidia_resiliency_ext as nvrx
+    except ModuleNotFoundError:
+        return
+    if not hasattr(nvrx, "__version__"):
+        nvrx.__version__ = "0.6.0"
+
+
 def init_megatron(args):
     if args.megatron_path:
-        if args.megatron_path not in sys.path:
-            sys.path.insert(0, args.megatron_path)
-    else:
-        try:
-            import megatron.core  # noqa: F401
-        except ModuleNotFoundError as exc:
+        megatron_path = pathlib.Path(args.megatron_path).expanduser().resolve()
+        if not (megatron_path / "megatron" / "core").is_dir():
             raise RuntimeError(
-                "Megatron Core is not importable. Install `megatron-core` or pass "
+                f"Megatron Core is not available under {megatron_path}. "
+                "Initialize the third_party/Megatron-LM submodule or pass "
                 "--megatron_path /path/to/Megatron-LM."
-            ) from exc
+            )
+        if str(megatron_path) not in sys.path:
+            sys.path.insert(0, str(megatron_path))
+    patch_nvrx_namespace_version()
+    try:
+        import megatron.core  # noqa: F401
+    except ModuleNotFoundError as exc:
+        raise RuntimeError(
+            "Megatron Core is not importable. Initialize the third_party/Megatron-LM "
+            "submodule, install `megatron-core`, or pass --megatron_path /path/to/Megatron-LM."
+        ) from exc
 
     import torch.distributed as dist
     from megatron.core import parallel_state
@@ -273,7 +295,13 @@ class MegatronMoE(nn.Module):
             params_dtype=torch.float32,
         )
         spec = get_gpt_layer_local_spec(num_experts=args.num_experts, moe_grouped_gemm=False)
-        self.moe = MoELayer(config, spec.submodules.mlp.submodules, layer_number=layer_number)
+        mlp_spec = spec.submodules.mlp
+        moe_submodules = getattr(mlp_spec, "submodules", None)
+        if moe_submodules is None and hasattr(mlp_spec, "keywords"):
+            moe_submodules = mlp_spec.keywords.get("submodules")
+        if moe_submodules is None:
+            raise RuntimeError("failed to resolve Megatron MoE submodules from GPT layer spec")
+        self.moe = MoELayer(config, moe_submodules, layer_number=layer_number)
 
     def forward(self, x):
         y, bias = self.moe(x.transpose(0, 1).contiguous())
