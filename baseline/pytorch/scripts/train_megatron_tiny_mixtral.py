@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Run tiny Mixtral with Megatron-LM MoE for InfiniTrain loss validation.
 
+Install Megatron Core, or pass --megatron_path to use a local Megatron-LM checkout:
+    pip install megatron-core
+
 Export an LLMC checkpoint aligned with InfiniTrain tiny_mixtral:
     python3 train_megatron_tiny_mixtral.py \
         --num_iterations 0 \
@@ -29,7 +32,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-DEFAULT_MEGATRON_PATH = "/var/qy_home/duanchenjie/workspace/Megatron-LM"
+DEFAULT_MEGATRON_PATH = os.environ.get("MEGATRON_PATH", "")
 
 
 class RMSNorm(nn.Module):
@@ -191,8 +194,17 @@ def get_batch(tokens, batch_idx, batch_size, sequence_length, device):
 
 
 def init_megatron(args):
-    if args.megatron_path not in sys.path:
-        sys.path.insert(0, args.megatron_path)
+    if args.megatron_path:
+        if args.megatron_path not in sys.path:
+            sys.path.insert(0, args.megatron_path)
+    else:
+        try:
+            import megatron.core  # noqa: F401
+        except ModuleNotFoundError as exc:
+            raise RuntimeError(
+                "Megatron Core is not importable. Install `megatron-core` or pass "
+                "--megatron_path /path/to/Megatron-LM."
+            ) from exc
 
     import torch.distributed as dist
     from megatron.core import parallel_state
@@ -470,7 +482,7 @@ def parse_args():
     parser.add_argument("--dtype", type=str, default=defaults.dtype, choices=("float32", "bfloat16"), help="training precision")
 
     # Megatron runtime environment.
-    parser.add_argument("--megatron_path", default=defaults.megatron_path, help="path to the Megatron-LM repository")
+    parser.add_argument("--megatron_path", default=defaults.megatron_path, help="optional path to a Megatron-LM checkout; empty uses installed megatron-core")
     parser.add_argument("--seed", type=int, default=defaults.seed, help="random seed")
     parser.add_argument("--device_id", type=int, default=defaults.device_id, help="CUDA device id")
     parser.add_argument("--master_port", type=int, default=defaults.master_port, help="single-rank NCCL master port")
