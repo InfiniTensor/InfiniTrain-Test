@@ -9,7 +9,6 @@ import re
 import pandas as pd
 from datetime import datetime, date
 from pathlib import Path
-import subprocess
 
 # date/branch/commit/avg_latency/avg_throughput/peak_used/peak_reserved
 META_COLS=7
@@ -21,44 +20,18 @@ REQUEST_RETRY_TIMES=3
 REQUEST_RETRY_DELAY=10
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-DEFAULT_INFINITRAIN_ROOT = SCRIPT_DIR.parents[2]
 WRITER_REPO_ROOT = SCRIPT_DIR.parents[2]
-INFINITRAIN_ROOT_ENV = "INFINITRAIN_ROOT"
-INFINITRAIN_ROOT_IS_EXPLICIT = bool(os.environ.get(INFINITRAIN_ROOT_ENV))
-
-
-def get_infinitrain_root() -> Path:
-    root = os.environ.get(INFINITRAIN_ROOT_ENV)
-    if root:
-        return Path(root).expanduser().resolve()
-    return DEFAULT_INFINITRAIN_ROOT
-
-
-INFINITRAIN_ROOT = get_infinitrain_root()
-SCRIPTS_DIR = INFINITRAIN_ROOT / "scripts"
 DEFAULT_TOKEN_FILE = SCRIPT_DIR / "token.json"
-DEFAULT_RUN_OUTPUT_DIR = SCRIPTS_DIR
-DEFAULT_LOG_DIR = SCRIPTS_DIR / "logs"
-DEFAULT_PROFILE_LOG_DIR = SCRIPTS_DIR / "profile_logs"
+DEFAULT_RUN_OUTPUT_DIR = Path("scripts")
+DEFAULT_LOG_DIR = DEFAULT_RUN_OUTPUT_DIR / "logs"
+DEFAULT_PROFILE_LOG_DIR = DEFAULT_RUN_OUTPUT_DIR / "profile_logs"
 
 
-def validate_infinitrain_root() -> None:
-    if not INFINITRAIN_ROOT_IS_EXPLICIT:
-        raise SystemExit(
-            f"Please set {INFINITRAIN_ROOT_ENV} to the actual InfiniTrain repo path, "
-            "for example: export INFINITRAIN_ROOT=~/Github/InfiniTrain"
-        )
-    if not INFINITRAIN_ROOT.is_dir():
-        raise SystemExit(f"{INFINITRAIN_ROOT_ENV} is not a directory: {INFINITRAIN_ROOT}")
-    if not (INFINITRAIN_ROOT / ".git").exists():
-        raise SystemExit(f"{INFINITRAIN_ROOT_ENV} does not look like a git repo: {INFINITRAIN_ROOT}")
-
-
-def resolve_path_from_root(path_value) -> Path:
+def resolve_path_from_cwd(path_value) -> Path:
     path = Path(path_value).expanduser()
     if path.is_absolute():
         return path.resolve()
-    return (INFINITRAIN_ROOT / path).resolve()
+    return path.resolve()
 
 
 def resolve_path_from_writer_repo(path_value) -> Path:
@@ -404,18 +377,46 @@ def parse_metadata_lines(log_content: str):
             metadata[key] = match.group(2).strip()
     return metadata
 
-def load_run_metadata(log_content: str):
+def resolve_metadata_file(metadata_file: str, log_file_path: Path) -> Path:
+    path = Path(metadata_file).expanduser()
+    if path.is_absolute():
+        return path
+
+    candidates = [
+        log_file_path.parent / path,
+        log_file_path.parent.parent / path,
+    ]
+    for candidate in candidates:
+        if candidate.exists():
+            return candidate
+    return candidates[0]
+
+
+def load_run_metadata(log_content: str, log_file_path: Path):
     """Load run metadata from the training log and its referenced metadata file."""
     metadata = parse_metadata_lines(log_content)
+    log_commit_metadata = {
+        key: metadata[key]
+        for key in ("git_commit_short", "git_commit")
+        if key in metadata
+    }
     metadata_file = metadata.get("run_metadata")
-    if metadata_file and os.path.exists(metadata_file):
+    if metadata_file:
+        metadata_path = resolve_metadata_file(metadata_file, log_file_path)
+    else:
+        metadata_path = log_file_path.parent.parent / "run_metadata.log"
+
+    if metadata_path.exists():
         try:
-            with open(metadata_file, 'r', encoding='utf-8') as f:
+            with metadata_path.open('r', encoding='utf-8') as f:
                 file_metadata = parse_metadata_lines(f.read())
+            file_metadata.pop("git_commit_short", None)
+            file_metadata.pop("git_commit", None)
             file_metadata.update(metadata)
+            file_metadata.update(log_commit_metadata)
             metadata = file_metadata
         except OSError as exc:
-            print(f"Failed to read run metadata file {metadata_file}: {exc}")
+            print(f"Failed to read run metadata file {metadata_path}: {exc}")
     return metadata
 
 def get_run_date(run_metadata):
@@ -434,16 +435,19 @@ def get_run_date(run_metadata):
     return datetime.now().date()
 
 def get_run_branch(run_metadata):
-    """Get benchmark branch from metadata, falling back to current git for old logs."""
-    return run_metadata.get("git_branch") or get_git_branch()
+    """Get benchmark branch from metadata."""
+    return run_metadata.get("git_branch") or "unknown"
 
-def get_run_commit_id(run_metadata):
-    """Get benchmark commit id from metadata, falling back to current git for old logs."""
+def get_run_commit_id(run_metadata, log_file_path):
+    """Get benchmark commit id from metadata, or fail before writing data."""
     if run_metadata.get("git_commit_short"):
         return run_metadata["git_commit_short"]
     if run_metadata.get("git_commit"):
         return run_metadata["git_commit"][:7]
-    return get_git_commit_id()
+    raise SystemExit(
+        "Missing required git commit metadata in training log: "
+        f"{log_file_path}. Expected [GIT_COMMIT_SHORT] or [GIT_COMMIT]."
+    )
 
 def parse_training_log(log_content):
     """Parse training log to extract avg latency and throughput from step >= 2 and peak mem usage during whole time"""
@@ -575,32 +579,6 @@ def discover_testcases(model_name: str, tag: str, log_dir=DEFAULT_LOG_DIR):
             testcases.append(testcase)
     return sorted(set(testcases))
 
-def get_git_branch():
-    """Get current git branch"""
-    try:
-        result = subprocess.check_output(
-            ["git", "-C", str(INFINITRAIN_ROOT), "rev-parse", "--abbrev-ref", "HEAD"],
-            stderr=subprocess.DEVNULL,
-            text=True,
-        )
-        return result.strip()
-    except subprocess.CalledProcessError:
-        return "unknown"
-
-
-def get_git_commit_id():
-    """Get current git commit id (first 7 chars)"""
-    try:
-        result = subprocess.check_output(
-            ["git", "-C", str(INFINITRAIN_ROOT), "rev-parse", "HEAD"],
-            stderr=subprocess.DEVNULL,
-            text=True,
-        )
-        return result.strip()[:7]
-    except subprocess.CalledProcessError:
-        return "unknown"
-
-
 def resolve_log_dirs(run_output_dir):
     """Resolve training and profile log directories from a run output directory."""
     run_output_dir = Path(run_output_dir)
@@ -636,7 +614,7 @@ def get_model_data(
     if log_file_path.exists():
         with log_file_path.open('r', encoding='utf-8') as f:
             content = f.read()
-            run_metadata = load_run_metadata(content)
+            run_metadata = load_run_metadata(content, log_file_path)
             result = parse_training_log(content)
             if result:
                 avg_latency, avg_throughput, peak_used_max, peak_reserved_max = result
@@ -665,7 +643,7 @@ def get_model_data(
     # Fill first row's first $META_COLS columns with info
     combined_df.iloc[0, 0] = FeishuSheetHandler.convert_to_feishu_date(get_run_date(run_metadata))
     combined_df.iloc[0, 1] = get_run_branch(run_metadata)
-    combined_df.iloc[0, 2] = get_run_commit_id(run_metadata)
+    combined_df.iloc[0, 2] = get_run_commit_id(run_metadata, log_file_path)
     if avg_latency is not None:
         combined_df.iloc[0, 3] = avg_latency
     if avg_throughput is not None:
@@ -689,22 +667,21 @@ def main():
     parser.add_argument(
         '--log-dir',
         default=str(DEFAULT_RUN_OUTPUT_DIR),
-        help='Run output directory containing logs/ and profile_logs/. Relative paths are resolved from the actual InfiniTrain repo in INFINITRAIN_ROOT. Default: scripts'
+        help='Run output directory containing logs/ and profile_logs/. Relative paths are resolved from the current working directory. Default: scripts'
     )
     args = parser.parse_args()
-    validate_infinitrain_root()
 
     config_file = resolve_path_from_writer_repo(args.config_file)
-    run_output_dir = resolve_path_from_root(args.log_dir)
+    run_output_dir = resolve_path_from_cwd(args.log_dir)
     log_dir, profile_log_dir = resolve_log_dirs(run_output_dir)
     if not log_dir or not profile_log_dir:
         return
 
-    print(f"Using {INFINITRAIN_ROOT_ENV}: {INFINITRAIN_ROOT}")
+    print(f"Using run output directory: {run_output_dir}")
 
     config = load_config(config_file)
     if not config:
-        print("Failed to load config file, exiting")
+        print(f"Failed to load config file: {config_file}")
         return
 
     print(f"Successfully loaded config file: {config_file}")
