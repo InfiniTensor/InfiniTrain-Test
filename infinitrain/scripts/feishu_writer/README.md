@@ -12,7 +12,7 @@
 
 ### 路径约定
 
-benchmark、logs、profile logs 和 `test_config.json` 仍然在实际的 `InfiniTrain` 仓库里。因此运行脚本时，需要事先配置：
+`test_config.json` 仍然在实际的 `InfiniTrain` 仓库里。因此运行第一个脚本时，需要事先配置：
 
 ```bash
 export INFINITRAIN_ROOT=/path/to/your/InfiniTrain
@@ -84,15 +84,13 @@ python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
 
 #### 1.4 **写入脚本**
 
-Provisioning 完成后，根据模式运行写入脚本：
+写入飞书的脚本不依赖于 `INFINITRAIN_PATH`，需要手动传入 `--log-dir`：
 
 ```bash
-# 新增机器
-python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/new_token.json
-
-# 已有机器新增 tag 或模型
-python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/token.json
+python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/token.json --log-dir <path_to_log_dir>
 ```
+
+此外，也可以通过 `--skip-profile` 手动跳过 profile logs 的上传。
 
 ### 2. 利用 AI Agent
 
@@ -306,6 +304,7 @@ python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py <token-config
 ```bash
 python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/token.json
 python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/new_token.json
+python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/token.json --skip-profile
 ```
 
 它会从这些目录发现本地数据：
@@ -320,6 +319,8 @@ python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/s
 3. 如果 testcase sheet 不存在，从远端 `模板` sheet 复制一个。
 4. 解析 benchmark/profile 数据并 prepend 到对应 sheet。
 5. 设置样式并合并元信息列。
+
+如果 `scripts/profile_logs` 目录或单个 profile report 不存在，脚本仍会写入前 7 列 meta 信息，profile 对应列会保持为空字符串。也可以通过 `--skip-profile` 手动跳过 profile 解析，行为与 profile 数据不存在一致。
 
 ## 安全检查
 
