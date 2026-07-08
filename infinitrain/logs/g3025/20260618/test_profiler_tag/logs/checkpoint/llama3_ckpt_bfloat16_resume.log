@@ -1,0 +1,25 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DBUILD_TEST=ON -DPROFILE_MODE=OFF .. && make -j
+[COMMAND] ./llama3 --input_bin /data1/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data1/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype bfloat16 --num_iteration 50 --save_interval 10 --load /data1/ckpt/bfloat16_no_resume/llama3/no_resume/checkpoint_step_000030 --save /data1/ckpt/bfloat16_resume/llama3/resume
+E20260623 02:41:05.542032 139866005237760 checkpoint.cc:106] [CKPT] Load done: global_step=30, consumed_batches =30, last_lr=1e-05, topology(ddp,tp,sp,pp)=(1,1,1,1)
+E20260623 02:41:05.758033 139866005237760 main.cc:470] step   31/50 | train loss 3.326631 | lr 1.00e-05 | (215.17 ms | 1190 tok/s | peak used: 23143 MB | peak reserved: 24480 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:05.842026 139866005237760 main.cc:470] step   32/50 | train loss 3.503263 | lr 1.00e-05 | (83.92 ms | 3051 tok/s | peak used: 23143 MB | peak reserved: 24480 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:05.925098 139866005237760 main.cc:470] step   33/50 | train loss 3.838482 | lr 1.00e-05 | (83.02 ms | 3084 tok/s | peak used: 23143 MB | peak reserved: 24480 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:06.047317 139866005237760 main.cc:470] step   34/50 | train loss 3.511963 | lr 1.00e-05 | (122.17 ms | 2095 tok/s | peak used: 23143 MB | peak reserved: 24480 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:06.128585 139866005237760 main.cc:470] step   35/50 | train loss 3.911140 | lr 1.00e-05 | (81.22 ms | 3152 tok/s | peak used: 23143 MB | peak reserved: 24608 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:06.209574 139866005237760 main.cc:470] step   36/50 | train loss 3.921885 | lr 1.00e-05 | (80.94 ms | 3163 tok/s | peak used: 23143 MB | peak reserved: 24608 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:06.292303 139866005237760 main.cc:470] step   37/50 | train loss 3.876348 | lr 1.00e-05 | (82.68 ms | 3096 tok/s | peak used: 23143 MB | peak reserved: 24608 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:06.373477 139866005237760 main.cc:470] step   38/50 | train loss 3.668016 | lr 1.00e-05 | (81.13 ms | 3156 tok/s | peak used: 23143 MB | peak reserved: 24608 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:06.455358 139866005237760 main.cc:470] step   39/50 | train loss 3.507643 | lr 1.00e-05 | (81.83 ms | 3128 tok/s | peak used: 23143 MB | peak reserved: 24800 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:06.536698 139866005237760 main.cc:470] step   40/50 | train loss 3.960201 | lr 1.00e-05 | (81.29 ms | 3149 tok/s | peak used: 23143 MB | peak reserved: 24800 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:25.213905 139866005237760 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/bfloat16_resume/llama3/resume/checkpoint_step_000040"
+E20260623 02:41:25.305262 139866005237760 main.cc:470] step   41/50 | train loss 3.459874 | lr 1.00e-05 | (90.81 ms | 2819 tok/s | peak used: 23143 MB | peak reserved: 24960 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:25.391987 139866005237760 main.cc:470] step   42/50 | train loss 3.909260 | lr 1.00e-05 | (86.67 ms | 2954 tok/s | peak used: 23143 MB | peak reserved: 25024 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:25.478708 139866005237760 main.cc:470] step   43/50 | train loss 3.869478 | lr 1.00e-05 | (86.67 ms | 2954 tok/s | peak used: 23143 MB | peak reserved: 25248 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:25.560698 139866005237760 main.cc:470] step   44/50 | train loss 3.880090 | lr 1.00e-05 | (81.94 ms | 3124 tok/s | peak used: 23143 MB | peak reserved: 25248 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:25.642114 139866005237760 main.cc:470] step   45/50 | train loss 3.907160 | lr 1.00e-05 | (81.37 ms | 3146 tok/s | peak used: 23143 MB | peak reserved: 25248 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:25.744546 139866005237760 main.cc:470] step   46/50 | train loss 4.086593 | lr 1.00e-05 | (102.38 ms | 2500 tok/s | peak used: 23143 MB | peak reserved: 25248 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:25.826458 139866005237760 main.cc:470] step   47/50 | train loss 3.645056 | lr 1.00e-05 | (81.86 ms | 3127 tok/s | peak used: 23143 MB | peak reserved: 25248 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:25.908657 139866005237760 main.cc:470] step   48/50 | train loss 3.404604 | lr 1.00e-05 | (82.15 ms | 3116 tok/s | peak used: 23143 MB | peak reserved: 25248 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:25.990980 139866005237760 main.cc:470] step   49/50 | train loss 3.429705 | lr 1.00e-05 | (82.27 ms | 3112 tok/s | peak used: 23143 MB | peak reserved: 25248 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:26.071775 139866005237760 main.cc:470] step   50/50 | train loss 4.125524 | lr 1.00e-05 | (80.75 ms | 3170 tok/s | peak used: 23143 MB | peak reserved: 25248 MB, DP=1, TP=1, SP=1, PP=1)
+E20260623 02:41:44.419467 139866005237760 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/bfloat16_resume/llama3/resume/checkpoint_step_000050"

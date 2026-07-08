@@ -1,0 +1,52 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DBUILD_TEST=ON -DPROFILE_MODE=OFF .. && make -j
+[COMMAND] ./llama3 --input_bin /data1/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data1/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype float32 --nthread_per_process 8 --num_iteration 10 --batch_size 40 --total_batch_size 5120 --tensor_parallel 4 --sequence_parallel true --lora_rank 4 --lora_alpha 8.0 --lora_target_modules attn.c_proj,c_fc,c_proj
+===== LoRA Model Summary (Rank 0) ======
+Total parameters:     375359488
+Trainable parameters: 688128 (0.183325%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 7) ======
+Total parameters:     375359488
+Trainable parameters: 688128 (0.183325%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 5) ======
+Total parameters:     375359488
+Trainable parameters: 688128 (0.183325%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 4) ======
+Total parameters:     375359488
+Trainable parameters: 688128 (0.183325%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 3) ======
+Total parameters:     375359488
+Trainable parameters: 688128 (0.183325%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 6) ======
+Total parameters:     375359488
+Trainable parameters: 688128 (0.183325%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 2) ======
+Total parameters:     375359488
+Trainable parameters: 688128 (0.183325%)
+Frozen parameters:    374671360
+========================================
+===== LoRA Model Summary (Rank 1) ======
+Total parameters:     375359488
+Trainable parameters: 688128 (0.183325%)
+Frozen parameters:    374671360
+========================================
+E20260623 02:31:48.606020 139757564698624 main.cc:470] step    1/10 | train loss 4.726650 | lr 1.00e-05 | (1134.91 ms | 4511 tok/s | peak used:  7361 MB | peak reserved:  7520 MB, DP=2, TP=4, SP=4, PP=1)
+E20260623 02:31:49.007748 139757564698624 main.cc:470] step    2/10 | train loss 4.576975 | lr 1.00e-05 | (401.08 ms | 12765 tok/s | peak used:  7361 MB | peak reserved:  7808 MB, DP=2, TP=4, SP=4, PP=1)
+E20260623 02:31:49.410448 139757564698624 main.cc:470] step    3/10 | train loss 4.214058 | lr 1.00e-05 | (402.63 ms | 12716 tok/s | peak used:  7361 MB | peak reserved:  7808 MB, DP=2, TP=4, SP=4, PP=1)
+E20260623 02:31:49.799668 139757564698624 main.cc:470] step    4/10 | train loss 4.371177 | lr 1.00e-05 | (389.16 ms | 13157 tok/s | peak used:  7361 MB | peak reserved:  7808 MB, DP=2, TP=4, SP=4, PP=1)
+E20260623 02:31:50.179662 139757564698624 main.cc:470] step    5/10 | train loss 4.407061 | lr 1.00e-05 | (379.93 ms | 13476 tok/s | peak used:  7361 MB | peak reserved:  7808 MB, DP=2, TP=4, SP=4, PP=1)
+E20260623 02:31:50.544799 139757564698624 main.cc:470] step    6/10 | train loss 4.437027 | lr 1.00e-05 | (364.97 ms | 14029 tok/s | peak used:  7361 MB | peak reserved:  7808 MB, DP=2, TP=4, SP=4, PP=1)
+E20260623 02:31:50.910214 139757564698624 main.cc:470] step    7/10 | train loss 4.498297 | lr 1.00e-05 | (365.35 ms | 14014 tok/s | peak used:  7361 MB | peak reserved:  7808 MB, DP=2, TP=4, SP=4, PP=1)
+E20260623 02:31:51.288316 139757564698624 main.cc:470] step    8/10 | train loss 4.394934 | lr 1.00e-05 | (378.05 ms | 13543 tok/s | peak used:  7361 MB | peak reserved:  7808 MB, DP=2, TP=4, SP=4, PP=1)
+E20260623 02:31:51.675350 139757564698624 main.cc:470] step    9/10 | train loss 4.413228 | lr 1.00e-05 | (386.97 ms | 13231 tok/s | peak used:  7361 MB | peak reserved:  7808 MB, DP=2, TP=4, SP=4, PP=1)
+E20260623 02:31:52.052736 139757564698624 main.cc:470] step   10/10 | train loss 4.368485 | lr 1.00e-05 | (377.33 ms | 13569 tok/s | peak used:  7361 MB | peak reserved:  7808 MB, DP=2, TP=4, SP=4, PP=1)

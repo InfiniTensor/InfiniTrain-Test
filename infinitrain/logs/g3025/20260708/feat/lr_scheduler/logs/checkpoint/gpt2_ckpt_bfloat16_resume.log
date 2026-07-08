@@ -1,0 +1,25 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DBUILD_TEST=ON -DPROFILE_MODE=OFF .. && make -j
+[COMMAND] ./gpt2 --input_bin /data1/shared/InfiniTrain-dev/data/llmc/gpt2/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data1/shared/InfiniTrain-dev/data/llmc/gpt2/gpt2_124M.bin --device cuda --dtype bfloat16 --num_iteration 50 --save_interval 10 --load /data1/ckpt/bfloat16_no_resume/gpt2/no_resume/checkpoint_step_000030 --save /data1/ckpt/bfloat16_resume/gpt2/resume
+E20260702 17:13:35.185124 139945696022528 checkpoint.cc:241] [CKPT] Load done: global_step=30, consumed_batches =30, topology(ddp,tp,sp,pp)=(1,1,1,1)
+E20260702 17:13:35.319571 139945696022528 main.cc:521] step   31/50 | train loss 4.772633 | lr 1.00e-04 | (133.81 ms | 1913 tok/s | peak used:  1370 MB | peak reserved:  1536 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:35.351019 139945696022528 main.cc:521] step   32/50 | train loss 4.751183 | lr 1.00e-04 | (31.37 ms | 8161 tok/s | peak used:  1370 MB | peak reserved:  1632 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:35.389712 139945696022528 main.cc:521] step   33/50 | train loss 4.529717 | lr 1.00e-04 | (38.65 ms | 6623 tok/s | peak used:  1370 MB | peak reserved:  1760 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:35.419971 139945696022528 main.cc:521] step   34/50 | train loss 4.930036 | lr 1.00e-04 | (30.22 ms | 8471 tok/s | peak used:  1370 MB | peak reserved:  1824 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:35.447848 139945696022528 main.cc:521] step   35/50 | train loss 5.017496 | lr 1.00e-04 | (27.84 ms | 9196 tok/s | peak used:  1370 MB | peak reserved:  1920 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:35.484741 139945696022528 main.cc:521] step   36/50 | train loss 5.046766 | lr 1.00e-04 | (36.84 ms | 6949 tok/s | peak used:  1370 MB | peak reserved:  1920 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:35.513984 139945696022528 main.cc:521] step   37/50 | train loss 4.988745 | lr 1.00e-04 | (29.20 ms | 8766 tok/s | peak used:  1370 MB | peak reserved:  1952 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:35.541818 139945696022528 main.cc:521] step   38/50 | train loss 4.524617 | lr 1.00e-04 | (27.80 ms | 9210 tok/s | peak used:  1370 MB | peak reserved:  2016 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:35.585039 139945696022528 main.cc:521] step   39/50 | train loss 4.833365 | lr 1.00e-04 | (43.18 ms | 5928 tok/s | peak used:  1370 MB | peak reserved:  2080 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:35.619321 139945696022528 main.cc:521] step   40/50 | train loss 4.702820 | lr 1.00e-04 | (34.24 ms | 7478 tok/s | peak used:  1370 MB | peak reserved:  2176 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:36.321164 139945696022528 checkpoint.cc:207] [CKPT] Save done: dir="/data1/ckpt/bfloat16_resume/gpt2/resume/checkpoint_step_000040"
+E20260702 17:13:36.349816 139945696022528 main.cc:521] step   41/50 | train loss 4.761134 | lr 1.00e-04 | (28.54 ms | 8971 tok/s | peak used:  1370 MB | peak reserved:  2176 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:36.378123 139945696022528 main.cc:521] step   42/50 | train loss 4.738701 | lr 1.00e-04 | (28.26 ms | 9059 tok/s | peak used:  1370 MB | peak reserved:  2176 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:36.405756 139945696022528 main.cc:521] step   43/50 | train loss 4.413312 | lr 1.00e-04 | (27.59 ms | 9277 tok/s | peak used:  1370 MB | peak reserved:  2176 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:36.433704 139945696022528 main.cc:521] step   44/50 | train loss 4.323795 | lr 1.00e-04 | (27.91 ms | 9173 tok/s | peak used:  1370 MB | peak reserved:  2176 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:36.461475 139945696022528 main.cc:521] step   45/50 | train loss 4.467569 | lr 1.00e-04 | (27.73 ms | 9231 tok/s | peak used:  1370 MB | peak reserved:  2176 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:36.489257 139945696022528 main.cc:521] step   46/50 | train loss 4.349974 | lr 1.00e-04 | (27.74 ms | 9227 tok/s | peak used:  1370 MB | peak reserved:  2176 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:36.517333 139945696022528 main.cc:521] step   47/50 | train loss 4.593153 | lr 1.00e-04 | (28.04 ms | 9130 tok/s | peak used:  1370 MB | peak reserved:  2176 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:36.545422 139945696022528 main.cc:521] step   48/50 | train loss 4.511193 | lr 1.00e-04 | (28.04 ms | 9131 tok/s | peak used:  1370 MB | peak reserved:  2208 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:36.573535 139945696022528 main.cc:521] step   49/50 | train loss 4.730697 | lr 1.00e-04 | (28.07 ms | 9121 tok/s | peak used:  1370 MB | peak reserved:  2240 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:36.609854 139945696022528 main.cc:521] step   50/50 | train loss 4.647415 | lr 1.00e-04 | (36.28 ms | 7056 tok/s | peak used:  1370 MB | peak reserved:  2304 MB, DP=1, TP=1, SP=1, PP=1)
+E20260702 17:13:37.314937 139945696022528 checkpoint.cc:207] [CKPT] Save done: dir="/data1/ckpt/bfloat16_resume/gpt2/resume/checkpoint_step_000050"

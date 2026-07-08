@@ -1,0 +1,92 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DBUILD_TEST=OFF -DPROFILE_MODE=ON .. && make -j
+[COMMAND] ./llama3 --input_bin /data1/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data1/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --nthread_per_process 8 --num_iteration 50 --save_interval 10 --batch_size 40 --total_batch_size 5120 --tensor_parallel 2 --sequence_parallel true --pipeline_parallel 2 --virtual_pipeline_parallel 2 --save /data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume --save_optimizer_state true --max_checkpoint_keep 5
+E20260702 16:30:57.846383 139619991527424 main.cc:470] step    1/50 | train loss 4.726650 | lr 1.00e-05 | (1908.42 ms | 2683 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:30:59.294007 139619991527424 main.cc:470] step    2/50 | train loss 4.117778 | lr 1.00e-05 | (1446.96 ms | 3538 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:00.851532 139619991527424 main.cc:470] step    3/50 | train loss 3.613283 | lr 1.00e-05 | (1557.44 ms | 3287 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:02.283483 139619991527424 main.cc:470] step    4/50 | train loss 3.654181 | lr 1.00e-05 | (1431.87 ms | 3576 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:03.796999 139619991527424 main.cc:470] step    5/50 | train loss 3.519578 | lr 1.00e-05 | (1513.42 ms | 3383 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:05.300095 139619991527424 main.cc:470] step    6/50 | train loss 3.483851 | lr 1.00e-05 | (1502.95 ms | 3407 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:06.747722 139619991527424 main.cc:470] step    7/50 | train loss 3.432098 | lr 1.00e-05 | (1447.52 ms | 3537 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:08.175938 139619991527424 main.cc:470] step    8/50 | train loss 3.572617 | lr 1.00e-05 | (1428.12 ms | 3585 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:09.614312 139619991527424 main.cc:470] step    9/50 | train loss 3.578167 | lr 1.00e-05 | (1438.29 ms | 3560 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:11.104171 139619991527424 main.cc:470] step   10/50 | train loss 3.383950 | lr 1.00e-05 | (1489.76 ms | 3437 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:16.713296 139619991527424 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000010/rank_000007"
+E20260702 16:31:16.794166 139620259979264 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000010/rank_000003"
+E20260702 16:31:17.338721 139620125753344 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000010/rank_000005"
+E20260702 16:31:17.376322 139620555681792 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000010/rank_000000"
+E20260702 16:31:17.381770 139620058640384 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000010/rank_000006"
+E20260702 16:31:17.625877 139620192866304 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000010/rank_000004"
+E20260702 16:31:18.378487 139620327092224 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000010/rank_000002"
+E20260702 16:31:18.466073 139620488568832 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000010/rank_000001"
+E20260702 16:31:19.819194 139619991527424 main.cc:470] step   11/50 | train loss 3.559243 | lr 1.00e-05 | (3105.81 ms | 1649 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:21.328187 139619991527424 main.cc:470] step   12/50 | train loss 3.722097 | lr 1.00e-05 | (1508.90 ms | 3393 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:22.783190 139619991527424 main.cc:470] step   13/50 | train loss 3.720446 | lr 1.00e-05 | (1454.91 ms | 3519 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:24.236188 139619991527424 main.cc:470] step   14/50 | train loss 3.605520 | lr 1.00e-05 | (1452.90 ms | 3524 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:25.648876 139619991527424 main.cc:470] step   15/50 | train loss 3.594845 | lr 1.00e-05 | (1412.60 ms | 3625 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:27.133443 139619991527424 main.cc:470] step   16/50 | train loss 3.467316 | lr 1.00e-05 | (1484.46 ms | 3449 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:28.587955 139619991527424 main.cc:470] step   17/50 | train loss 3.448144 | lr 1.00e-05 | (1454.43 ms | 3520 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:30.081104 139619991527424 main.cc:470] step   18/50 | train loss 3.587117 | lr 1.00e-05 | (1493.05 ms | 3429 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:31.519392 139619991527424 main.cc:470] step   19/50 | train loss 3.734068 | lr 1.00e-05 | (1438.18 ms | 3560 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:32.985807 139619991527424 main.cc:470] step   20/50 | train loss 3.490179 | lr 1.00e-05 | (1466.34 ms | 3492 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:38.699078 139620259979264 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000020/rank_000003"
+E20260702 16:31:39.093725 139619991527424 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000020/rank_000007"
+E20260702 16:31:39.719290 139620192866304 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000020/rank_000004"
+E20260702 16:31:39.721717 139620555681792 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000020/rank_000000"
+E20260702 16:31:39.729159 139620058640384 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000020/rank_000006"
+E20260702 16:31:39.825610 139620125753344 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000020/rank_000005"
+E20260702 16:31:40.474452 139620488568832 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000020/rank_000001"
+E20260702 16:31:40.624331 139620327092224 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000020/rank_000002"
+E20260702 16:31:42.066554 139619991527424 main.cc:470] step   21/50 | train loss 3.530210 | lr 1.00e-05 | (2972.75 ms | 1722 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:43.509062 139619991527424 main.cc:470] step   22/50 | train loss 3.547033 | lr 1.00e-05 | (1442.42 ms | 3550 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:44.958130 139619991527424 main.cc:470] step   23/50 | train loss 3.300500 | lr 1.00e-05 | (1448.98 ms | 3534 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:46.393154 139619991527424 main.cc:470] step   24/50 | train loss 3.469902 | lr 1.00e-05 | (1434.94 ms | 3568 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:47.870284 139619991527424 main.cc:470] step   25/50 | train loss 3.468788 | lr 1.00e-05 | (1477.04 ms | 3466 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:49.337903 139619991527424 main.cc:470] step   26/50 | train loss 3.477642 | lr 1.00e-05 | (1467.49 ms | 3489 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:50.738101 139619991527424 main.cc:470] step   27/50 | train loss 3.591702 | lr 1.00e-05 | (1400.10 ms | 3657 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:52.216713 139619991527424 main.cc:470] step   28/50 | train loss 3.567207 | lr 1.00e-05 | (1478.52 ms | 3463 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:53.697819 139619991527424 main.cc:470] step   29/50 | train loss 3.349509 | lr 1.00e-05 | (1481.01 ms | 3457 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:31:55.252369 139619991527424 main.cc:470] step   30/50 | train loss 3.455826 | lr 1.00e-05 | (1554.45 ms | 3294 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:01.217859 139619991527424 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000030/rank_000007"
+E20260702 16:32:01.356621 139620259979264 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000030/rank_000003"
+E20260702 16:32:01.827129 139620058640384 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000030/rank_000006"
+E20260702 16:32:01.835860 139620555681792 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000030/rank_000000"
+E20260702 16:32:02.017042 139620192866304 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000030/rank_000004"
+E20260702 16:32:02.018613 139620125753344 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000030/rank_000005"
+E20260702 16:32:02.726930 139620488568832 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000030/rank_000001"
+E20260702 16:32:02.806222 139620327092224 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000030/rank_000002"
+E20260702 16:32:04.051979 139619991527424 main.cc:470] step   31/50 | train loss 3.433494 | lr 1.00e-05 | (2834.04 ms | 1807 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:05.483755 139619991527424 main.cc:470] step   32/50 | train loss 3.624731 | lr 1.00e-05 | (1431.69 ms | 3576 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:07.007021 139619991527424 main.cc:470] step   33/50 | train loss 4.052609 | lr 1.00e-05 | (1523.18 ms | 3361 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:08.458375 139619991527424 main.cc:470] step   34/50 | train loss 3.927372 | lr 1.00e-05 | (1451.25 ms | 3528 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:09.915765 139619991527424 main.cc:470] step   35/50 | train loss 3.947894 | lr 1.00e-05 | (1457.31 ms | 3513 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:11.396153 139619991527424 main.cc:470] step   36/50 | train loss 3.893831 | lr 1.00e-05 | (1480.31 ms | 3459 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:12.917217 139619991527424 main.cc:470] step   37/50 | train loss 3.835696 | lr 1.00e-05 | (1520.99 ms | 3366 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:14.347095 139619991527424 main.cc:470] step   38/50 | train loss 3.761027 | lr 1.00e-05 | (1429.79 ms | 3581 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:15.791040 139619991527424 main.cc:470] step   39/50 | train loss 3.809649 | lr 1.00e-05 | (1443.86 ms | 3546 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:17.276831 139619991527424 main.cc:470] step   40/50 | train loss 3.795297 | lr 1.00e-05 | (1485.69 ms | 3446 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:23.004949 139620259979264 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000040/rank_000003"
+E20260702 16:32:23.420720 139619991527424 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000040/rank_000007"
+E20260702 16:32:23.720823 139620555681792 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000040/rank_000000"
+E20260702 16:32:23.786529 139620125753344 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000040/rank_000005"
+E20260702 16:32:23.815046 139620192866304 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000040/rank_000004"
+E20260702 16:32:23.899119 139620058640384 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000040/rank_000006"
+E20260702 16:32:24.582442 139620488568832 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000040/rank_000001"
+E20260702 16:32:24.676925 139620327092224 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000040/rank_000002"
+E20260702 16:32:25.961564 139619991527424 main.cc:470] step   41/50 | train loss 3.480402 | lr 1.00e-05 | (2540.76 ms | 2015 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:27.608658 139619991527424 main.cc:470] step   42/50 | train loss 3.815051 | lr 1.00e-05 | (1647.00 ms | 3109 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:29.101975 139619991527424 main.cc:470] step   43/50 | train loss 3.641967 | lr 1.00e-05 | (1493.24 ms | 3429 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:30.571710 139619991527424 main.cc:470] step   44/50 | train loss 3.641180 | lr 1.00e-05 | (1469.62 ms | 3484 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:32.140998 139619991527424 main.cc:470] step   45/50 | train loss 3.571667 | lr 1.00e-05 | (1569.20 ms | 3263 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:33.609424 139619991527424 main.cc:470] step   46/50 | train loss 3.659066 | lr 1.00e-05 | (1468.34 ms | 3487 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:35.108344 139619991527424 main.cc:470] step   47/50 | train loss 3.827412 | lr 1.00e-05 | (1498.82 ms | 3416 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:36.557981 139619991527424 main.cc:470] step   48/50 | train loss 3.487963 | lr 1.00e-05 | (1449.51 ms | 3532 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:38.032224 139619991527424 main.cc:470] step   49/50 | train loss 3.575305 | lr 1.00e-05 | (1474.16 ms | 3473 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:39.489086 139619991527424 main.cc:470] step   50/50 | train loss 3.474264 | lr 1.00e-05 | (1456.76 ms | 3515 tok/s | peak used: 12027 MB | peak reserved: 12064 MB, DP=2, TP=2, SP=2, PP=2)
+E20260702 16:32:45.408372 139619991527424 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000050/rank_000007"
+E20260702 16:32:45.452483 139620259979264 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000050/rank_000003"
+E20260702 16:32:45.900575 139620555681792 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000050/rank_000000"
+E20260702 16:32:45.965781 139620192866304 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000050/rank_000004"
+E20260702 16:32:45.982910 139620125753344 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000050/rank_000005"
+E20260702 16:32:46.134928 139620058640384 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000050/rank_000006"
+E20260702 16:32:46.811214 139620488568832 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000050/rank_000001"
+E20260702 16:32:46.880067 139620327092224 checkpoint.cc:84] [CKPT] Save done: dir="/data1/ckpt/3d_ddp2_tp2_pp2_no_resume/llama3/no_resume/checkpoint_step_000050/rank_000002"
