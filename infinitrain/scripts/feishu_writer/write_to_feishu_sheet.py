@@ -14,6 +14,7 @@ from pathlib import Path
 META_COLS=7
 HEADER_ROWS=5
 HEADER_COLS="W"
+PROFILE_COLS=16
 
 # Retry settings
 REQUEST_RETRY_TIMES=3
@@ -589,10 +590,29 @@ def resolve_log_dirs(run_output_dir):
         print(f"Training log directory does not exist: {log_dir}")
         return None, None
     if not profile_log_dir.is_dir():
-        print(f"Profile log directory does not exist: {profile_log_dir}")
-        return None, None
+        print(f"Profile log directory does not exist: {profile_log_dir}, profile columns will be empty")
 
     return log_dir, profile_log_dir
+
+
+def build_empty_sheet_data():
+    """Build a 5-row sheet block with meta columns and empty profile columns."""
+    return [["" for _ in range(META_COLS + PROFILE_COLS)] for _ in range(5)]
+
+
+def fill_meta_columns(sheet_data, run_metadata, log_file_path, avg_latency, avg_throughput, peak_used_max, peak_reserved_max):
+    """Fill the first row's metadata columns in a sheet data block."""
+    sheet_data[0][0] = FeishuSheetHandler.convert_to_feishu_date(get_run_date(run_metadata))
+    sheet_data[0][1] = get_run_branch(run_metadata)
+    sheet_data[0][2] = get_run_commit_id(run_metadata, log_file_path)
+    if avg_latency is not None:
+        sheet_data[0][3] = avg_latency
+    if avg_throughput is not None:
+        sheet_data[0][4] = avg_throughput
+    if peak_used_max is not None:
+        sheet_data[0][5] = peak_used_max
+    if peak_reserved_max is not None:
+        sheet_data[0][6] = peak_reserved_max
 
 
 def get_model_data(
@@ -601,6 +621,7 @@ def get_model_data(
     tag,
     log_dir=DEFAULT_LOG_DIR,
     profile_log_dir=DEFAULT_PROFILE_LOG_DIR,
+    skip_profile=False,
 ):
     """Construct 2D list for writing to Feishu"""
     log_file_path = Path(log_dir) / tag / f"{model_name}_{sheet_title}.log"
@@ -622,6 +643,21 @@ def get_model_data(
     else:
         print(f"Training log does not exist: {log_file_path}")
 
+    sheet_data = build_empty_sheet_data()
+    fill_meta_columns(
+        sheet_data,
+        run_metadata,
+        log_file_path,
+        avg_latency,
+        avg_throughput,
+        peak_used_max,
+        peak_reserved_max,
+    )
+
+    if skip_profile:
+        print("Skipping profile report, profile columns will be empty")
+        return cmd_args, sheet_data
+
     # Read performance report
     report_df = None
     if profile_file_path.exists():
@@ -631,7 +667,8 @@ def get_model_data(
         print(f"Performance report does not exist: {profile_file_path}")
 
     if report_df is None:
-        return cmd_args, []
+        print("No valid profile data found, profile columns will be empty")
+        return cmd_args, sheet_data
 
     # Insert $META_COLS empty columns at the front
     new_data = [["" for _ in range(META_COLS)] for _ in range(5)]
@@ -640,20 +677,18 @@ def get_model_data(
     # Ensure all columns can hold mixed types
     combined_df = combined_df.astype(object)
 
-    # Fill first row's first $META_COLS columns with info
-    combined_df.iloc[0, 0] = FeishuSheetHandler.convert_to_feishu_date(get_run_date(run_metadata))
-    combined_df.iloc[0, 1] = get_run_branch(run_metadata)
-    combined_df.iloc[0, 2] = get_run_commit_id(run_metadata, log_file_path)
-    if avg_latency is not None:
-        combined_df.iloc[0, 3] = avg_latency
-    if avg_throughput is not None:
-        combined_df.iloc[0, 4] = avg_throughput
-    if peak_used_max is not None:
-        combined_df.iloc[0, 5] = peak_used_max
-    if peak_reserved_max is not None:
-        combined_df.iloc[0, 6] = peak_reserved_max
+    sheet_data = combined_df.values.tolist()
+    fill_meta_columns(
+        sheet_data,
+        run_metadata,
+        log_file_path,
+        avg_latency,
+        avg_throughput,
+        peak_used_max,
+        peak_reserved_max,
+    )
 
-    return cmd_args, combined_df.values.tolist()
+    return cmd_args, sheet_data
 
 
 def main():
@@ -669,15 +704,22 @@ def main():
         default=str(DEFAULT_RUN_OUTPUT_DIR),
         help='Run output directory containing logs/ and profile_logs/. Relative paths are resolved from the current working directory. Default: scripts'
     )
+    parser.add_argument(
+        '--skip-profile',
+        action='store_true',
+        help='Do not read profile reports. Only write the first 7 metadata columns and leave profile columns empty.'
+    )
     args = parser.parse_args()
 
     config_file = resolve_path_from_writer_repo(args.config_file)
     run_output_dir = resolve_path_from_cwd(args.log_dir)
     log_dir, profile_log_dir = resolve_log_dirs(run_output_dir)
-    if not log_dir or not profile_log_dir:
+    if not log_dir:
         return
 
     print(f"Using run output directory: {run_output_dir}")
+    if args.skip_profile:
+        print("Profile parsing disabled by --skip-profile")
 
     config = load_config(config_file)
     if not config:
@@ -740,6 +782,7 @@ def main():
                     tag=tag,
                     log_dir=log_dir,
                     profile_log_dir=profile_log_dir,
+                    skip_profile=args.skip_profile,
                 )
 
                 if not sheet_data:
