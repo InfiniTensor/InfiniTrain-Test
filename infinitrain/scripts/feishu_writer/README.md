@@ -16,10 +16,15 @@
 
 ```bash
 export INFINITRAIN_ROOT=/path/to/your/InfiniTrain
+export RUN_OUTPUT_DIR="$INFINITRAIN_ROOT/scripts/<run-output-dir>"
 cd /path/to/your/InfiniTrain-Test
 ```
 
-未设置 `INFINITRAIN_ROOT` 时脚本会直接停止，避免误把 `InfiniTrain-Test` 当作数据根目录。
+`RUN_OUTPUT_DIR` 指向一次测试的输出目录。该目录通常按
+`scripts/<YYYYMMDD>/<branch>_<short-commit>` 组织，但这不是强制命名格式。
+脚本只要求其中存在 `logs/` 目录；同级的 `profile_logs/` 目录可选。
+
+未设置 `INFINITRAIN_ROOT` 时，`provision_feishu_sheets.py` 会直接停止，避免误把 `InfiniTrain-Test` 当作数据根目录。
 
 ### 1. 手动运行脚本
 
@@ -84,10 +89,12 @@ python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
 
 #### 1.4 **写入脚本**
 
-写入飞书的脚本不依赖于 `INFINITRAIN_PATH`，需要手动传入 `--log-dir`：
+`write_to_feishu_sheet.py` 不读取 `INFINITRAIN_ROOT`，需要通过 `--log-dir`
+手动传入实际测试的输出目录。尽管参数名为 `--log-dir`，这里传入的是同时包含
+`logs/` 和 `profile_logs/` 的父目录：
 
 ```bash
-python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/token.json --log-dir <path_to_log_dir>
+python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/token.json --log-dir "$RUN_OUTPUT_DIR"
 ```
 
 此外，也可以通过 `--skip-profile` 手动跳过 profile logs 的上传。
@@ -167,7 +174,7 @@ python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/s
 - `--machine-folder-token TOKEN`：复用已有机器目录，不再新建机器目录。
 - `--dry-run`：只打印计划，不创建飞书资源，也不写 token JSON。
 - 不传 `--dry-run` 时默认执行远端写操作并更新 token JSON，不需要额外确认参数。
-- Provisioning 完成后，脚本会根据实际输出 token 文件打印下一步可直接运行的 `write_to_feishu_sheet.py` 命令。
+- Provisioning 完成后，脚本会根据实际输出 token 文件打印 `write_to_feishu_sheet.py` 命令；从 `InfiniTrain-Test` 运行时仍需补充 `--log-dir "$RUN_OUTPUT_DIR"`。
 
 权限参数：
 
@@ -219,7 +226,7 @@ python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
 后续直接写入，不需要人工粘贴 token：
 
 ```bash
-python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/new_token.json
+python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/new_token.json --log-dir "$RUN_OUTPUT_DIR"
 ```
 
 如果执行过程中因为 scope 不足或网络中断停在半截，下一次重跑建议加 `--grant-existing`，这样已复制出来但尚未授权/检查的 spreadsheet 也会被补处理：
@@ -251,7 +258,7 @@ python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py --new-tags 
 ```
 
 `new_tag` 必须已存在于 `test_config.json` 的 `test_groups[].tag` 中。脚本不会读取
-`$INFINITRAIN_ROOT/scripts/logs`；它会为该 tag 创建配置中声明的全部模型表格。
+`$RUN_OUTPUT_DIR/logs`；它会为该 tag 创建配置中声明的全部模型表格。
 
 如果当前 `infinitrain/scripts/feishu_writer/token.json` 里还没有 `FEISHU_PROVISION.machine_folder_token`，第一次需要显式传入已有机器目录 token：
 
@@ -264,7 +271,7 @@ python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
 这个流程会原地更新 `infinitrain/scripts/feishu_writer/token.json`。后续直接运行：
 
 ```bash
-python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/token.json
+python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/token.json --log-dir "$RUN_OUTPUT_DIR"
 ```
 
 ## 场景三：已有机器新增 model
@@ -296,21 +303,21 @@ python3 infinitrain/scripts/feishu_writer/provision_feishu_sheets.py \
 ## write_to_feishu_sheet.py 用法
 
 ```bash
-python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py <token-config-json>
+python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py <token-config-json> --log-dir "$RUN_OUTPUT_DIR"
 ```
 
 示例：
 
 ```bash
-python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/token.json
-python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/new_token.json
-python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/token.json --skip-profile
+python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/token.json --log-dir "$RUN_OUTPUT_DIR"
+python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/new_token.json --log-dir "$RUN_OUTPUT_DIR"
+python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/scripts/feishu_writer/token.json --log-dir "$RUN_OUTPUT_DIR" --skip-profile
 ```
 
-它会从这些目录发现本地数据：
+使用上述 `--log-dir` 时，它会从这些目录发现本地数据：
 
-- `$INFINITRAIN_ROOT/scripts/logs/<tag>/<model>_<testcase>.log`
-- `$INFINITRAIN_ROOT/scripts/profile_logs/<tag>/<model>_<testcase>_profile_<model>.report.rank0`
+- `$RUN_OUTPUT_DIR/logs/<tag>/<model>_<testcase>.log`
+- `$RUN_OUTPUT_DIR/profile_logs/<tag>/<model>_<testcase>_profile_<model>.report.rank0`
 
 对每个已配置的 tag/model spreadsheet，它会：
 
@@ -320,7 +327,7 @@ python3 infinitrain/scripts/feishu_writer/write_to_feishu_sheet.py infinitrain/s
 4. 解析 benchmark/profile 数据并 prepend 到对应 sheet。
 5. 设置样式并合并元信息列。
 
-如果 `scripts/profile_logs` 目录或单个 profile report 不存在，脚本仍会写入前 7 列 meta 信息，profile 对应列会保持为空字符串。也可以通过 `--skip-profile` 手动跳过 profile 解析，行为与 profile 数据不存在一致。
+如果 `$RUN_OUTPUT_DIR/profile_logs` 目录或单个 profile report 不存在，脚本仍会写入前 7 列 meta 信息，profile 对应列会保持为空字符串。也可以通过 `--skip-profile` 手动跳过 profile 解析，行为与 profile 数据不存在一致。
 
 ## 安全检查
 
