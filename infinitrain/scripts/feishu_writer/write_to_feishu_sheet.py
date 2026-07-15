@@ -23,9 +23,6 @@ REQUEST_RETRY_DELAY=10
 SCRIPT_DIR = Path(__file__).resolve().parent
 WRITER_REPO_ROOT = SCRIPT_DIR.parents[2]
 DEFAULT_TOKEN_FILE = SCRIPT_DIR / "token.json"
-DEFAULT_RUN_OUTPUT_DIR = Path("scripts")
-DEFAULT_LOG_DIR = DEFAULT_RUN_OUTPUT_DIR / "logs"
-DEFAULT_PROFILE_LOG_DIR = DEFAULT_RUN_OUTPUT_DIR / "profile_logs"
 
 
 def resolve_path_from_cwd(path_value) -> Path:
@@ -565,7 +562,7 @@ def parse_profile_report(profile_content):
         return merged_df.head(5).iloc[:, :16]
     return None
 
-def discover_testcases(model_name: str, tag: str, log_dir=DEFAULT_LOG_DIR):
+def discover_testcases(model_name: str, tag: str, log_dir):
     """Get all test case id from local log dir"""
     pattern = str(Path(log_dir) / tag / f"{model_name}_*.log")
     files = glob.glob(pattern)
@@ -619,8 +616,8 @@ def get_model_data(
     model_name,
     sheet_title,
     tag,
-    log_dir=DEFAULT_LOG_DIR,
-    profile_log_dir=DEFAULT_PROFILE_LOG_DIR,
+    log_dir,
+    profile_log_dir,
     skip_profile=False,
 ):
     """Construct 2D list for writing to Feishu"""
@@ -701,8 +698,8 @@ def main():
     )
     parser.add_argument(
         '--log-dir',
-        default=str(DEFAULT_RUN_OUTPUT_DIR),
-        help='Run output directory containing logs/ and profile_logs/. Relative paths are resolved from the current working directory. Default: scripts'
+        required=True,
+        help='Required: run output directory containing logs/ and profile_logs/. Relative paths are resolved from the current working directory.'
     )
     parser.add_argument(
         '--skip-profile',

@@ -26,39 +26,14 @@ DEFAULT_ROOT_FOLDER_URL = (
 )
 DEFAULT_TEMPLATE_TOKEN = "X5mJskjzSh2mo3tzuERccAYxnib"
 SCRIPT_DIR = Path(__file__).resolve().parent
-DEFAULT_INFINITRAIN_ROOT = SCRIPT_DIR.parents[2]
 WRITER_REPO_ROOT = SCRIPT_DIR.parents[2]
-INFINITRAIN_ROOT_ENV = "INFINITRAIN_ROOT"
-INFINITRAIN_ROOT_IS_EXPLICIT = bool(os.environ.get(INFINITRAIN_ROOT_ENV))
 
 
-def get_infinitrain_root() -> Path:
-    root = os.environ.get(INFINITRAIN_ROOT_ENV)
-    if root:
-        return Path(root).expanduser().resolve()
-    return DEFAULT_INFINITRAIN_ROOT
-
-
-INFINITRAIN_ROOT = get_infinitrain_root()
-
-
-def validate_infinitrain_root() -> None:
-    if not INFINITRAIN_ROOT_IS_EXPLICIT:
-        raise SystemExit(
-            f"Please set {INFINITRAIN_ROOT_ENV} to the actual InfiniTrain repo path, "
-            "for example: export INFINITRAIN_ROOT=~/Github/InfiniTrain"
-        )
-    if not INFINITRAIN_ROOT.is_dir():
-        raise SystemExit(f"{INFINITRAIN_ROOT_ENV} is not a directory: {INFINITRAIN_ROOT}")
-    if not (INFINITRAIN_ROOT / ".git").exists():
-        raise SystemExit(f"{INFINITRAIN_ROOT_ENV} does not look like a git repo: {INFINITRAIN_ROOT}")
-
-
-def resolve_path_from_root(path_value: str | Path) -> Path:
+def resolve_path_from_cwd(path_value: str | Path) -> Path:
     path = Path(path_value).expanduser()
     if path.is_absolute():
         return path.resolve()
-    return (INFINITRAIN_ROOT / path).resolve()
+    return path.resolve()
 
 
 def resolve_path_from_writer_repo(path_value: str | Path) -> Path:
@@ -542,7 +517,6 @@ def writer_command(token_file_path: Path) -> str:
 
 
 def main() -> int:
-    scripts_dir = INFINITRAIN_ROOT / "scripts"
     writer_scripts_dir = SCRIPT_DIR
     default_token_file = writer_scripts_dir / "token.json"
     default_new_token_file = writer_scripts_dir / "new_token.json"
@@ -551,8 +525,8 @@ def main() -> int:
     )
     parser.add_argument(
         "--test-config",
-        default=str(scripts_dir / "test_config.json"),
-        help="Path to test_config JSON. Relative paths are resolved from the actual InfiniTrain repo in INFINITRAIN_ROOT.",
+        required=True,
+        help="Required: path to test_config.json. Relative paths are resolved from the current working directory.",
     )
     parser.add_argument(
         "--token-file",
@@ -609,9 +583,8 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--verbose", action="store_true")
     args = parser.parse_args()
-    validate_infinitrain_root()
 
-    test_config_path = resolve_path_from_root(args.test_config)
+    test_config_path = resolve_path_from_cwd(args.test_config)
     token_file_path = resolve_path_from_writer_repo(args.token_file)
     new_machine_name = args.new_machine.strip()
     requested_tags = list(dict.fromkeys(parse_csv(args.new_tags) or []))
@@ -643,7 +616,6 @@ def main() -> int:
         sort_keys=True,
     )
 
-    print(f"[root] {INFINITRAIN_ROOT_ENV}={INFINITRAIN_ROOT}")
     provision = token_config.setdefault(PROVISION_KEY, {})
 
     if new_machine_name:
