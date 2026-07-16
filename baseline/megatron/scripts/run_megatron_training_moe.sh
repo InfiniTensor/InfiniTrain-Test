@@ -3,10 +3,12 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
-RESULT_LOG="${RESULT_LOG:-${SCRIPT_DIR}/../logs/result_megatron_tiny_mixtral.log}"
+
+RESULT_LOG="${RESULT_LOG:-${SCRIPT_DIR}/../logs/qy_a100_g3025/result_megatron_training_moe.log}"
 INPUT_BIN="${MIXTRAL_INPUT_BIN:-/data1/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin}"
 MODEL_DIR="${MEGATRON_MODEL_DIR:-${SCRIPT_DIR}/../models}"
-WEIGHTS_PATH="${MODEL_DIR}/tiny_mixtral_megatron_export.bin"
+WEIGHTS_PATH="${MODEL_DIR}/mixtral_megatron_export.bin"
+
 MEGATRON_PATH="${MEGATRON_PATH:-${REPO_ROOT}/third_party/Megatron-LM}"
 MASTER_PORT_BASE="${MEGATRON_MASTER_PORT_BASE:-29571}"
 export PYTORCH_ALLOC_CONF="${PYTORCH_ALLOC_CONF:-expandable_segments:True}"
@@ -15,9 +17,9 @@ mkdir -p "$(dirname "${RESULT_LOG}")" "${MODEL_DIR}"
 : > "${RESULT_LOG}"
 
 echo "=============================================="
-echo "Generating: tiny_mixtral Megatron LLMC bin"
+echo "Generating: mixtral Megatron LLMC bin"
 echo "=============================================="
-python "${SCRIPT_DIR}/train_megatron_tiny_mixtral.py" \
+python "${SCRIPT_DIR}/train_megatron_mixtral.py" \
     --write_model_path "${WEIGHTS_PATH}" \
     --megatron_path "${MEGATRON_PATH}" \
     --num_iterations 0 \
@@ -35,9 +37,9 @@ run_case() {
     {
         echo ""
         echo "=============================================="
-        echo "Running: tiny_mixtral_${case_id} (${dtype})"
+        echo "Running: mixtral_${case_id} (${dtype})"
         echo "=============================================="
-        python "${SCRIPT_DIR}/train_megatron_tiny_mixtral.py" \
+        python "${SCRIPT_DIR}/train_megatron_mixtral.py" \
             --weights_path "${WEIGHTS_PATH}" \
             --megatron_path "${MEGATRON_PATH}" \
             --input_bin "${INPUT_BIN}" \

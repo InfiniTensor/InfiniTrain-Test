@@ -7,16 +7,16 @@ different Megatron-LM checkout.
 
 The usual entry point is the companion shell script, which first writes a local
 LLMC checkpoint under baseline/megatron/models and then trains from it:
-    ./run_megatron_tiny_mixtral.sh
+    ./run_megatron_mixtral.sh
 
 Export an LLMC checkpoint manually:
-    python3 train_megatron_tiny_mixtral.py \
+    python3 train_megatron_mixtral.py \
         --num_iterations 0 \
-        --write_model_path ../models/tiny_mixtral_megatron_export.bin
+        --write_model_path ../models/mixtral_megatron_export.bin
 
 Train from the exported LLMC checkpoint manually:
-    python3 train_megatron_tiny_mixtral.py \
-        --weights_path ../models/tiny_mixtral_megatron_export.bin \
+    python3 train_megatron_mixtral.py \
+        --weights_path ../models/mixtral_megatron_export.bin \
         --input_bin /data1/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin \
         --num_iterations 10 \
         --log_interval 1 \
