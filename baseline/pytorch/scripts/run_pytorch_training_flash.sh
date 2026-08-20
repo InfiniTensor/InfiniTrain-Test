@@ -23,7 +23,6 @@ INPUT_BINS=(
 )
 
 COMMON_ARGS=(
-  --attention_backend flash
   --dtype bfloat16
   --num_iterations 10
   --write_tensors 0
@@ -31,9 +30,10 @@ COMMON_ARGS=(
 
 run_case() {
   local case_id="$1"
-  local batch_size="$2"
-  local sequence_length="$3"
-  local total_batch_size="$4"
+  local attention_backend="$2"
+  local batch_size="$3"
+  local sequence_length="$4"
+  local total_batch_size="$5"
 
   for idx in "${!TRAINING_SCRIPTS[@]}"; do
     local training_script="${TRAINING_SCRIPTS[$idx]}"
@@ -47,15 +47,18 @@ run_case() {
       --batch_size "${batch_size}" \
       --sequence_length "${sequence_length}" \
       --total_batch_size "${total_batch_size}" \
+      --attention_backend "${attention_backend}" \
       "${COMMON_ARGS[@]}"
   done
 }
 
-run_case "dp8_bs8_seq256" 8 256 16384
-run_case "dp8_bs16_seq256" 16 256 32768
-run_case "dp8_bs8_seq512" 8 512 32768
-run_case "dp8_bs8_seq1024" 8 1024 65536
+run_case "dp8_bs2_seq128_tb2048_unfused" unfused 2 128 2048
+run_case "dp8_bs2_seq128_tb2048_flash" flash 2 128 2048
+run_case "dp8_bs2_seq512_tb8192_unfused" unfused 2 512 8192
+run_case "dp8_bs2_seq512_tb8192_flash" flash 2 512 8192
+run_case "dp8_bs2_seq1024_tb16384_unfused" unfused 2 1024 16384
+run_case "dp8_bs2_seq1024_tb16384_flash" flash 2 1024 16384
 
 echo "=========================================="
-echo "All FlashAttention training jobs finished."
+echo "All attention backend comparison jobs finished."
 echo "=========================================="
