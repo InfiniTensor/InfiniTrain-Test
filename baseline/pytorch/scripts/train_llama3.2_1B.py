@@ -50,6 +50,9 @@ import torch.distributed as dist
 import tiktoken
 from tiktoken.load import load_tiktoken_bpe
 
+ATTENTION_BACKEND = "unfused"
+FLASH_ATTN_FUNC = None
+
 def log(name, tensor):
     min_w = tensor.min().item()
     max_w = tensor.max().item()
@@ -209,27 +212,27 @@ class CausalSelfAttention(nn.Module):
             k = self.cache_k[:B, : start_pos + T]
             v = self.cache_v[:B, : start_pos + T]
 
-        k = repeat_kv(k, self.n_rep)  # GQA <-- 2. difference compared to GPT-2
-        v = repeat_kv(v, self.n_rep)
-
-        q, k, v = map(lambda t: t.transpose(1, 2), (q, k, v))  # (B, NH, T, HD)
-
-        if FLASH:
-            # flashattention
-            # if T == 1 no need to mask, otherwise the function complains
-            # scaled_dot_product_attention expects a mask where value of True indicates that the element should take part in attention
-            # our mask is the opposite, so we need to invert it
-            y = F.scaled_dot_product_attention(q, k, v, mask == 0 if T > 1 else None)
+        if ATTENTION_BACKEND == "flash":
+            # flash_attn_func accepts (B, T, H, D) and n_head / n_kv_head GQA directly.
+            q, k = q.to(v.dtype), k.to(v.dtype)
+            y = FLASH_ATTN_FUNC(q, k, v, causal=True)
         else:
-            # manual implementation of attention
-            # this materializes the large (T,T) matrix for all the queries and keys
-            scores = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(self.hd))
-            if mask is not None:
-                scores.masked_fill_(mask, torch.finfo(scores.dtype).min)
-            att = F.softmax(scores.float(), dim=-1).type_as(q)
-            y = att @ v # (B, NH, T, T) x (B, NH, T, HD) -> (B, NH, T, HD)
+            k = repeat_kv(k, self.n_rep)  # GQA <-- 2. difference compared to GPT-2
+            v = repeat_kv(v, self.n_rep)
+            q, k, v = map(lambda t: t.transpose(1, 2), (q, k, v))  # (B, NH, T, HD)
+            if ATTENTION_BACKEND == "fused":
+                y = F.scaled_dot_product_attention(q, k, v, attn_mask=(mask == 0) if T > 1 else None)
+            else:
+                # manual implementation of attention
+                # this materializes the large (T,T) matrix for all the queries and keys
+                scores = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(self.hd))
+                if mask is not None:
+                    scores.masked_fill_(mask, torch.finfo(scores.dtype).min)
+                att = F.softmax(scores.float(), dim=-1).type_as(q)
+                y = att @ v # (B, NH, T, T) x (B, NH, T, HD) -> (B, NH, T, HD)
+            y = y.transpose(1, 2)
 
-        y = y.transpose(1, 2).contiguous().view(B, T, C)
+        y = y.contiguous().view(B, T, C)
         y = self.c_proj(y)
         return y
 
@@ -1207,7 +1210,8 @@ if __name__ == "__main__":
     # memory management
     parser.add_argument("--device", type=str, default="", help="by default we autodetect, or set it here")
     parser.add_argument("--compile", type=int, default=0, help="torch.compile the model")
-    parser.add_argument("--flash", type=int, default=0, help="use flash attention")
+    parser.add_argument("--attention_backend", choices=("unfused", "fused", "flash"), default="unfused",
+                        help="attention backend")
     parser.add_argument("--dtype", type=str, default="float32", help="float32|float16|bfloat16")
     parser.add_argument("--zero_stage", type=int, default=0, help="zero redundancy optimizer stage (0/1/2/3)")
     # python -> C bridge
@@ -1227,6 +1231,8 @@ if __name__ == "__main__":
     assert 1 <= T <= 8192, "sequence length must be between 1 and 8192"
     assert args.dtype in {"float32", "float16", "bfloat16"}
     assert args.model in {"meta-llama/Llama-3.2-1B"}  # only 1B base model supported for now
+    if args.attention_backend == "flash" and args.dtype not in {"float16", "bfloat16"}:
+        parser.error("--attention_backend=flash requires --dtype=float16 or --dtype=bfloat16")
 
     # create the logging directory if it does not exist
     logfile = None
@@ -1294,9 +1300,15 @@ if __name__ == "__main__":
     if args.tensorcores:
         torch.set_float32_matmul_precision('high')
 
-    # turn on/off flash attention
-    assert args.flash in {0, 1}
-    FLASH = args.flash
+    ATTENTION_BACKEND = args.attention_backend
+    if ATTENTION_BACKEND == "flash":
+        if device_type != "cuda":
+            parser.error("--attention_backend=flash requires a CUDA device")
+        try:
+            from flash_attn import flash_attn_func
+        except ImportError as exc:
+            raise RuntimeError("--attention_backend=flash requires the flash-attn Python package") from exc
+        FLASH_ATTN_FUNC = flash_attn_func
 
     # init the model
     if args.use_hf:
