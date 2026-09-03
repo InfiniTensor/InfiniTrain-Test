@@ -35,6 +35,14 @@ The aligned basic matrix is:
 | `llama3_3` | FP32 | 8 | 10 | 5120 | 64 | 10 |
 | `llama3_3_bfloat16` | BF16 | 8 | 10 | 5120 | 64 | 10 |
 
+The basic cases enable synchronized step-performance logging by default. The
+timed region is Megatron's standard training step, including data loading,
+forward, loss, backward, gradient communication, and the optimizer update. On
+multiple GPUs the reported latency is the slowest rank. Step 1 is treated as
+warmup, and the summary averages steps 2 through 10, matching the PyTorch
+baseline. Disable it with `LOG_STEP_PERFORMANCE=0`, or enable it for an
+individual run with `LOG_STEP_PERFORMANCE=1`.
+
 InfiniTrain uses the existing `llama3` executable with the same defaults:
 
 ```bash

@@ -4,6 +4,7 @@
 import os
 import pathlib
 import sys
+import time
 
 import numpy as np
 import torch
@@ -30,6 +31,7 @@ from megatron.core import parallel_state
 from megatron.core.datasets import gpt_dataset
 from megatron.core.enums import ModelType
 from megatron.training import get_args, pretrain
+from megatron.training import training as megatron_training
 from megatron.training.argument_utils import pretrain_cfg_container_from_args
 from megatron.training.arguments import parse_and_validate_args
 from model_provider import model_provider
@@ -38,7 +40,51 @@ from llmc_loader import Reader, pack_qkv_for_megatron, tensor_parallel_slice
 
 def add_args(parser):
     parser.add_argument("--llmc-filepath", required=True)
+    parser.add_argument("--log-step-performance", action="store_true",
+                        help="Report synchronized end-to-end train-step latency and throughput")
     return parser
+
+
+def install_performance_logger():
+    original_train_step = megatron_training.train_step
+    measured = []
+
+    def timed_train_step(*args, **kwargs):
+        runtime_args = get_args()
+        iteration = kwargs.get("iteration")
+        if iteration is None and len(args) > 7:
+            iteration = args[7]
+        torch.cuda.synchronize()
+        started = time.perf_counter()
+        result = original_train_step(*args, **kwargs)
+        torch.cuda.synchronize()
+        local_elapsed = time.perf_counter() - started
+
+        # Exclude the slowest-rank reduction itself from the measured interval.
+        elapsed = torch.tensor(local_elapsed, dtype=torch.float64, device=torch.cuda.current_device())
+        if torch.distributed.is_initialized():
+            torch.distributed.all_reduce(elapsed, op=torch.distributed.ReduceOp.MAX)
+        elapsed_seconds = elapsed.item()
+        step = (iteration if iteration is not None else len(measured)) + 1
+        tokens_per_second = runtime_args.global_batch_size * runtime_args.seq_length / elapsed_seconds
+        rank = torch.distributed.get_rank() if torch.distributed.is_initialized() else 0
+        if rank == 0:
+            print(f"PERF step {step}/{runtime_args.train_iters} | "
+                  f"{elapsed_seconds * 1000:.2f} ms | {tokens_per_second:.0f} tok/s", flush=True)
+
+        if step > 1 and not result[1]:
+            measured.append((elapsed_seconds, tokens_per_second))
+        if step == runtime_args.train_iters and rank == 0:
+            if measured:
+                avg_latency_ms = sum(item[0] for item in measured) / len(measured) * 1000
+                avg_throughput = sum(item[1] for item in measured) / len(measured)
+                print(f"PERF summary | measured_steps {len(measured)} | "
+                      f"avg {avg_latency_ms:.2f} ms | avg {avg_throughput:.0f} tok/s", flush=True)
+            else:
+                print("PERF summary | measured_steps 0", flush=True)
+        return result
+
+    megatron_training.train_step = timed_train_step
 
 
 def ordered_shuffle_index(num_samples, total_size, numpy_random_state):
@@ -96,6 +142,8 @@ if __name__ == "__main__":
     gpt_dataset._build_shuffle_index = ordered_shuffle_index
     setattr(upstream.train_valid_test_datasets_provider, "is_distributed", True)
     args = parse_and_validate_args(extra_args_provider=add_args, args_defaults={"tokenizer_type": "NullTokenizer"})
+    if args.log_step_performance:
+        install_performance_logger()
     pretrain(pretrain_cfg_container_from_args(args), upstream.train_valid_test_datasets_provider,
              llmc_model_provider, ModelType.encoder_or_decoder, upstream.forward_step,
              get_embedding_ranks=upstream.get_embedding_ranks)

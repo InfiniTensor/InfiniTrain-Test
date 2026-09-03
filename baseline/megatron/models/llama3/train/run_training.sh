@@ -19,6 +19,7 @@ SEQ_LENGTH="${SEQ_LENGTH:-64}"
 TRAIN_ITERS="${TRAIN_ITERS:-10}"
 LR="${LR:-1e-5}"
 DTYPE="${DTYPE:-float32}"
+LOG_STEP_PERFORMANCE="${LOG_STEP_PERFORMANCE:-0}"
 
 export CUDA_DEVICE_MAX_CONNECTIONS="${CUDA_DEVICE_MAX_CONNECTIONS:-1}"
 if [[ "${DTYPE}" == "float32" ]]; then export LLAMA3_DISABLE_TF32="${LLAMA3_DISABLE_TF32:-1}"; fi
@@ -31,6 +32,8 @@ if (( GLOBAL_BATCH_SIZE % (MICRO_BATCH_SIZE * DP) != 0 )); then echo "global bat
 
 DTYPE_ARGS=()
 case "${DTYPE}" in float32) ;; bfloat16) DTYPE_ARGS+=(--bf16) ;; *) echo "unsupported DTYPE=${DTYPE}" >&2; exit 2;; esac
+PERFORMANCE_ARGS=()
+if [[ "${LOG_STEP_PERFORMANCE}" == "1" ]]; then PERFORMANCE_ARGS+=(--log-step-performance); fi
 
 mkdir -p "$(dirname "${RESULT_LOG}")" "${CACHE_PATH}"
 ARGS=(
@@ -54,6 +57,7 @@ ARGS=(
   --llmc-filepath "${LLMC_FILEPATH}" --log-interval 1
   --eval-interval "${TRAIN_ITERS}" --eval-iters 0 --exit-interval "${TRAIN_ITERS}"
   "${DTYPE_ARGS[@]}"
+  "${PERFORMANCE_ARGS[@]}"
 )
 {
   echo "InfiniTrain-Test commit: $(git -C "${REPO_ROOT}" rev-parse HEAD)"
