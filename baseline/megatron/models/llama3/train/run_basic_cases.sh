@@ -5,6 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../../.." && pwd)"
 ARTIFACT_ROOT="${LLAMA3_MEGATRON_ARTIFACT_ROOT:-${REPO_ROOT}/baseline/megatron/artifacts/llama3}"
 CASES="${CASES:-llama3_1,llama3_1_bfloat16,llama3_2,llama3_2_bfloat16,llama3_3,llama3_3_bfloat16}"
+LOG_STEP_PERFORMANCE="${LOG_STEP_PERFORMANCE:-1}"
 
 case_selected() {
   [[ ",${CASES}," == *",$1,"* ]]
@@ -33,6 +34,7 @@ run_case() {
   SEQ_LENGTH=64 \
   TRAIN_ITERS=10 \
   LR=1e-5 \
+  LOG_STEP_PERFORMANCE="${LOG_STEP_PERFORMANCE}" \
   RESULT_LOG="${ARTIFACT_ROOT}/logs/${name}.log" \
     bash "${SCRIPT_DIR}/run_training.sh"
 }
