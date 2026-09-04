@@ -29,11 +29,16 @@ The aligned basic matrix is:
 | Case | Dtype | GPUs / DP | Micro batch | Total batch tokens | Sequence length | Iterations |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
 | `llama3_1` | FP32 | 1 | 4 | 256 | 64 | 10 |
-| `llama3_1_bfloat16` | BF16 | 1 | 4 | 256 | 64 | 10 |
+| `llama3_1_bfloat16` | BF16 autocast | 1 | 4 | 256 | 64 | 10 |
 | `llama3_2` | FP32 | 1 | 80 | 5120 | 64 | 10 |
-| `llama3_2_bfloat16` | BF16 | 1 | 80 | 5120 | 64 | 10 |
+| `llama3_2_bfloat16` | BF16 autocast | 1 | 80 | 5120 | 64 | 10 |
 | `llama3_3` | FP32 | 8 | 10 | 5120 | 64 | 10 |
-| `llama3_3_bfloat16` | BF16 | 8 | 10 | 5120 | 64 | 10 |
+| `llama3_3_bfloat16` | BF16 autocast | 8 | 10 | 5120 | 64 | 10 |
+The BF16 basic cases use `DTYPE=autocast_bfloat16` to match the
+InfiniTrain/PyTorch precision policy: parameters remain FP32 while the forward
+pass runs under PyTorch BF16 autocast. `DTYPE=bfloat16` remains available for
+native Megatron BF16 runs, where model parameters are stored in BF16; its loss
+trajectory is therefore not expected to match the aligned BF16 cases exactly.
 
 The basic cases enable synchronized step-performance logging by default. The
 timed region is Megatron's standard training step, including data loading,

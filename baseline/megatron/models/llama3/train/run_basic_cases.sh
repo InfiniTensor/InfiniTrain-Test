@@ -42,10 +42,10 @@ run_case() {
 # Keep these case names and batch shapes aligned with
 # baseline/pytorch/scripts/run_pytorch_training.sh.
 run_case llama3_1          float32  1  4  256
-run_case llama3_1_bfloat16 bfloat16 1  4  256
+run_case llama3_1_bfloat16 autocast_bfloat16 1  4  256
 run_case llama3_2          float32  1 80 5120
-run_case llama3_2_bfloat16 bfloat16 1 80 5120
+run_case llama3_2_bfloat16 autocast_bfloat16 1 80 5120
 run_case llama3_3          float32  8 10 5120
-run_case llama3_3_bfloat16 bfloat16 8 10 5120
+run_case llama3_3_bfloat16 autocast_bfloat16 8 10 5120
 
 echo "All selected Llama3 Megatron basic cases finished."
