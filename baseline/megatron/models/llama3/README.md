@@ -34,6 +34,7 @@ The aligned basic matrix is:
 | `llama3_2_bfloat16` | BF16 autocast | 1 | 80 | 5120 | 64 | 10 |
 | `llama3_3` | FP32 | 8 | 10 | 5120 | 64 | 10 |
 | `llama3_3_bfloat16` | BF16 autocast | 8 | 10 | 5120 | 64 | 10 |
+
 The BF16 basic cases use `DTYPE=autocast_bfloat16` to match the
 InfiniTrain/PyTorch precision policy: parameters remain FP32 while the forward
 pass runs under PyTorch BF16 autocast. `DTYPE=bfloat16` remains available for
@@ -59,11 +60,42 @@ InfiniTrain uses the existing `llama3` executable with the same defaults:
   --tensor_parallel=1 --pipeline_parallel=1
 ```
 
-Compare logs with:
+For individual-case diagnostics and machine-readable per-step JSON, compare one
+log pair with the model-specific wrapper.
+
 
 ```bash
 INFINITRAIN_LOG=/path/to/infinitrain.log \
   bash baseline/megatron/models/llama3/compare/compare_loss.sh
+```
+
+
+For batch regression summaries, pass the completed flat log directory directly.
+The scripts automatically pair `infinitrain_*.log` with the corresponding
+Megatron log and report loss and throughput separately:
+
+```bash
+python baseline/megatron/scripts/compare_loss.py baseline/megatron/artifacts/llama3/logs
+```
+
+```bash
+python baseline/megatron/scripts/compare_tps.py baseline/megatron/artifacts/llama3/logs
+```
+
+Both scripts recursively collect `.log` files and print missing-file and total-case summaries.
+The loss script prints explicit PASS and FAIL results and corrects Megatron's
+iteration-2 running-average value by default. TPS reports each backend's average
+throughput and the InfiniTrain/Megatron percentage without a performance threshold.
+The standard InfiniTrain `run_models_and_profile.bash` output can be passed as
+the first directory. Use `--include-prefix llama3_` when its `basic/` directory
+also contains other models:
+
+```bash
+python baseline/megatron/scripts/compare_loss.py /path/to/infinitrain/run/logs/basic baseline/megatron/artifacts/llama3/logs --include-prefix llama3_
+```
+
+```bash
+python baseline/megatron/scripts/compare_tps.py /path/to/infinitrain/run/logs/basic baseline/megatron/artifacts/llama3/logs --include-prefix llama3_
 ```
 
 The adapter parses the LLMC header, validates the full file size, repacks block
