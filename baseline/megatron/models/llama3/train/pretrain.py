@@ -40,6 +40,8 @@ from llmc_loader import Reader, pack_qkv_for_megatron, tensor_parallel_slice
 
 def add_args(parser):
     parser.add_argument("--llmc-filepath", required=True)
+    parser.add_argument("--autocast-bfloat16", action="store_true",
+                        help="Keep FP32 parameters and autocast the forward pass to BF16")
     parser.add_argument("--log-step-performance", action="store_true",
                         help="Report synchronized end-to-end train-step latency and throughput")
     return parser
@@ -85,6 +87,12 @@ def install_performance_logger():
         return result
 
     megatron_training.train_step = timed_train_step
+
+
+def autocast_forward_step(*args, **kwargs):
+    # Keep parameters in FP32 while using PyTorch's BF16 autocast policy for forward operators.
+    with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
+        return upstream.forward_step(*args, **kwargs)
 
 
 def ordered_shuffle_index(num_samples, total_size, numpy_random_state):
@@ -144,6 +152,7 @@ if __name__ == "__main__":
     args = parse_and_validate_args(extra_args_provider=add_args, args_defaults={"tokenizer_type": "NullTokenizer"})
     if args.log_step_performance:
         install_performance_logger()
+    forward_step = autocast_forward_step if args.autocast_bfloat16 else upstream.forward_step
     pretrain(pretrain_cfg_container_from_args(args), upstream.train_valid_test_datasets_provider,
-             llmc_model_provider, ModelType.encoder_or_decoder, upstream.forward_step,
+             llmc_model_provider, ModelType.encoder_or_decoder, forward_step,
              get_embedding_ranks=upstream.get_embedding_ranks)

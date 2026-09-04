@@ -31,7 +31,7 @@ GLOBAL_BATCH_SIZE="$((TOTAL_BATCH_TOKENS / SEQ_LENGTH))"
 if (( GLOBAL_BATCH_SIZE % (MICRO_BATCH_SIZE * DP) != 0 )); then echo "global batch must be divisible by micro batch * DP" >&2; exit 2; fi
 
 DTYPE_ARGS=()
-case "${DTYPE}" in float32) ;; bfloat16) DTYPE_ARGS+=(--bf16) ;; *) echo "unsupported DTYPE=${DTYPE}" >&2; exit 2;; esac
+case "${DTYPE}" in float32) ;; bfloat16) DTYPE_ARGS+=(--bf16) ;; autocast_bfloat16) DTYPE_ARGS+=(--autocast-bfloat16) ;; *) echo "unsupported DTYPE=${DTYPE}" >&2; exit 2;; esac
 PERFORMANCE_ARGS=()
 if [[ "${LOG_STEP_PERFORMANCE}" == "1" ]]; then PERFORMANCE_ARGS+=(--log-step-performance); fi
 
