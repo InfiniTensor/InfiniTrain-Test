@@ -14,7 +14,7 @@ MEGATRON_LOSS = re.compile(r"iteration\s+(\d+)/\s*\d+.*?lm loss:\s*([-+\d.eE]+)"
 
 
 def get_dtype_from_filename(filename):
-    return "bfloat16" if "_bfloat16" in filename else "fp32"
+    return "bfloat16" if "_bfloat16" in filename or "_bf16" in filename else "fp32"
 
 
 def parse_log(file_path):
@@ -75,6 +75,7 @@ def main():
     parser.add_argument("baseline_dir", type=Path, help="InfiniTrain log directory")
     parser.add_argument("test_dir", type=Path, nargs="?", help="Megatron log directory; omit for flat-layout auto-pairing")
     parser.add_argument("--include-prefix", help="only compare log basenames with this prefix")
+    parser.add_argument("--include-cases", help="comma-separated log basenames to compare")
     parser.add_argument("--prefer-autocast-bfloat16", action="store_true", help="prefer historical Megatron autocast BF16 log names")
     parser.add_argument("--threshold-fp32", type=float, default=1e-5)
     parser.add_argument("--threshold-bf16", type=float, default=1e-2)
@@ -98,6 +99,12 @@ def main():
     exit_if_duplicate_logs(args.baseline_dir, baseline_duplicates)
     if args.test_dir is not None:
         exit_if_duplicate_logs(args.test_dir, test_duplicates)
+
+    if args.include_cases:
+        selected = {name.strip() for name in args.include_cases.split(",") if name.strip()}
+        selected = {name if name.endswith(".log") else f"{name}.log" for name in selected}
+        baseline_files = {name: path for name, path in baseline_files.items() if name in selected}
+        test_files = {name: path for name, path in test_files.items() if name in selected}
 
     baseline_only = sorted(set(baseline_files) - set(test_files))
     test_only = sorted(set(test_files) - set(baseline_files))

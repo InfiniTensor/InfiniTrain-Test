@@ -9,31 +9,44 @@ not replace or modify the existing PyTorch Llama3 baseline.
 ```bash
 bash baseline/megatron/models/llama3/prepare/prepare_dataset.sh
 
-DTYPE=float32 NPROC_PER_NODE=1 TP=1 PP=1 \
-  bash baseline/megatron/models/llama3/train/run_training.sh
+DTYPE=float32 NPROC_PER_NODE=1 TP=1 PP=1 bash baseline/megatron/models/llama3/train/run_training.sh
 ```
 
-Run the six basic cases that correspond to the PyTorch `llama3_1`, `llama3_2`,
-and `llama3_3` FP32/BF16 cases:
+Run the sixteen basic FP32/BF16 cases. Cases 1-3 cover single-GPU and DDP;
+cases 4-8 add TP, SP, PP, VPP, and the core DP+TP+PP combination.
 
 ```bash
 bash baseline/megatron/models/llama3/train/run_basic_cases.sh
 
 # Run only selected cases.
-CASES=llama3_1,llama3_3_bfloat16 \
-  bash baseline/megatron/models/llama3/train/run_basic_cases.sh
+CASES=llama3_1,llama3_3_bfloat16 bash baseline/megatron/models/llama3/train/run_basic_cases.sh
 ```
 
 The aligned basic matrix is:
 
-| Case | Dtype | GPUs / DP | Micro batch | Total batch tokens | Sequence length | Iterations |
-| --- | --- | ---: | ---: | ---: | ---: | ---: |
-| `llama3_1` | FP32 | 1 | 4 | 256 | 64 | 10 |
-| `llama3_1_bfloat16` | BF16 autocast | 1 | 4 | 256 | 64 | 10 |
-| `llama3_2` | FP32 | 1 | 80 | 5120 | 64 | 10 |
-| `llama3_2_bfloat16` | BF16 autocast | 1 | 80 | 5120 | 64 | 10 |
-| `llama3_3` | FP32 | 8 | 10 | 5120 | 64 | 10 |
-| `llama3_3_bfloat16` | BF16 autocast | 8 | 10 | 5120 | 64 | 10 |
+| Case | Dtype | GPUs | DP | TP | PP | SP | VPP | Micro batch | Global batch | Tokens/step | Seq | Impl |
+| --- | --- | ---: | ---: | ---: | ---: | :---: | ---: | ---: | ---: | ---: | ---: | --- |
+| `llama3_1` | FP32 | 1 | 1 | 1 | 1 | off | 1 | 4 | 4 | 256 | 64 | local |
+| `llama3_1_bfloat16` | BF16 autocast | 1 | 1 | 1 | 1 | off | 1 | 4 | 4 | 256 | 64 | local |
+| `llama3_2` | FP32 | 1 | 1 | 1 | 1 | off | 1 | 80 | 80 | 5120 | 64 | local |
+| `llama3_2_bfloat16` | BF16 autocast | 1 | 1 | 1 | 1 | off | 1 | 80 | 80 | 5120 | 64 | local |
+| `llama3_3` | FP32 | 8 | 8 | 1 | 1 | off | 1 | 10 | 80 | 5120 | 64 | local |
+| `llama3_3_bfloat16` | BF16 autocast | 8 | 8 | 1 | 1 | off | 1 | 10 | 80 | 5120 | 64 | local |
+| `llama3_4` | FP32 | 8 | 2 | 4 | 1 | off | 1 | 40 | 80 | 5120 | 64 | local |
+| `llama3_4_bfloat16` | BF16 autocast | 8 | 2 | 4 | 1 | off | 1 | 40 | 80 | 5120 | 64 | local |
+| `llama3_5` | FP32 | 8 | 2 | 4 | 1 | on | 1 | 40 | 80 | 5120 | 64 | TE |
+| `llama3_5_bfloat16` | BF16 autocast | 8 | 2 | 4 | 1 | on | 1 | 40 | 80 | 5120 | 64 | TE |
+| `llama3_6` | FP32 | 8 | 1 | 1 | 8 | off | 1 | 10 | 80 | 5120 | 64 | local |
+| `llama3_6_bfloat16` | BF16 autocast | 8 | 1 | 1 | 8 | off | 1 | 10 | 80 | 5120 | 64 | local |
+| `llama3_7` | FP32 | 4 | 1 | 1 | 4 | off | 2 | 10 | 80 | 5120 | 64 | local |
+| `llama3_7_bfloat16` | BF16 autocast | 4 | 1 | 1 | 4 | off | 2 | 10 | 80 | 5120 | 64 | local |
+| `llama3_8` | FP32 | 8 | 2 | 2 | 2 | off | 1 | 40 | 80 | 5120 | 64 | local |
+| `llama3_8_bfloat16` | BF16 autocast | 8 | 2 | 2 | 2 | off | 1 | 40 | 80 | 5120 | 64 | local |
+
+Case 5 uses Transformer Engine because the local Torch RMSNorm does not support
+sequence parallelism. Case 8 intentionally covers DP+TP+PP without SP/VPP:
+its aligned batch has one microbatch (`80 / (40 * DP2)`), while Megatron VPP2
+requires at least two. Case 7 exercises VPP2 separately with eight microbatches.
 
 The BF16 basic cases use `DTYPE=autocast_bfloat16` to match the
 InfiniTrain/PyTorch precision policy: parameters remain FP32 while the forward
@@ -100,3 +113,6 @@ python baseline/megatron/scripts/compare_tps.py /path/to/infinitrain/run/logs/ba
 
 The adapter parses the LLMC header, validates the full file size, repacks block
 Q/K/V into Megatron GQA order, and packs SwiGLU as `[c_fc2 gate, c_fc up]`.
+For pipeline parallel runs it loads embeddings only on `pre_process` stages, final
+normalization/output weights only on `post_process` stages, and maps each local
+layer to its global LLMC index using Megatron's `layer_number`.

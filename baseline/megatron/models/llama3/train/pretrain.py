@@ -107,10 +107,17 @@ def assign(target, source, name):
     target.copy_(torch.from_numpy(source.copy()).to(device=target.device, dtype=target.dtype))
 
 
+def assign_norm(norm, fused_linear, source, name):
+    target = getattr(norm, "weight", None)
+    if target is None:
+        target = getattr(fused_linear, "layer_norm_weight", None)
+    if target is None:
+        raise RuntimeError(f"{name}: normalization weight not found")
+    assign(target, source, name)
+
+
 def load_llmc(model, path):
     args = get_args()
-    if args.pipeline_model_parallel_size != 1:
-        raise RuntimeError("Llama3 LLMC runtime loading currently supports PP=1")
     tp_size = parallel_state.get_tensor_model_parallel_world_size()
     tp_rank = parallel_state.get_tensor_model_parallel_rank()
     reader, tensors = Reader(path), None
@@ -125,19 +132,24 @@ def load_llmc(model, path):
         raise RuntimeError("this adapter does not yet implement Llama scaled RoPE")
     tensors = reader.tensors
     with torch.no_grad():
-        assign(model.embedding.word_embeddings.weight, tensor_parallel_slice(tensors["embedding"], tp_rank, tp_size, 0), "embedding")
-        for i, layer in enumerate(model.decoder.layers):
-            assign(layer.input_layernorm.weight, tensors["input_norm"][i], f"layer{i}.input_norm")
+        if model.pre_process:
+            assign(model.embedding.word_embeddings.weight, tensor_parallel_slice(tensors["embedding"], tp_rank, tp_size, 0), "embedding")
+        for layer in model.decoder.layers:
+            i = layer.layer_number - 1
+            assign_norm(layer.input_layernorm, layer.self_attention.linear_qkv, tensors["input_norm"][i], f"layer{i}.input_norm")
             assign(layer.self_attention.linear_qkv.weight, pack_qkv_for_megatron(tensors["qkv"][i], cfg, tp_rank, tp_size), f"layer{i}.qkv")
             assign(layer.self_attention.linear_proj.weight, tensor_parallel_slice(tensors["attention_output"][i], tp_rank, tp_size, 1), f"layer{i}.attention_output")
-            assign(layer.pre_mlp_layernorm.weight, tensors["pre_mlp_norm"][i], f"layer{i}.pre_mlp_norm")
+            assign_norm(layer.pre_mlp_layernorm, layer.mlp.linear_fc1, tensors["pre_mlp_norm"][i], f"layer{i}.pre_mlp_norm")
             gate = tensor_parallel_slice(tensors["gate"][i], tp_rank, tp_size, 0)
             up = tensor_parallel_slice(tensors["up"][i], tp_rank, tp_size, 0)
             assign(layer.mlp.linear_fc1.weight, np.concatenate([gate, up], axis=0), f"layer{i}.linear_fc1")
             assign(layer.mlp.linear_fc2.weight, tensor_parallel_slice(tensors["down"][i], tp_rank, tp_size, 1), f"layer{i}.linear_fc2")
-        assign(model.decoder.final_layernorm.weight, tensors["final_norm"], "final_norm")
-        assign(model.output_layer.weight, tensor_parallel_slice(tensors["output"], tp_rank, tp_size, 0), "output")
-    print(f"loaded Llama3 LLMC checkpoint on TP rank {tp_rank}/{tp_size}: {path}", flush=True)
+        if model.post_process:
+            assign(model.decoder.final_layernorm.weight, tensors["final_norm"], "final_norm")
+            assign(model.output_layer.weight, tensor_parallel_slice(tensors["output"], tp_rank, tp_size, 0), "output")
+    pp_rank = parallel_state.get_pipeline_model_parallel_rank()
+    print(f"loaded Llama3 LLMC checkpoint on TP rank {tp_rank}/{tp_size}, "
+          f"PP rank {pp_rank}/{args.pipeline_model_parallel_size}: {path}", flush=True)
 
 
 def llmc_model_provider(pre_process=True, post_process=True, vp_stage=None, config=None, pg_collection=None):
