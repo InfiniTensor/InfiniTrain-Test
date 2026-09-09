@@ -12,6 +12,7 @@ from compare_utils import collect_flat_megatron_logs, collect_log_files, exit_if
 THROUGHPUT = re.compile(
     r"(?:PERF\s+)?step\s+(\d+)/\d+.*?\|\s+(\d+(?:\.\d+)?)\s+tok/s"
 )
+CONFIG_ITEM = re.compile(r"(DP|TP|PP|SP|VPP|dtype|micro_batch|global_batch|seq)=([^\s]+)")
 
 
 def parse_log(file_path):
@@ -43,6 +44,30 @@ def compare_files(baseline_file, test_file, warmup_steps):
     test_average = sum(test.values()) / len(test)
     throughput_ratio = baseline_average / test_average
     return baseline_average, test_average, throughput_ratio, len(baseline)
+
+
+def parse_config(file_path):
+    for line in file_path.read_text(errors="replace").splitlines():
+        items = dict(CONFIG_ITEM.findall(line))
+        if {"DP", "TP", "PP"}.issubset(items):
+            return items
+    return {}
+
+
+def format_table(headers, rows):
+    widths = [len(header) for header in headers]
+    for row in rows:
+        widths = [max(width, len(value)) for width, value in zip(widths, row)]
+
+    def format_row(row):
+        cells = (value.ljust(width) for value, width in zip(row, widths))
+        return "| " + " | ".join(cells) + " |"
+
+    separator = "+-" + "-+-".join("-" * width for width in widths) + "-+"
+    lines = [separator, format_row(headers), separator]
+    lines.extend(format_row(row) for row in rows)
+    lines.append(separator)
+    return "\n".join(lines)
 
 
 def print_group(title, rows):
@@ -99,17 +124,34 @@ def main():
             errors.append(f"[ERROR] {name}: {error}")
             continue
 
-        results.append(
-            f"{name} | InfiniTrain {baseline_average:.2f} tok/s "
-            f"| Megatron {test_average:.2f} tok/s | InfiniTrain/Megatron {ratio:.1%} "
-            f"| steps {steps}"
+        config = parse_config(test_files[name])
+        dp, tp, pp = (config.get(key, "-") for key in ("DP", "TP", "PP"))
+        sp = "on" if config.get("SP") in {"1", "true", "True"} else "off"
+        vpp = config.get("VPP", "1")
+        gpu_count = "-"
+        if all(value.isdigit() for value in (dp, tp, pp)):
+            gpu_count = str(int(dp) * int(tp) * int(pp))
+        basic = (
+            f"{config.get('dtype', '-')} MB={config.get('micro_batch', '-')} "
+            f"GB={config.get('global_batch', '-')} Seq={config.get('seq', '-')}"
         )
+        parallel = f"GPU={gpu_count} DP={dp} TP={tp} PP={pp} SP={sp} VPP={vpp}"
+        results.append((
+            name.removesuffix(".log"), basic, parallel, str(steps),
+            f"{baseline_average:.2f}", f"{test_average:.2f}", f"{ratio:.1%}",
+        ))
 
     print(f"Baseline: {args.baseline_dir.resolve()}")
     print(f"Test:     {test_display}")
     print(f"Warmup steps excluded: {args.warmup_steps}")
     print()
-    print_group(f"THROUGHPUT RESULTS ({len(results)})", results)
+    print(f"THROUGHPUT RESULTS ({len(results)})")
+    if results:
+        headers = ("Case", "Basic config", "Parallel config", "Steps", "InfiniTrain tok/s", "Megatron tok/s", "InfiniTrain/Megatron")
+        print(format_table(headers, results))
+    else:
+        print("  (none)")
+    print()
     if errors:
         print_group(f"ERRORS ({len(errors)})", errors)
 
