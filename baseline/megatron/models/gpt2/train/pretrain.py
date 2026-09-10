@@ -27,6 +27,8 @@ MEGATRON_PATH = pathlib.Path(os.environ.get(
 sys.path.insert(0, str(MEGATRON_PATH))
 
 import pretrain_gpt as upstream
+from megatron.core import parallel_state
+from megatron.core import tensor_parallel
 from megatron.core.datasets import gpt_dataset
 from gpt_builders import gpt_builder
 from megatron.core.enums import ModelType
@@ -107,71 +109,30 @@ def assign(target, source, name):
         raise RuntimeError(f"{name}: {tuple(target.shape)} != {tuple(source.shape)}")
     target.copy_(source.to(target.device, target.dtype))
 
-def register_tensor_dumps(model):
-    output_dir = os.environ.get("GPT2_TENSOR_DUMP_DIR")
-    if not output_dir:
-        return
-    output_dir = pathlib.Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    counters = {}
+def assign_norm(norm, fused_linear, source, name, parameter):
+    target = getattr(norm, parameter, None)
+    if target is None:
+        target = getattr(fused_linear, f"layer_norm_{parameter}", None)
+    if target is None:
+        raise RuntimeError(f"{name}: normalization {parameter} not found")
+    assign(target, source, name)
 
-    def save(name, value):
-        index = counters.get(name, 0)
-        counters[name] = index + 1
-        suffix = f"_{index}" if index else ""
-        np.save(
-            output_dir / f"{name}{suffix}_forward.npy",
-            value.detach().float().cpu().contiguous().numpy(),
-        )
-
-    def register(module, name):
-        def dump(_module, _inputs, output):
-            value = output[0] if isinstance(output, tuple) else output
-            if not torch.is_tensor(value):
-                return
-            save(name, value)
-
-        module.register_forward_hook(dump)
-
-    def register_mlp(layer, prefix):
-        def dump_fc1(_module, _inputs, output):
-            value, bias = output
-            biased = value + bias if bias is not None else value
-            save(f"{prefix}.mlp.c_fc", biased)
-            save(f"{prefix}.mlp.gelu", layer.mlp.activation_func(biased))
-
-        def dump_fc2(_module, _inputs, output):
-            value, bias = output
-            save(f"{prefix}.mlp.c_proj", value + bias if bias is not None else value)
-
-        layer.mlp.linear_fc1.register_forward_hook(dump_fc1)
-        layer.mlp.linear_fc2.register_forward_hook(dump_fc2)
-
-    register(model.embedding.word_embeddings, "transformer.wte")
-    register(model.embedding.position_embeddings, "transformer.wpe")
-    register(model.embedding, "TransformerFirstStage")
-    for i, layer in enumerate(model.decoder.layers):
-        prefix = f"transformer.h.{i}"
-        register(layer.input_layernorm, f"{prefix}.ln_1")
-        register(layer.self_attention.linear_qkv, f"{prefix}.attn.c_attn")
-        register(layer.self_attention.linear_proj, f"{prefix}.attn.c_proj")
-        register(layer.pre_mlp_layernorm, f"{prefix}.ln_2")
-        register_mlp(layer, prefix)
-        register(layer, prefix)
-    register(model.decoder.final_layernorm, "transformer.ln_f")
-    register(model.output_layer, "lm_head")
+def tensor_parallel_slice(value, rank, size, axis):
+    if value.shape[axis] % size:
+        raise RuntimeError(f"cannot shard {tuple(value.shape)} axis {axis} over TP={size}")
+    width = value.shape[axis] // size
+    return value.narrow(axis, rank * width, width)
 
 def load_llmc(model, path):
     args = get_args()
-    if args.tensor_model_parallel_size != 1 or args.pipeline_model_parallel_size != 1:
-        raise RuntimeError("LLMC direct loading supports TP=1, PP=1")
+    tp_size = parallel_state.get_tensor_model_parallel_world_size()
+    tp_rank = parallel_state.get_tensor_model_parallel_rank()
     with open(path, "rb") as stream, torch.no_grad():
         header = struct.unpack("<256i", stream.read(1024))
         if header[:8] != (20240326, 3, 1024, 50257, 12, 12, 768, 50304):
             raise RuntimeError(f"unexpected LLMC header: {header[:8]}")
         padded_wte = read_tensor(stream, (50304, 768))
-        assign(model.embedding.word_embeddings.weight, padded_wte[: model.vocab_size], "wte")
-        assign(model.embedding.position_embeddings.weight, read_tensor(stream, (1024, 768)), "wpe")
+        wpe = read_tensor(stream, (1024, 768))
         shapes = {
             "ln1w": (768,), "ln1b": (768,), "qkvw": (2304, 768), "qkvb": (2304,),
             "projw": (768, 768), "projb": (768,), "ln2w": (768,), "ln2b": (768,),
@@ -181,36 +142,60 @@ def load_llmc(model, path):
         final_w, final_b = read_tensor(stream, (768,)), read_tensor(stream, (768,))
         if stream.read(1):
             raise RuntimeError("trailing LLMC checkpoint data")
-        for i, layer in enumerate(model.decoder.layers):
-            if os.environ.get("LLMC_QKV_LAYOUT", "interleaved") == "block":
-                qkvw, qkvb = values["qkvw"][i], values["qkvb"][i]
-            else:
-                qkvw = values["qkvw"][i].view(3, 12, 64, 768).permute(1, 0, 2, 3).reshape(2304, 768)
-                qkvb = values["qkvb"][i].view(3, 12, 64).permute(1, 0, 2).reshape(2304)
-            pairs = [
-                (layer.input_layernorm.weight, values["ln1w"][i], "ln1w"),
-                (layer.input_layernorm.bias, values["ln1b"][i], "ln1b"),
-                (layer.self_attention.linear_qkv.weight, qkvw, "qkvw"),
-                (layer.self_attention.linear_qkv.bias, qkvb, "qkvb"),
-                (layer.self_attention.linear_proj.weight, values["projw"][i], "projw"),
-                (layer.self_attention.linear_proj.bias, values["projb"][i], "projb"),
-                (layer.pre_mlp_layernorm.weight, values["ln2w"][i], "ln2w"),
-                (layer.pre_mlp_layernorm.bias, values["ln2b"][i], "ln2b"),
-                (layer.mlp.linear_fc1.weight, values["fc1w"][i], "fc1w"),
-                (layer.mlp.linear_fc1.bias, values["fc1b"][i], "fc1b"),
-                (layer.mlp.linear_fc2.weight, values["fc2w"][i], "fc2w"),
-                (layer.mlp.linear_fc2.bias, values["fc2b"][i], "fc2b"),
-            ]
-            for target, source, name in pairs:
-                assign(target, source, f"layer{i}.{name}")
-        assign(model.decoder.final_layernorm.weight, final_w, "lnf.weight")
-        assign(model.decoder.final_layernorm.bias, final_b, "lnf.bias")
-    print(f"loaded LLMC checkpoint: {path}", flush=True)
+
+        embedding = tensor_parallel_slice(padded_wte if tp_size > 1 else padded_wte[:50257], tp_rank, tp_size, 0)
+        if model.pre_process:
+            assign(model.embedding.word_embeddings.weight, embedding, "wte")
+            assign(model.embedding.position_embeddings.weight, wpe, "wpe")
+        for layer in model.decoder.layers:
+            i = layer.layer_number - 1
+            qkvw = values["qkvw"][i].view(3, 12, 64, 768).permute(1, 0, 2, 3)
+            qkvb = values["qkvb"][i].view(3, 12, 64).permute(1, 0, 2)
+            qkvw = tensor_parallel_slice(qkvw, tp_rank, tp_size, 0).reshape(-1, 768)
+            qkvb = tensor_parallel_slice(qkvb, tp_rank, tp_size, 0).reshape(-1)
+            assign_norm(layer.input_layernorm, layer.self_attention.linear_qkv, values["ln1w"][i], f"layer{i}.ln1w", "weight")
+            assign_norm(layer.input_layernorm, layer.self_attention.linear_qkv, values["ln1b"][i], f"layer{i}.ln1b", "bias")
+            assign(layer.self_attention.linear_qkv.weight, qkvw, f"layer{i}.qkvw")
+            assign(layer.self_attention.linear_qkv.bias, qkvb, f"layer{i}.qkvb")
+            assign(layer.self_attention.linear_proj.weight, tensor_parallel_slice(values["projw"][i], tp_rank, tp_size, 1), f"layer{i}.projw")
+            assign(layer.self_attention.linear_proj.bias, values["projb"][i], f"layer{i}.projb")
+            assign_norm(layer.pre_mlp_layernorm, layer.mlp.linear_fc1, values["ln2w"][i], f"layer{i}.ln2w", "weight")
+            assign_norm(layer.pre_mlp_layernorm, layer.mlp.linear_fc1, values["ln2b"][i], f"layer{i}.ln2b", "bias")
+            assign(layer.mlp.linear_fc1.weight, tensor_parallel_slice(values["fc1w"][i], tp_rank, tp_size, 0), f"layer{i}.fc1w")
+            assign(layer.mlp.linear_fc1.bias, tensor_parallel_slice(values["fc1b"][i], tp_rank, tp_size, 0), f"layer{i}.fc1b")
+            assign(layer.mlp.linear_fc2.weight, tensor_parallel_slice(values["fc2w"][i], tp_rank, tp_size, 1), f"layer{i}.fc2w")
+            assign(layer.mlp.linear_fc2.bias, values["fc2b"][i], f"layer{i}.fc2b")
+        if model.post_process:
+            assign(model.shared_embedding_or_output_weight() if model.share_embeddings_and_output_weights else model.output_layer.weight, embedding, "output")
+            assign(model.decoder.final_layernorm.weight, final_w, "lnf.weight")
+            assign(model.decoder.final_layernorm.bias, final_b, "lnf.bias")
+    pp_rank = parallel_state.get_pipeline_model_parallel_rank()
+    print(f"loaded LLMC checkpoint on TP rank {tp_rank}/{tp_size}, "
+          f"PP rank {pp_rank}/{args.pipeline_model_parallel_size}: {path}", flush=True)
+
+def aligned_vocab_loss(self, labels, logits):
+    args = get_args()
+    partition_size = logits.size(-1)
+    vocab_start = parallel_state.get_tensor_model_parallel_rank() * partition_size
+    valid_size = max(0, min(partition_size, args.vocab_size - vocab_start))
+    if valid_size < partition_size:
+        logits = logits.clone()
+        logits[..., valid_size:] = float("-inf")
+    labels = labels.transpose(0, 1).contiguous()
+    loss = tensor_parallel.vocab_parallel_cross_entropy(logits, labels)
+    return loss.transpose(0, 1).contiguous()
+
+
+def aligned_gpt_builder(*args, **kwargs):
+    model = gpt_builder(*args, **kwargs)
+    if model.post_process and parallel_state.get_tensor_model_parallel_world_size() > 1:
+        model.compute_language_model_loss = aligned_vocab_loss.__get__(model, type(model))
+    return model
+
 
 def llmc_model_provider(pre_process=True, post_process=True, vp_stage=None, config=None, pg_collection=None):
-    model = model_provider(gpt_builder, pre_process, post_process, vp_stage, config, pg_collection)
+    model = model_provider(aligned_gpt_builder, pre_process, post_process, vp_stage, config, pg_collection)
     load_llmc(model, get_args().llmc_filepath)
-    register_tensor_dumps(model)
     return model
 
 if __name__ == "__main__":
