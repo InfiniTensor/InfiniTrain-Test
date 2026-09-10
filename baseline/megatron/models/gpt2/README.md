@@ -3,8 +3,7 @@
 This shadow baseline compares InfiniTrain and Megatron-LM using the same GPT-2
 LLMC FP32 checkpoint and the same ordered Tiny Shakespeare token stream. It
 uses upstream Megatron training and GPTDataset without modifying
-`third_party/Megatron-LM`. Direct LLMC loading currently supports TP=1 and
-PP=1.
+`third_party/Megatron-LM`. Direct LLMC loading supports the TP, SP, PP, and VPP combinations in the basic matrix.
 
 ## Prepare and run
 
@@ -29,6 +28,16 @@ The basic matrix matches `baseline/pytorch/scripts/run_pytorch_training.sh`:
 | `gpt2_2_bfloat16` | BF16 autocast | 1 | 80 | 5120 | 64 | 10 |
 | `gpt2_3` | FP32 | 8 | 10 | 5120 | 64 | 10 |
 | `gpt2_3_bfloat16` | BF16 autocast | 8 | 10 | 5120 | 64 | 10 |
+| `gpt2_4` | FP32 | 8 / DP=2, TP=4 | 40 | 5120 | 64 | 10 |
+| `gpt2_4_bfloat16` | BF16 autocast | 8 / DP=2, TP=4 | 40 | 5120 | 64 | 10 |
+| `gpt2_5` | FP32 | 8 / DP=2, TP=4, SP | 40 | 5120 | 64 | 10 |
+| `gpt2_5_bfloat16` | BF16 autocast | 8 / DP=2, TP=4, SP, TE | 40 | 5120 | 64 | 10 |
+| `gpt2_6` | FP32 | 8 / PP=8 | 10 | 5120 | 64 | 10 |
+| `gpt2_6_bfloat16` | BF16 autocast | 8 / PP=8 | 10 | 5120 | 64 | 10 |
+| `gpt2_7` | FP32 | 4 / PP=4, VPP=2 | 10 | 5120 | 64 | 10 |
+| `gpt2_7_bfloat16` | BF16 autocast | 4 / PP=4, VPP=2 | 10 | 5120 | 64 | 10 |
+| `gpt2_8` | FP32 | 8 / DP=2, TP=2, PP=2, SP, VPP=2 | 20 | 5120 | 64 | 10 |
+| `gpt2_8_bfloat16` | BF16 autocast | 8 / DP=2, TP=2, PP=2, SP, VPP=2, TE | 20 | 5120 | 64 | 10 |
 
 The BF16 basic cases use `DTYPE=autocast_bfloat16`: parameters remain FP32
 while the forward pass runs under PyTorch BF16 autocast, matching the
@@ -58,11 +67,11 @@ For batch loss and throughput comparison against an InfiniTrain standard run
 directory:
 
 ```bash
-python3 baseline/megatron/scripts/compare_loss.py /path/to/infinitrain/logs/basic baseline/megatron/artifacts/gpt2/logs --include-prefix gpt2_ --threshold-fp32 2e-3 --include-cases gpt2_1,gpt2_1_bfloat16,gpt2_2,gpt2_2_bfloat16,gpt2_3,gpt2_3_bfloat16
+python3 baseline/megatron/scripts/compare_loss.py /path/to/infinitrain/logs/basic baseline/megatron/artifacts/gpt2/logs --include-prefix gpt2_ --threshold-fp32 2e-3 --include-cases gpt2_1,gpt2_1_bfloat16,gpt2_2,gpt2_2_bfloat16,gpt2_3,gpt2_3_bfloat16,gpt2_4,gpt2_4_bfloat16,gpt2_5,gpt2_5_bfloat16,gpt2_6,gpt2_6_bfloat16,gpt2_7,gpt2_7_bfloat16,gpt2_8,gpt2_8_bfloat16
 ```
 
 ```bash
-python3 baseline/megatron/scripts/compare_tps.py /path/to/infinitrain/logs/basic baseline/megatron/artifacts/gpt2/logs --include-prefix gpt2_ --include-cases gpt2_1,gpt2_1_bfloat16,gpt2_2,gpt2_2_bfloat16,gpt2_3,gpt2_3_bfloat16
+python3 baseline/megatron/scripts/compare_tps.py /path/to/infinitrain/logs/basic baseline/megatron/artifacts/gpt2/logs --include-prefix gpt2_ --include-cases gpt2_1,gpt2_1_bfloat16,gpt2_2,gpt2_2_bfloat16,gpt2_3,gpt2_3_bfloat16,gpt2_4,gpt2_4_bfloat16,gpt2_5,gpt2_5_bfloat16,gpt2_6,gpt2_6_bfloat16,gpt2_7,gpt2_7_bfloat16,gpt2_8,gpt2_8_bfloat16
 ```
 
 The GPT-2 FP32 threshold is `2e-3`; BF16 uses the batch comparer's default

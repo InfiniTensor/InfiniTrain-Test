@@ -4,8 +4,11 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../../.." && pwd)"
 ARTIFACT_ROOT="${GPT2_MEGATRON_ARTIFACT_ROOT:-${REPO_ROOT}/baseline/megatron/artifacts/gpt2}"
-CASES="${CASES:-gpt2_1,gpt2_1_bfloat16,gpt2_2,gpt2_2_bfloat16,gpt2_3,gpt2_3_bfloat16}"
+CASES="${CASES:-gpt2_1,gpt2_1_bfloat16,gpt2_2,gpt2_2_bfloat16,gpt2_3,gpt2_3_bfloat16,gpt2_4,gpt2_4_bfloat16,gpt2_5,gpt2_5_bfloat16,gpt2_6,gpt2_6_bfloat16,gpt2_7,gpt2_7_bfloat16,gpt2_8,gpt2_8_bfloat16}"
 LOG_STEP_PERFORMANCE="${LOG_STEP_PERFORMANCE:-1}"
+AGGREGATE_LOG="${RESULT_LOG:-${REPO_ROOT}/baseline/megatron/logs/qy_a100_g3025/result_megatron_training_gpt2.log}"
+mkdir -p "$(dirname "${AGGREGATE_LOG}")" "${ARTIFACT_ROOT}/logs"
+: > "${AGGREGATE_LOG}"
 
 case_selected() {
   [[ ",${CASES}," == *",$1,"* ]]
@@ -17,26 +20,43 @@ run_case() {
   local nproc_per_node="$3"
   local micro_batch_size="$4"
   local total_batch_tokens="$5"
+  local tp="${6:-1}"
+  local pp="${7:-1}"
+  local sp="${8:-0}"
+  local vpp="${9:-1}"
+  local transformer_impl="${10:-local}"
+  local pipeline_layout="${11:-}"
+  local display_dtype="${dtype}"
+  if [[ "${dtype}" == "autocast_bfloat16" ]]; then display_dtype="bfloat16"; fi
 
   if ! case_selected "${name}"; then
     return
   fi
 
-  echo "=========================================="
-  echo "Running: ${name} (${dtype}, ${nproc_per_node} GPU(s))"
-  echo "=========================================="
+  local case_log="${ARTIFACT_ROOT}/logs/${name}.log"
+  : > "${case_log}"
+  {
+    echo "=============================================="
+    echo "Running: ${name} (${display_dtype})"
+    echo "=============================================="
+  } | tee -a "${case_log}" "${AGGREGATE_LOG}"
   DTYPE="${dtype}" \
   NPROC_PER_NODE="${nproc_per_node}" \
-  TP=1 \
-  PP=1 \
+  TP="${tp}" \
+  PP="${pp}" \
+  SP="${sp}" \
+  VPP="${vpp}" \
+  PIPELINE_LAYOUT="${pipeline_layout}" \
+  TRANSFORMER_IMPL="${transformer_impl}" \
   MICRO_BATCH_SIZE="${micro_batch_size}" \
   TOTAL_BATCH_TOKENS="${total_batch_tokens}" \
   SEQ_LENGTH=64 \
   TRAIN_ITERS=10 \
   LR=1e-4 \
   LOG_STEP_PERFORMANCE="${LOG_STEP_PERFORMANCE}" \
-  RESULT_LOG="${ARTIFACT_ROOT}/logs/${name}.log" \
-    bash "${SCRIPT_DIR}/run_training.sh"
+  RESULT_LOG="${case_log}" \
+  APPEND_RESULT_LOG=1 \
+    bash "${SCRIPT_DIR}/run_training.sh" | tee >(grep --line-buffered "lm loss:" >> "${AGGREGATE_LOG}")
 }
 
 # Keep these case names and batch shapes aligned with
@@ -47,5 +67,15 @@ run_case gpt2_2          float32  1 80 5120
 run_case gpt2_2_bfloat16 autocast_bfloat16 1 80 5120
 run_case gpt2_3          float32  8 10 5120
 run_case gpt2_3_bfloat16 autocast_bfloat16 8 10 5120
+run_case gpt2_4          float32  8 40 5120 4 1 0 1
+run_case gpt2_4_bfloat16 autocast_bfloat16 8 40 5120 4 1 0 1
+run_case gpt2_5          float32  8 40 5120 4 1 1 1 local
+run_case gpt2_5_bfloat16 autocast_bfloat16 8 40 5120 4 1 1 1 transformer_engine
+run_case gpt2_6          float32  8 10 5120 1 8 0 1 local "Ett|tt|tt|tt|t|t|t|tL"
+run_case gpt2_6_bfloat16 autocast_bfloat16 8 10 5120 1 8 0 1 local "Ett|tt|tt|tt|t|t|t|tL"
+run_case gpt2_7          float32  4 10 5120 1 4 0 2 local "Ett|tt|t|t|tt|tt|t|tL"
+run_case gpt2_7_bfloat16 autocast_bfloat16 4 10 5120 1 4 0 2 local "Ett|tt|t|t|tt|tt|t|tL"
+run_case gpt2_8          float32  8 20 5120 2 2 1 2
+run_case gpt2_8_bfloat16 autocast_bfloat16 8 20 5120 2 2 1 2 transformer_engine
 
 echo "All selected GPT-2 Megatron basic cases finished."
