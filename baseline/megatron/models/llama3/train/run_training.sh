@@ -7,7 +7,7 @@ BASELINE="${REPO_ROOT}/baseline/megatron"
 MEGATRON_PATH="${MEGATRON_PATH:-${REPO_ROOT}/third_party/Megatron-LM}"
 DATA_PREFIX="${LLAMA3_MEGATRON_DATA_PREFIX:-${BASELINE}/artifacts/llama3/datasets/llama3_text_document}"
 LLMC_FILEPATH="${LLAMA3_LLMC_FILEPATH:-/data1/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin}"
-RESULT_LOG="${RESULT_LOG:-${BASELINE}/artifacts/llama3/logs/result_megatron_training.log}"
+RESULT_LOG="${RESULT_LOG:-${BASELINE}/artifacts/llama3/logs/result_megatron_training_llama3.log}"
 CACHE_PATH="${LLAMA3_MEGATRON_CACHE_PATH:-${BASELINE}/artifacts/llama3/cache}"
 
 NPROC_PER_NODE="${NPROC_PER_NODE:-1}"

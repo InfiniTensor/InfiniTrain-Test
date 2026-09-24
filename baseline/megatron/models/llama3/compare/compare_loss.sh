@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../../.." && pwd)"
 BASELINE="${REPO_ROOT}/baseline/megatron"
 INFINITRAIN_LOG="${INFINITRAIN_LOG:?set INFINITRAIN_LOG to the InfiniTrain Llama3 log}"
-MEGATRON_LOG="${MEGATRON_LOG:-${BASELINE}/artifacts/llama3/logs/result_megatron_training.log}"
+MEGATRON_LOG="${MEGATRON_LOG:-${BASELINE}/artifacts/llama3/logs/result_megatron_training_llama3.log}"
 OUTPUT_JSON="${OUTPUT_JSON:-${BASELINE}/artifacts/llama3/results/loss_comparison.json}"
 
 python "${BASELINE}/common/tools/compare_loss.py" \

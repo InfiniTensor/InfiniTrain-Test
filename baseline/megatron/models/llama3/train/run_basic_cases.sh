@@ -6,7 +6,7 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../../.." && pwd)"
 ARTIFACT_ROOT="${LLAMA3_MEGATRON_ARTIFACT_ROOT:-${REPO_ROOT}/baseline/megatron/artifacts/llama3}"
 CASES="${CASES:-llama3_1,llama3_1_bfloat16,llama3_2,llama3_2_bfloat16,llama3_3,llama3_3_bfloat16,llama3_4,llama3_4_bfloat16,llama3_5,llama3_5_bfloat16,llama3_6,llama3_6_bfloat16,llama3_7,llama3_7_bfloat16,llama3_8,llama3_8_bfloat16}"
 LOG_STEP_PERFORMANCE="${LOG_STEP_PERFORMANCE:-1}"
-AGGREGATE_LOG="${RESULT_LOG:-${REPO_ROOT}/baseline/megatron/logs/qy_a100_g3025/result_megatron_training.log}"
+AGGREGATE_LOG="${RESULT_LOG:-${REPO_ROOT}/baseline/megatron/logs/qy_a100_g3025/result_megatron_training_llama3.log}"
 mkdir -p "$(dirname "${AGGREGATE_LOG}")" "${ARTIFACT_ROOT}/logs"
 : > "${AGGREGATE_LOG}"
 
