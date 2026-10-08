@@ -243,18 +243,12 @@ class MLP(nn.Module):
         if config.ffn_dim_multiplier is not None:
             hidden_dim = int(config.ffn_dim_multiplier * hidden_dim)
         hidden_dim = config.multiple_of * ((hidden_dim + config.multiple_of - 1) // config.multiple_of)
-        self.c_fc = nn.Linear(config.n_embd, hidden_dim, bias=False)
-        self.c_fc2 = nn.Linear(config.n_embd, hidden_dim, bias=False)
+        self.c_fc = nn.Linear(config.n_embd, 2 * hidden_dim, bias=False)
         self.c_proj = nn.Linear(hidden_dim, config.n_embd, bias=False)
 
     def forward(self, x):
-        # SwiGLU self.c_proj(F.silu(self.c_fc2(x)) * self.c_fc(x))  <-- 3. difference compared to GPT-2
-        x1 = self.c_fc(x)
-        x2 = self.c_fc2(x)
-        x2 = x2 * F.sigmoid(x2)
-        x3 = x1 * x2
-        x4 = self.c_proj(x3)
-        return x4
+        gate, up = self.c_fc(x).chunk(2, dim=-1)
+        return self.c_proj(F.silu(gate) * up)
 
 class Block(nn.Module):
 
@@ -379,12 +373,13 @@ class LLaMA(nn.Module):
             new_key = f'transformer.h.{i}.attn.c_proj.weight'
             checkpoint[new_key] = checkpoint.pop(old_key)
 
-        ffn_map = {'w1': 'c_fc2', 'w2': 'c_proj', 'w3': 'c_fc'}
         for i in range(config.n_layer):
-            for name in ['feed_forward.w1', 'feed_forward.w2', 'feed_forward.w3']:
-                old_key = f'layers.{i}.{name}.weight'
-                new_key = f'transformer.h.{i}.mlp.{ffn_map[name.split(".")[-1]]}.weight'
-                checkpoint[new_key] = checkpoint.pop(old_key)
+            gate = checkpoint.pop(f'layers.{i}.feed_forward.w1.weight')
+            up = checkpoint.pop(f'layers.{i}.feed_forward.w3.weight')
+            checkpoint[f'transformer.h.{i}.mlp.c_fc.weight'] = torch.cat((gate, up), dim=0)
+            checkpoint[f'transformer.h.{i}.mlp.c_proj.weight'] = checkpoint.pop(
+                f'layers.{i}.feed_forward.w2.weight'
+            )
 
         checkpoint['transformer.ln_f.weight'] = checkpoint.pop('norm.weight')
         checkpoint['lm_head.weight'] = checkpoint.pop('output.weight')
@@ -423,12 +418,13 @@ class LLaMA(nn.Module):
             new_key = f'transformer.h.{i}.attn.c_proj.weight'
             checkpoint[new_key] = checkpoint.pop(old_key)
 
-        ffn_map = {'gate_proj': 'c_fc2', 'down_proj': 'c_proj', 'up_proj': 'c_fc'}
         for i in range(config.n_layer):
-            for name in ['gate_proj', 'down_proj', 'up_proj']:
-                old_key = f'model.layers.{i}.mlp.{name}.weight'
-                new_key = f'transformer.h.{i}.mlp.{ffn_map[name]}.weight'
-                checkpoint[new_key] = checkpoint.pop(old_key)
+            gate = checkpoint.pop(f'model.layers.{i}.mlp.gate_proj.weight')
+            up = checkpoint.pop(f'model.layers.{i}.mlp.up_proj.weight')
+            checkpoint[f'transformer.h.{i}.mlp.c_fc.weight'] = torch.cat((gate, up), dim=0)
+            checkpoint[f'transformer.h.{i}.mlp.c_proj.weight'] = checkpoint.pop(
+                f'model.layers.{i}.mlp.down_proj.weight'
+            )
 
         checkpoint['transformer.ln_f.weight'] = checkpoint.pop('model.norm.weight')
 
@@ -912,10 +908,13 @@ def write_tensors(model_tensors, L, file, dtype):
         write_fun(model_tensors[f"transformer.h.{i}.attn.c_proj.weight"], file)
     for i in range(L): # (L, C)
         write_fun(model_tensors[f"transformer.h.{i}.ln_2.weight"], file)
-    for i in range(L): # (L, 4C, C)
-        write_fun(model_tensors[f"transformer.h.{i}.mlp.c_fc.weight"], file)
-    for i in range(L): # (L, 4C, C)
-        write_fun(model_tensors[f"transformer.h.{i}.mlp.c_fc2.weight"], file)
+    # Keep the LLMC checkpoint layout unchanged: all up weights, then all gate weights.
+    for i in range(L):
+        _, up = model_tensors[f"transformer.h.{i}.mlp.c_fc.weight"].chunk(2, dim=0)
+        write_fun(up, file)
+    for i in range(L):
+        gate, _ = model_tensors[f"transformer.h.{i}.mlp.c_fc.weight"].chunk(2, dim=0)
+        write_fun(gate, file)
     for i in range(L): # (L, C, 4C)
         write_fun(model_tensors[f"transformer.h.{i}.mlp.c_proj.weight"], file)
     write_fun(model_tensors["transformer.ln_f.weight"], file) # (C, )

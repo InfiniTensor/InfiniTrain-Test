@@ -9,6 +9,7 @@ set -euo pipefail
 LORA_ARGS=(
   --lora_rank 8
   --lora_alpha 16.0
+  --lora_target_modules c_attn,attn.c_proj,c_fc
 )
 
 # ---------- GPT-2 LoRA ----------
