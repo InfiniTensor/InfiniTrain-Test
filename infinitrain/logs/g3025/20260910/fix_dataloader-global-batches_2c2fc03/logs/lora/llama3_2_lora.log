@@ -1,0 +1,22 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DBUILD_TEST=ON -DPROFILE_MODE=OFF .. && make -j
+[RUN_METADATA] /home/chenxi/InfiniTrain/scripts/20260910/fix_dataloader-global-batches_2c2fc03/logs/run_metadata.log
+[RUN_STARTED_AT] 2026-09-10 10:01:49
+[GIT_BRANCH] fix/dataloader-global-batches
+[GIT_COMMIT] 2c2fc033d8413fabc71a73f62ba47c549fe1c2e2
+[GIT_COMMIT_SHORT] 2c2fc03
+[COMMAND] ./llama3 --input_bin /data1/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data1/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device cuda --dtype float32 --num_iteration 10 --batch_size 80 --total_batch_size 5120 --lora_rank 8 --lora_alpha 16.0 --lora_target_modules c_attn,attn.c_proj --lora_load_path /data1/shared/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_lora_weights_rank8_alpha16.bin
+===== LoRA Model Summary (Rank 0) ======
+Total parameters:     1499662336
+Trainable parameters: 1179648 (0.0786609%)
+Frozen parameters:    1498482688
+========================================
+E20260910 10:26:05.573802 139628819705856 main.cc:515] step    1/10 | train loss 4.726651 | lr 1.00e-05 | (1697.41 ms | 3016 tok/s | peak used: 29990 MB | peak reserved: 30208 MB, DP=1, TP=1, SP=1, PP=1)
+E20260910 10:26:07.202086 139628819705856 main.cc:515] step    2/10 | train loss 4.578903 | lr 1.00e-05 | (1627.96 ms | 3145 tok/s | peak used: 29990 MB | peak reserved: 30272 MB, DP=1, TP=1, SP=1, PP=1)
+E20260910 10:26:08.825050 139628819705856 main.cc:515] step    3/10 | train loss 4.217411 | lr 1.00e-05 | (1622.92 ms | 3155 tok/s | peak used: 29990 MB | peak reserved: 30336 MB, DP=1, TP=1, SP=1, PP=1)
+E20260910 10:26:10.453287 139628819705856 main.cc:515] step    4/10 | train loss 4.375901 | lr 1.00e-05 | (1628.19 ms | 3145 tok/s | peak used: 29990 MB | peak reserved: 30432 MB, DP=1, TP=1, SP=1, PP=1)
+E20260910 10:26:12.080429 139628819705856 main.cc:515] step    5/10 | train loss 4.413907 | lr 1.00e-05 | (1627.10 ms | 3147 tok/s | peak used: 29990 MB | peak reserved: 30464 MB, DP=1, TP=1, SP=1, PP=1)
+E20260910 10:26:13.797581 139628819705856 main.cc:515] step    6/10 | train loss 4.446315 | lr 1.00e-05 | (1717.11 ms | 2982 tok/s | peak used: 29990 MB | peak reserved: 30560 MB, DP=1, TP=1, SP=1, PP=1)
+E20260910 10:26:15.425685 139628819705856 main.cc:515] step    7/10 | train loss 4.510062 | lr 1.00e-05 | (1628.06 ms | 3145 tok/s | peak used: 29990 MB | peak reserved: 30656 MB, DP=1, TP=1, SP=1, PP=1)
+E20260910 10:26:17.049687 139628819705856 main.cc:515] step    8/10 | train loss 4.406632 | lr 1.00e-05 | (1623.96 ms | 3153 tok/s | peak used: 29990 MB | peak reserved: 30688 MB, DP=1, TP=1, SP=1, PP=1)
+E20260910 10:26:18.673665 139628819705856 main.cc:515] step    9/10 | train loss 4.425781 | lr 1.00e-05 | (1623.93 ms | 3153 tok/s | peak used: 29990 MB | peak reserved: 30784 MB, DP=1, TP=1, SP=1, PP=1)
+E20260910 10:26:20.338337 139628819705856 main.cc:515] step   10/10 | train loss 4.382312 | lr 1.00e-05 | (1664.63 ms | 3076 tok/s | peak used: 29990 MB | peak reserved: 30848 MB, DP=1, TP=1, SP=1, PP=1)

@@ -1,0 +1,57 @@
+[LAST_CMAKE] cmake -DUSE_CUDA=ON -DUSE_NCCL=ON -DBUILD_TEST=OFF -DPROFILE_MODE=ON .. && make -j
+[RUN_METADATA] /workspace/Github/InfiniTrain-sp-gradient-finalize/scripts/20261009/fix_sp-gradient-finalize_c15c2d1/logs/run_metadata.log
+[RUN_STARTED_AT] 2026-10-09 02:46:02
+[GIT_BRANCH] fix/sp-gradient-finalize
+[GIT_COMMIT] c15c2d10e3c5dd8134a809e2b05a23e2b4847a33
+[GIT_COMMIT_SHORT] c15c2d1
+[COMMAND] ./gpt2 --input_bin /data1/shared/InfiniTrain-dev/data/llmc/gpt2/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /data1/shared/InfiniTrain-dev/data/llmc/gpt2/gpt2_124M.bin --device cuda --dtype=float32 --nthread_per_process=8 --num_iteration=10 --batch_size=40 --total_batch_size=5120 --tensor_parallel=4 --sequence_parallel=true --lora_rank=4 --lora_alpha=8.0 --lora_target_modules=attn.c_proj,c_fc,c_proj
+===== LoRA Model Summary (Rank 6) ======
+Total parameters:     41603328
+Trainable parameters: 193536 (0.465194%)
+Frozen parameters:    41409792
+========================================
+===== LoRA Model Summary (Rank 7) ======
+Total parameters:     41603328
+Trainable parameters: 193536 (0.465194%)
+Frozen parameters:    41409792
+========================================
+===== LoRA Model Summary (Rank 5) ======
+Total parameters:     41603328
+Trainable parameters: 193536 (0.465194%)
+Frozen parameters:    41409792
+========================================
+===== LoRA Model Summary (Rank 4) ======
+Total parameters:     41603328
+Trainable parameters: 193536 (0.465194%)
+Frozen parameters:    41409792
+========================================
+===== LoRA Model Summary (Rank 1) ======
+Total parameters:     41603328
+Trainable parameters: 193536 (0.465194%)
+Frozen parameters:    41409792
+========================================
+===== LoRA Model Summary (Rank 3) ======
+Total parameters:     41603328
+Trainable parameters: 193536 (0.465194%)
+Frozen parameters:    41409792
+========================================
+===== LoRA Model Summary (Rank 2) ======
+Total parameters:     41603328
+Trainable parameters: 193536 (0.465194%)
+Frozen parameters:    41409792
+========================================
+===== LoRA Model Summary (Rank 0) ======
+Total parameters:     41603328
+Trainable parameters: 193536 (0.465194%)
+Frozen parameters:    41409792
+========================================
+E20261009 04:22:31.193396 140597633458176 main.cc:547] step    1/10 | train loss 5.219545 | lr 1.00e-04 | (821.87 ms | 6230 tok/s | peak used:  1733 MB | peak reserved:  1792 MB, DP=2, TP=4, SP=4, PP=1)
+E20261009 04:22:31.568288 140597633458176 main.cc:547] step    2/10 | train loss 5.143068 | lr 1.00e-04 | (374.40 ms | 13675 tok/s | peak used:  1733 MB | peak reserved:  1792 MB, DP=2, TP=4, SP=4, PP=1)
+E20261009 04:22:31.971792 140597633458176 main.cc:547] step    3/10 | train loss 5.074586 | lr 1.00e-04 | (403.42 ms | 12691 tok/s | peak used:  1733 MB | peak reserved:  1792 MB, DP=2, TP=4, SP=4, PP=1)
+E20261009 04:22:32.314317 140597633458176 main.cc:547] step    4/10 | train loss 4.774493 | lr 1.00e-04 | (342.43 ms | 14952 tok/s | peak used:  1733 MB | peak reserved:  1792 MB, DP=2, TP=4, SP=4, PP=1)
+E20261009 04:22:32.737476 140597633458176 main.cc:547] step    5/10 | train loss 4.900578 | lr 1.00e-04 | (423.11 ms | 12101 tok/s | peak used:  1733 MB | peak reserved:  1792 MB, DP=2, TP=4, SP=4, PP=1)
+E20261009 04:22:33.098091 140597633458176 main.cc:547] step    6/10 | train loss 4.886546 | lr 1.00e-04 | (360.51 ms | 14202 tok/s | peak used:  1733 MB | peak reserved:  1792 MB, DP=2, TP=4, SP=4, PP=1)
+E20261009 04:22:33.476507 140597633458176 main.cc:547] step    7/10 | train loss 4.977941 | lr 1.00e-04 | (378.36 ms | 13532 tok/s | peak used:  1733 MB | peak reserved:  1792 MB, DP=2, TP=4, SP=4, PP=1)
+E20261009 04:22:33.808316 140597633458176 main.cc:547] step    8/10 | train loss 4.925625 | lr 1.00e-04 | (331.75 ms | 15433 tok/s | peak used:  1733 MB | peak reserved:  1792 MB, DP=2, TP=4, SP=4, PP=1)
+E20261009 04:22:34.216491 140597633458176 main.cc:547] step    9/10 | train loss 4.957052 | lr 1.00e-04 | (408.11 ms | 12546 tok/s | peak used:  1733 MB | peak reserved:  1792 MB, DP=2, TP=4, SP=4, PP=1)
+E20261009 04:22:34.995302 140597633458176 main.cc:547] step   10/10 | train loss 5.033367 | lr 1.00e-04 | (778.74 ms | 6575 tok/s | peak used:  1733 MB | peak reserved:  1792 MB, DP=2, TP=4, SP=4, PP=1)
