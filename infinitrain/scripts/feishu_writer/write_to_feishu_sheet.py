@@ -34,7 +34,7 @@ def resolve_path_from_cwd(path_value) -> Path:
 
 def resolve_path_from_writer_repo(path_value) -> Path:
     path = Path(path_value).expanduser()
-    if path.is_absolute():
+    if path.is_absolute() or path.is_file():
         return path.resolve()
     return (WRITER_REPO_ROOT / path).resolve()
 
@@ -694,7 +694,7 @@ def main():
         'config_file',
         nargs='?',
         default=str(DEFAULT_TOKEN_FILE),
-        help='Path to JSON config file in the writer repo. Relative paths are resolved from InfiniTrain-Test. Default: infinitrain/scripts/feishu_writer/token.json'
+        help='Path to JSON config file. Relative paths are checked in the current working directory first, then InfiniTrain-Test. Default: infinitrain/scripts/feishu_writer/token.json'
     )
     parser.add_argument(
         '--log-dir',
