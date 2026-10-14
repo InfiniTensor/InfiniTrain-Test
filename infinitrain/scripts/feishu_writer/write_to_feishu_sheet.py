@@ -36,7 +36,8 @@ def resolve_path_from_writer_repo(path_value) -> Path:
     path = Path(path_value).expanduser()
     if path.is_absolute() or path.is_file():
         return path.resolve()
-    return (WRITER_REPO_ROOT / path).resolve()
+    repo_path = (WRITER_REPO_ROOT / path).resolve()
+    return repo_path if repo_path.is_file() else path.resolve()
 
 
 class FeishuSheetHandler:
