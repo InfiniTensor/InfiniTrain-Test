@@ -17,7 +17,9 @@ INFINITRAIN_LOSS = re.compile(
 
 
 def get_dtype_from_filename(filename):
-    return "bfloat16" if "_bfloat16" in filename or "_bf16" in filename else "fp32"
+    if "_bfloat16" in filename or "_bf16" in filename:
+        return "bfloat16"
+    return "sp_fp32" if "_sp_" in filename else "fp32"
 
 
 def parse_log(file_path):
@@ -108,6 +110,7 @@ def main():
     parser.add_argument("--include-cases", help="comma-separated log basenames to compare")
     parser.add_argument("--prefer-autocast-bfloat16", action="store_true", help="prefer historical Megatron autocast BF16 log names")
     parser.add_argument("--threshold-fp32", type=float, default=1e-5)
+    parser.add_argument("--threshold-sp-fp32", type=float, default=1e-5)
     parser.add_argument("--threshold-bf16", type=float, default=1e-2)
     args = parser.parse_args()
 
@@ -140,7 +143,7 @@ def main():
     warnings = [f"requested case not found: {name}" for name in requested_missing]
     for name in common:
         dtype = get_dtype_from_filename(name)
-        threshold = args.threshold_bf16 if dtype == "bfloat16" else args.threshold_fp32
+        threshold = args.threshold_bf16 if dtype == "bfloat16" else (args.threshold_sp_fp32 if dtype == "sp_fp32" else args.threshold_fp32)
         try:
             steps, max_abs_diff, mismatches, case_warnings = compare_files(
                 baseline_files[name], test_files[name], threshold
