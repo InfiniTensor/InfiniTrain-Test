@@ -1,0 +1,67 @@
+[LAST_CMAKE] cmake -DINFINITRAIN_BACKEND=maca -DINFINITRAIN_MACA_WITH_MCCL=ON -DBUILD_TEST=OFF -DPROFILE_MODE=OFF ../.. && cmake --build . -j
+[RUN_METADATA] /home/chenxi/InfiniTrain-Backends/20261029/feat_maca-backend_88d62ce/logs/run_metadata.log
+[RUN_STARTED_AT] 2026-10-29 09:49:21
+[GIT_BRANCH] feat/maca-backend
+[GIT_COMMIT] 88d62ce04b2400b560f5f707ae80af7f74e8335b
+[GIT_COMMIT_SHORT] 88d62ce
+[COMMAND] ./infini_run --nproc_per_node=8 ./qwen3 --input_bin /nfs/InfiniTrain-dev/data/llmc/qwen3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /nfs/InfiniTrain-dev/data/llmc/qwen3/qwen3-8b-fp32.llmc --device maca --dtype=bfloat16 --nthread_per_process=1 --num_iteration=10 --batch_size=1 --total_batch_size=64 --tensor_parallel=8 --lora_rank=8 --lora_alpha=16.0 --lora_target_modules=c_attn,c_proj,c_fc,c_fc2 --lora_load_path=$QWEN3_LORA_WEIGHTS_DIR
+E20261029 10:05:04.221380 127411292371072 maca_guard_impl.cc:214] MACA runtime: multithread_workarounds=true allocator=sync retain_async_pool=false MACA_LAUNCH_BLOCKING=1 MCCL_P2P_DISABLE=1
+E20261029 10:05:04.221499 132474278824064 maca_guard_impl.cc:214] MACA runtime: multithread_workarounds=true allocator=sync retain_async_pool=false MACA_LAUNCH_BLOCKING=1 MCCL_P2P_DISABLE=1
+E20261029 10:05:04.221499 138544118134912 maca_guard_impl.cc:214] MACA runtime: multithread_workarounds=true allocator=sync retain_async_pool=false MACA_LAUNCH_BLOCKING=1 MCCL_P2P_DISABLE=1
+E20261029 10:05:04.221561 130798027921536 maca_guard_impl.cc:214] MACA runtime: multithread_workarounds=true allocator=sync retain_async_pool=false MACA_LAUNCH_BLOCKING=1 MCCL_P2P_DISABLE=1
+E20261029 10:05:04.221681 132458063378560 maca_guard_impl.cc:214] MACA runtime: multithread_workarounds=true allocator=sync retain_async_pool=false MACA_LAUNCH_BLOCKING=1 MCCL_P2P_DISABLE=1
+E20261029 10:05:04.221562 130684171688064 maca_guard_impl.cc:214] MACA runtime: multithread_workarounds=true allocator=sync retain_async_pool=false MACA_LAUNCH_BLOCKING=1 MCCL_P2P_DISABLE=1
+E20261029 10:05:04.221786 136595424782464 maca_guard_impl.cc:214] MACA runtime: multithread_workarounds=true allocator=sync retain_async_pool=false MACA_LAUNCH_BLOCKING=1 MCCL_P2P_DISABLE=1
+E20261029 10:05:04.221677 132349341849728 maca_guard_impl.cc:214] MACA runtime: multithread_workarounds=true allocator=sync retain_async_pool=false MACA_LAUNCH_BLOCKING=1 MCCL_P2P_DISABLE=1
+===== LoRA Model Summary (Rank 0) ======
+Total parameters:     1030525952
+Trainable parameters: 6414336 (0.622433%)
+Frozen parameters:    1024111616
+========================================
+===== LoRA Model Summary (Rank 7) ======
+Total parameters:     1030525952
+Trainable parameters: 6414336 (0.622433%)
+Frozen parameters:    1024111616
+========================================
+===== LoRA Model Summary (Rank 2) ======
+Total parameters:     1030525952
+Trainable parameters: 6414336 (0.622433%)
+Frozen parameters:    1024111616
+========================================
+===== LoRA Model Summary (Rank 1) ======
+Total parameters:     1030525952
+Trainable parameters: 6414336 (0.622433%)
+Frozen parameters:    1024111616
+========================================
+===== LoRA Model Summary (Rank 6) ======
+Total parameters:     1030525952
+Trainable parameters: 6414336 (0.622433%)
+Frozen parameters:    1024111616
+========================================
+===== LoRA Model Summary (Rank 5) ======
+Total parameters:     1030525952
+Trainable parameters: 6414336 (0.622433%)
+Frozen parameters:    1024111616
+========================================
+===== LoRA Model Summary (Rank 3) ======
+Total parameters:     1030525952
+Trainable parameters: 6414336 (0.622433%)
+Frozen parameters:    1024111616
+========================================
+===== LoRA Model Summary (Rank 4) ======
+Total parameters:     1030525952
+Trainable parameters: 6414336 (0.622433%)
+Frozen parameters:    1024111616
+========================================
+E20261029 10:06:55.532558 136595424782464 main.cc:645] step    1/10 | train loss 4.217561 | lr 1.00e-05 | (2245.13 ms | 29 tok/s | peak used:  6096 MB | peak reserved:  6098 MB, DP=1, TP=8, SP=1, PP=1)
+E20261029 10:06:56.398183 136595424782464 main.cc:645] step    2/10 | train loss 3.671772 | lr 1.00e-05 | (865.50 ms | 74 tok/s | peak used:  6096 MB | peak reserved:  6098 MB, DP=1, TP=8, SP=1, PP=1)
+E20261029 10:06:57.235802 136595424782464 main.cc:645] step    3/10 | train loss 3.529378 | lr 1.00e-05 | (837.55 ms | 76 tok/s | peak used:  6096 MB | peak reserved:  6098 MB, DP=1, TP=8, SP=1, PP=1)
+E20261029 10:06:58.084410 136595424782464 main.cc:645] step    4/10 | train loss 4.730344 | lr 1.00e-05 | (848.54 ms | 75 tok/s | peak used:  6096 MB | peak reserved:  6098 MB, DP=1, TP=8, SP=1, PP=1)
+E20261029 10:06:58.985829 136595424782464 main.cc:645] step    5/10 | train loss 4.217930 | lr 1.00e-05 | (901.35 ms | 71 tok/s | peak used:  6096 MB | peak reserved:  6098 MB, DP=1, TP=8, SP=1, PP=1)
+E20261029 10:06:59.902944 136595424782464 main.cc:645] step    6/10 | train loss 4.892333 | lr 1.00e-05 | (917.05 ms | 70 tok/s | peak used:  6096 MB | peak reserved:  6098 MB, DP=1, TP=8, SP=1, PP=1)
+E20261029 10:07:00.763426 136595424782464 main.cc:645] step    7/10 | train loss 4.582334 | lr 1.00e-05 | (860.39 ms | 74 tok/s | peak used:  6096 MB | peak reserved:  6098 MB, DP=1, TP=8, SP=1, PP=1)
+E20261029 10:07:01.617407 136595424782464 main.cc:645] step    8/10 | train loss 4.748293 | lr 1.00e-05 | (853.91 ms | 75 tok/s | peak used:  6096 MB | peak reserved:  6098 MB, DP=1, TP=8, SP=1, PP=1)
+E20261029 10:07:02.473345 136595424782464 main.cc:645] step    9/10 | train loss 3.759685 | lr 1.00e-05 | (855.87 ms | 75 tok/s | peak used:  6096 MB | peak reserved:  6098 MB, DP=1, TP=8, SP=1, PP=1)
+E20261029 10:07:03.276526 136595424782464 main.cc:645] step   10/10 | train loss 4.546366 | lr 1.00e-05 | (803.11 ms | 80 tok/s | peak used:  6096 MB | peak reserved:  6098 MB, DP=1, TP=8, SP=1, PP=1)
+[EXIT_CODE] 0
+[RESULT] PASS
