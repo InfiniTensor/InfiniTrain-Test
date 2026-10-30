@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../../.." && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../.." && pwd)"
 BASELINE="${REPO_ROOT}/baseline/megatron"
 MEGATRON_PATH="${MEGATRON_PATH:-${REPO_ROOT}/third_party/Megatron-LM}"
 DATA_PREFIX="${LLAMA3_MEGATRON_DATA_PREFIX:-${BASELINE}/artifacts/llama3/datasets/llama3_text_document}"
@@ -74,7 +74,9 @@ if [[ "${APPEND_RESULT_LOG:-0}" == "1" ]]; then TEE_ARGS+=(-a); fi
 {
   echo "InfiniTrain-Test commit: $(git -C "${REPO_ROOT}" rev-parse HEAD)"
   echo "Megatron-LM commit: $(git -C "${MEGATRON_PATH}" rev-parse HEAD)"
-  echo "DP=${DP} TP=${TP} PP=${PP} SP=${SP} VPP=${VPP} transformer_impl=${TRANSFORMER_IMPL} dtype=${DTYPE} micro_batch=${MICRO_BATCH_SIZE} global_batch=${GLOBAL_BATCH_SIZE} seq=${SEQ_LENGTH}"
+  echo "Framework: Megatron-LM"
+  echo "Model: llama3"
+  echo "Config: GPUs=${NPROC_PER_NODE} DP=${DP} TP=${TP} PP=${PP} SP=${SP} VPP=${VPP} transformer_impl=${TRANSFORMER_IMPL} dtype=${DTYPE} micro_batch=${MICRO_BATCH_SIZE} global_batch=${GLOBAL_BATCH_SIZE} seq=${SEQ_LENGTH} steps=${TRAIN_ITERS} lr=${LR}"
   MEGATRON_PATH="${MEGATRON_PATH}" PYTHONPATH="${MEGATRON_PATH}:${PYTHONPATH:-}" \
-    torchrun --standalone --nproc_per_node "${NPROC_PER_NODE}" "${SCRIPT_DIR}/pretrain.py" "${ARGS[@]}"
+    torchrun --standalone --nproc_per_node "${NPROC_PER_NODE}" "${BASELINE}/models/llama3/pretrain.py" "${ARGS[@]}"
 } 2>&1 | tee "${TEE_ARGS[@]}" "${RESULT_LOG}"
