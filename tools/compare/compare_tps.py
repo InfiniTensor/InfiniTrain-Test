@@ -10,29 +10,60 @@ from compare_utils import collect_flat_megatron_logs, collect_log_files, exit_if
 
 
 THROUGHPUT = re.compile(
-    r"(?:PERF\s+)?step\s+(\d+)/\d+.*?\|\s+(\d+(?:\.\d+)?)\s+tok/s"
+    r"(?:PERF\s+)?step\s+(\d+)/(\d+).*?\|\s+(\d+(?:\.\d+)?)\s+tok/s"
 )
 CONFIG_ITEM = re.compile(r"(DP|TP|PP|SP|VPP|dtype|micro_batch|global_batch|seq)=([^\s]+)")
 
 
 def parse_log(file_path):
     values = {}
+    expected_steps = None
     for line_number, line in enumerate(file_path.read_text(errors="replace").splitlines(), 1):
         match = THROUGHPUT.search(line)
         if not match:
             continue
         step = int(match.group(1))
+        declared_steps = int(match.group(2))
         if step in values:
             raise ValueError(f"{file_path}:{line_number}: duplicate step {step}")
-        values[step] = float(match.group(2))
+        if expected_steps is not None and declared_steps != expected_steps:
+            raise ValueError(
+                f"{file_path}:{line_number}: inconsistent planned steps "
+                f"{declared_steps}, expected {expected_steps}"
+            )
+        expected_steps = declared_steps
+        values[step] = float(match.group(3))
     if not values:
         raise ValueError(f"no throughput records found in {file_path}")
-    return values
+    return values, expected_steps
+
+
+def incomplete_steps_warning(label, values, expected_steps):
+    if len(values) >= expected_steps:
+        return None
+    return (
+        f"{label}: only {len(values)}/{expected_steps} steps found; "
+        "comparing available steps"
+    )
 
 
 def compare_files(baseline_file, test_file, warmup_steps):
-    baseline = {step: value for step, value in parse_log(baseline_file).items() if step > warmup_steps}
-    test = {step: value for step, value in parse_log(test_file).items() if step > warmup_steps}
+    baseline_all, baseline_expected = parse_log(baseline_file)
+    test_all, test_expected = parse_log(test_file)
+    warnings = [
+        warning
+        for warning in (
+            incomplete_steps_warning("baseline", baseline_all, baseline_expected),
+            incomplete_steps_warning("test", test_all, test_expected),
+        )
+        if warning
+    ]
+    if baseline_expected != test_expected:
+        warnings.append(
+            f"planned step mismatch: baseline={baseline_expected}, test={test_expected}"
+        )
+    baseline = {step: value for step, value in baseline_all.items() if step > warmup_steps}
+    test = {step: value for step, value in test_all.items() if step > warmup_steps}
     if not baseline or not test:
         raise ValueError("no throughput records remain after warmup")
     if baseline.keys() != test.keys():
@@ -43,7 +74,7 @@ def compare_files(baseline_file, test_file, warmup_steps):
     baseline_average = sum(baseline.values()) / len(baseline)
     test_average = sum(test.values()) / len(test)
     throughput_ratio = baseline_average / test_average
-    return baseline_average, test_average, throughput_ratio, len(baseline)
+    return baseline_average, test_average, throughput_ratio, len(baseline), warnings
 
 
 def parse_config(file_path):
@@ -103,9 +134,11 @@ def main():
     if args.test_dir is not None:
         exit_if_duplicate_logs(args.test_dir, test_duplicates)
 
+    requested_missing = []
     if args.include_cases:
         selected = {name.strip() for name in args.include_cases.split(",") if name.strip()}
         selected = {name if name.endswith(".log") else f"{name}.log" for name in selected}
+        requested_missing = sorted(selected - (set(baseline_files) | set(test_files)))
         baseline_files = {name: path for name, path in baseline_files.items() if name in selected}
         test_files = {name: path for name, path in test_files.items() if name in selected}
 
@@ -115,9 +148,10 @@ def main():
 
     results = []
     errors = []
+    warnings = [f"requested case not found: {name}" for name in requested_missing]
     for name in common:
         try:
-            baseline_average, test_average, ratio, steps = compare_files(
+            baseline_average, test_average, ratio, steps, case_warnings = compare_files(
                 baseline_files[name], test_files[name], args.warmup_steps
             )
         except ValueError as error:
@@ -140,6 +174,7 @@ def main():
             name.removesuffix(".log"), basic, parallel, str(steps),
             f"{baseline_average:.2f}", f"{test_average:.2f}", f"{ratio:.1%}",
         ))
+        warnings.extend(f"{name}: {message}" for message in case_warnings)
 
     print(f"Baseline: {args.baseline_dir.resolve()}")
     print(f"Test:     {test_display}")
@@ -154,11 +189,13 @@ def main():
     print()
     if errors:
         print_group(f"ERRORS ({len(errors)})", errors)
+    if warnings:
+        print_group(f"WARNINGS ({len(warnings)})", [f"WARNING: {message}" for message in warnings])
 
     if baseline_only:
-        print(f"Missing from test: {', '.join(baseline_only)}")
+        print(f"Missing from Megatron test: {', '.join(baseline_only)}")
     if test_only:
-        print(f"Missing from baseline: {', '.join(test_only)}")
+        print(f"Missing from InfiniTrain baseline: {', '.join(test_only)}")
     if baseline_only or test_only:
         print()
 
@@ -168,6 +205,7 @@ def main():
     print(f"compared: {len(results)}")
     print(f"errors  : {len(errors)}")
     print(f"missing : {len(baseline_only) + len(test_only)}")
+    print(f"warnings: {len(warnings)}")
     print(f"total   : {total}")
     print("=" * 64)
     return 1 if errors or baseline_only or test_only else 0

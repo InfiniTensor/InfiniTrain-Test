@@ -20,10 +20,9 @@ except ModuleNotFoundError:
     pass
 
 SCRIPT_DIR = pathlib.Path(__file__).resolve().parent
-REPO_ROOT = SCRIPT_DIR.parents[4]
+REPO_ROOT = SCRIPT_DIR.parents[3]
 MEGATRON_PATH = pathlib.Path(os.environ.get("MEGATRON_PATH", REPO_ROOT / "third_party" / "Megatron-LM"))
 sys.path.insert(0, str(MEGATRON_PATH))
-sys.path.insert(0, str(SCRIPT_DIR.parent / "adapter"))
 
 import pretrain_gpt as upstream
 from gpt_builders import gpt_builder
@@ -69,21 +68,40 @@ def install_performance_logger():
         elapsed_seconds = elapsed.item()
         step = (iteration if iteration is not None else len(measured)) + 1
         tokens_per_second = runtime_args.global_batch_size * runtime_args.seq_length / elapsed_seconds
-        rank = torch.distributed.get_rank() if torch.distributed.is_initialized() else 0
-        if rank == 0:
-            print(f"PERF step {step}/{runtime_args.train_iters} | "
-                  f"{elapsed_seconds * 1000:.2f} ms | {tokens_per_second:.0f} tok/s", flush=True)
+        should_report = (
+            parallel_state.is_pipeline_last_stage(ignore_virtual=True)
+            and parallel_state.get_tensor_model_parallel_rank() == 0
+            and parallel_state.get_data_parallel_rank() == 0
+        )
+        loss_dict, skipped_iter = result[0], result[1]
+        if should_report and "lm loss" in loss_dict:
+            loss = loss_dict["lm loss"].float().item()
+            print(
+                f"step {step:4d}/{runtime_args.train_iters} | train loss {loss:.6f} "
+                f"| ({elapsed_seconds * 1000:.2f} ms | {tokens_per_second:.0f} tok/s)",
+                flush=True,
+            )
 
-        if step > 1 and not result[1]:
+        if step > 1 and not skipped_iter:
             measured.append((elapsed_seconds, tokens_per_second))
-        if step == runtime_args.train_iters and rank == 0:
-            if measured:
-                avg_latency_ms = sum(item[0] for item in measured) / len(measured) * 1000
-                avg_throughput = sum(item[1] for item in measured) / len(measured)
-                print(f"PERF summary | measured_steps {len(measured)} | "
-                      f"avg {avg_latency_ms:.2f} ms | avg {avg_throughput:.0f} tok/s", flush=True)
-            else:
-                print("PERF summary | measured_steps 0", flush=True)
+        if step == runtime_args.train_iters:
+            peak_memory = torch.tensor(
+                torch.cuda.max_memory_allocated() // 1024 // 1024,
+                dtype=torch.int64,
+                device=torch.cuda.current_device(),
+            )
+            if torch.distributed.is_initialized():
+                torch.distributed.all_reduce(peak_memory, op=torch.distributed.ReduceOp.MAX)
+            if should_report:
+                if measured:
+                    avg_latency_ms = sum(item[0] for item in measured) / len(measured) * 1000
+                    avg_throughput = sum(item[1] for item in measured) / len(measured)
+                    print(f"final {len(measured)} iters Latency avg: {avg_latency_ms:.3f}ms", flush=True)
+                    print(f"final {len(measured)} iters Throughput avg: {avg_throughput:.0f} tok/s", flush=True)
+                else:
+                    print("final 0 iters Latency avg: n/a", flush=True)
+                    print("final 0 iters Throughput avg: n/a", flush=True)
+                print(f"peak memory consumption: {peak_memory.item()} MiB", flush=True)
         return result
 
     megatron_training.train_step = timed_train_step
