@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../../.." && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../../../.." && pwd)"
 ARTIFACT_ROOT="${LLAMA3_MEGATRON_ARTIFACT_ROOT:-${REPO_ROOT}/baseline/megatron/artifacts/llama3}"
 CASES="${CASES:-llama3_1,llama3_1_bfloat16,llama3_2,llama3_2_bfloat16,llama3_3,llama3_3_bfloat16,llama3_4,llama3_4_bfloat16,llama3_5,llama3_5_bfloat16,llama3_6,llama3_6_bfloat16,llama3_7,llama3_7_bfloat16,llama3_8,llama3_8_bfloat16}"
 LOG_STEP_PERFORMANCE="${LOG_STEP_PERFORMANCE:-1}"
@@ -12,6 +12,21 @@ mkdir -p "$(dirname "${AGGREGATE_LOG}")" "${ARTIFACT_ROOT}/logs"
 
 case_selected() {
   [[ ",${CASES}," == *",$1,"* ]]
+}
+
+filter_summary_log() {
+  awk '
+    /^InfiniTrain-Test commit:/ ||
+    /^Megatron-LM commit:/ ||
+    /^Framework:/ ||
+    /^Model:/ ||
+    /^Config:/ ||
+    /^step[[:space:]]+[0-9]+\/[0-9]+[[:space:]]+\|[[:space:]]+train loss/ ||
+    /^final [0-9]+ iters (Latency|Throughput) avg:/ ||
+    /^peak memory consumption:/ {
+      print
+    }
+  '
 }
 
 run_case() {
@@ -54,7 +69,7 @@ run_case() {
   LOG_STEP_PERFORMANCE="${LOG_STEP_PERFORMANCE}" \
   RESULT_LOG="${case_log}" \
   APPEND_RESULT_LOG=1 \
-    bash "${SCRIPT_DIR}/run_training.sh" | tee >(grep --line-buffered "lm loss:" >> "${AGGREGATE_LOG}")
+    bash "${SCRIPT_DIR}/run.sh" | filter_summary_log | tee -a "${AGGREGATE_LOG}"
 }
 
 # Keep these case names and batch shapes aligned with

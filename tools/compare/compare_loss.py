@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Batch-compare InfiniTrain and Megatron training losses."""
 
+import math
 import re
 import sys
 from argparse import ArgumentParser
@@ -9,8 +10,10 @@ from pathlib import Path
 from compare_utils import collect_flat_megatron_logs, collect_log_files, exit_if_duplicate_logs
 
 
-INFINITRAIN_LOSS = re.compile(r"step\s+(\d+)/\d+\s+\|\s+train loss\s+([-+\d.eE]+)")
-MEGATRON_LOSS = re.compile(r"iteration\s+(\d+)/\s*\d+.*?lm loss:\s*([-+\d.eE]+)")
+NUMBER = r"[-+]?(?:\d+(?:\.\d*)?(?:[eE][-+]?\d+)?|\.\d+(?:[eE][-+]?\d+)?|inf(?:inity)?|nan)"
+INFINITRAIN_LOSS = re.compile(
+    rf"step\s+(\d+)/(\d+)\s+\|\s+train loss\s+({NUMBER})", re.IGNORECASE
+)
 
 
 def get_dtype_from_filename(filename):
@@ -19,27 +22,54 @@ def get_dtype_from_filename(filename):
 
 def parse_log(file_path):
     losses = {}
+    expected_steps = None
     for line_number, line in enumerate(file_path.read_text(errors="replace").splitlines(), 1):
-        match = INFINITRAIN_LOSS.search(line) or MEGATRON_LOSS.search(line)
+        match = INFINITRAIN_LOSS.search(line)
         if not match:
             continue
         step = int(match.group(1))
+        declared_steps = int(match.group(2))
+        loss = float(match.group(3))
         if step in losses:
             raise ValueError(f"{file_path}:{line_number}: duplicate step {step}")
-        losses[step] = float(match.group(2))
+        if expected_steps is not None and declared_steps != expected_steps:
+            raise ValueError(
+                f"{file_path}:{line_number}: inconsistent planned steps "
+                f"{declared_steps}, expected {expected_steps}"
+            )
+        if not math.isfinite(loss):
+            raise ValueError(f"{file_path}:{line_number}: non-finite loss at step {step}: {loss}")
+        expected_steps = declared_steps
+        losses[step] = loss
     if not losses:
         raise ValueError(f"no loss records found in {file_path}")
-    return losses
+    return losses, expected_steps
 
 
-def compare_files(baseline_file, test_file, threshold, correct_megatron_step2):
-    baseline = parse_log(baseline_file)
-    test = parse_log(test_file)
-    if correct_megatron_step2:
-        if 1 not in test or 2 not in test:
-            raise ValueError(f"{test_file}: step-2 correction requires steps 1 and 2")
-        test[2] = 2.0 * test[2] - test[1]
+def incomplete_steps_warning(label, values, expected_steps):
+    if len(values) >= expected_steps:
+        return None
+    return (
+        f"{label}: only {len(values)}/{expected_steps} steps found; "
+        "comparing available steps"
+    )
 
+
+def compare_files(baseline_file, test_file, threshold):
+    baseline, baseline_expected = parse_log(baseline_file)
+    test, test_expected = parse_log(test_file)
+    warnings = [
+        warning
+        for warning in (
+            incomplete_steps_warning("baseline", baseline, baseline_expected),
+            incomplete_steps_warning("test", test, test_expected),
+        )
+        if warning
+    ]
+    if baseline_expected != test_expected:
+        warnings.append(
+            f"planned step mismatch: baseline={baseline_expected}, test={test_expected}"
+        )
     all_steps = sorted(set(baseline) | set(test))
     mismatches = []
     max_abs_diff = 0.0
@@ -56,7 +86,7 @@ def compare_files(baseline_file, test_file, threshold, correct_megatron_step2):
                     f"step {step}: {baseline[step]:.6f} vs {test[step]:.6f} "
                     f"(diff {difference:.2e})"
                 )
-    return len(all_steps), max_abs_diff, mismatches
+    return len(all_steps), max_abs_diff, mismatches, warnings
 
 
 def print_group(title, rows):
@@ -79,13 +109,6 @@ def main():
     parser.add_argument("--prefer-autocast-bfloat16", action="store_true", help="prefer historical Megatron autocast BF16 log names")
     parser.add_argument("--threshold-fp32", type=float, default=1e-5)
     parser.add_argument("--threshold-bf16", type=float, default=1e-2)
-    parser.add_argument(
-        "--no-megatron-step2-running-average",
-        dest="correct_step2",
-        action="store_false",
-        help="disable Megatron iteration-2 running-average correction",
-    )
-    parser.set_defaults(correct_step2=True)
     args = parser.parse_args()
 
     if args.test_dir is None:
@@ -100,9 +123,11 @@ def main():
     if args.test_dir is not None:
         exit_if_duplicate_logs(args.test_dir, test_duplicates)
 
+    requested_missing = []
     if args.include_cases:
         selected = {name.strip() for name in args.include_cases.split(",") if name.strip()}
         selected = {name if name.endswith(".log") else f"{name}.log" for name in selected}
+        requested_missing = sorted(selected - (set(baseline_files) | set(test_files)))
         baseline_files = {name: path for name, path in baseline_files.items() if name in selected}
         test_files = {name: path for name, path in test_files.items() if name in selected}
 
@@ -112,12 +137,13 @@ def main():
 
     passed = []
     failed = []
+    warnings = [f"requested case not found: {name}" for name in requested_missing]
     for name in common:
         dtype = get_dtype_from_filename(name)
         threshold = args.threshold_bf16 if dtype == "bfloat16" else args.threshold_fp32
         try:
-            steps, max_abs_diff, mismatches = compare_files(
-                baseline_files[name], test_files[name], threshold, args.correct_step2
+            steps, max_abs_diff, mismatches, case_warnings = compare_files(
+                baseline_files[name], test_files[name], threshold
             )
         except ValueError as error:
             failed.append(f"[FAIL] {name}: {error}")
@@ -131,17 +157,20 @@ def main():
             failed.extend(f"       {message}" for message in mismatches)
         else:
             passed.append(f"[PASS] {summary}")
+        warnings.extend(f"{name}: {message}" for message in case_warnings)
 
     print(f"Baseline: {args.baseline_dir.resolve()}")
     print(f"Test:     {test_display}")
     print()
     print_group(f"PASSED loss cases ({len(passed)})", passed)
     print_group(f"FAILED loss cases ({sum(row.startswith('[FAIL]') for row in failed)})", failed)
+    if warnings:
+        print_group(f"WARNINGS ({len(warnings)})", [f"WARNING: {message}" for message in warnings])
 
     if baseline_only:
-        print(f"Missing from test: {', '.join(baseline_only)}")
+        print(f"Missing from Megatron test: {', '.join(baseline_only)}")
     if test_only:
-        print(f"Missing from baseline: {', '.join(test_only)}")
+        print(f"Missing from InfiniTrain baseline: {', '.join(test_only)}")
     if baseline_only or test_only:
         print()
 
@@ -153,6 +182,7 @@ def main():
     print(f"passed  : {passed_cases}")
     print(f"failed  : {failed_cases}")
     print(f"missing : {len(baseline_only) + len(test_only)}")
+    print(f"warnings: {len(warnings)}")
     print(f"total   : {total}")
     print("=" * 64)
     return 1 if failed_cases or baseline_only or test_only else 0
