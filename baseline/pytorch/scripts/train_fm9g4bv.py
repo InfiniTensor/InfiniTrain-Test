@@ -2014,7 +2014,7 @@ class Resampler(nn.Module):
         # bs, c*k**2, l -> bs, c, k**2, l -> bs, l, k**2, c -> bs*l, k**2, c
         return unfold_input_embeds
     
-    def prepare_single_key_value(self, feature_1x, feature_2x, feature_4x, feature_8x, tgt_size=(24, 24), attn_mask=None, dtype=torch.bfloat16):
+    def prepare_single_key_value(self, feature_1x, feature_2x, feature_4x, feature_8x, tgt_size=(24, 24), attn_mask=None):
         """Prepare KV in a 4*9 manner"""
         muti_res_feat_keys = []
         muti_res_feat_values = []
@@ -2032,9 +2032,10 @@ class Resampler(nn.Module):
             if feature is None:
                 continue
             
-            feature = feature.to(torch.bfloat16)
+            feature = feature.to(dtype=projector.weight.dtype)
             feature = projector(feature.permute(0,2,3,1))
-            
+            dtype = feature.dtype
+
             key_height = feature.shape[1]
             key_width = feature.shape[2]
             key_pos_embed = get_abs_pos(self.pos_embed, (key_height, key_width)) #torch.Size([550, 4096])
@@ -2054,12 +2055,13 @@ class Resampler(nn.Module):
 
         return muti_res_feat_keys, muti_res_feat_values
 
-    def query_with_parallel_attn(self, key_list, value_list, dtype=torch.bfloat16):
+    def query_with_parallel_attn(self, key_list, value_list):
         """Prepare Q and do attn"""
         bs = len(key_list) #7
 
         keys = torch.cat(key_list, dim=0)
         values = torch.cat(value_list, dim=0)
+        dtype = keys.dtype
 
         attn_results = []
         for query_now in [self.query]:
@@ -4160,12 +4162,36 @@ from transformers import Trainer, TrainingArguments
 
 @dataclass
 class BaselineArguments:
-    model_path: str = field(metadata={"help": "Local FM9G4B-V model directory"})
-    data_path: str = field(metadata={"help": "Training JSON with image paths"})
+    model_path: str = field(default="/data/shared/InfiniTrain-dev/data/llmc/9g4bv/FM9G4B-V", metadata={"help": "Local FM9G4B-V model directory"})
+    data_path: str = field(default="/data/shared/InfiniTrain-dev/data/llmc/9g4bv/FM9G4B-V/datasets/simplevqa-fm9g/data.json", metadata={"help": "Training JSON with image paths"})
     tune_vision: bool = True
     tune_llm: bool = True
     model_max_length: int = 2048
     max_slice_nums: int = 9
+
+@dataclass
+class FM9GTrainingArguments(TrainingArguments):
+    output_dir: str = "/data/shared/InfiniTrain-dev/data/llmc/9g4bv/FM9G4B-V/output/baseline"
+    deepspeed: Optional[str] = None
+    zero2: bool = field(default=False, metadata={"help": "Enable ZeRO-2; --deepspeed overrides its default configuration"})
+    bf16: bool = True
+    num_train_epochs: int = 10
+    per_device_train_batch_size: int = 1
+    gradient_accumulation_steps: int = 1
+    learning_rate: float = 1e-5
+    weight_decay: float = 0.1
+    adam_beta2: float = 0.95
+    lr_scheduler_type: str = "cosine"
+    warmup_ratio: float = 0.01
+    gradient_checkpointing: bool = True
+    logging_steps: float = 1
+    save_strategy: str = "no"
+    report_to: str = "none"
+
+    def __post_init__(self):
+        if self.zero2 and not self.deepspeed:
+            self.deepspeed = "/data/shared/InfiniTrain-dev/data/llmc/9g4bv/FM9G4B-V/ds_config_zero2.json"
+        super().__post_init__()
 
 
 class FM9GTrainer(Trainer):
@@ -4195,7 +4221,7 @@ class FM9GTrainer(Trainer):
 
 
 def main():
-    parser = HfArgumentParser((BaselineArguments, TrainingArguments))
+    parser = HfArgumentParser((BaselineArguments, FM9GTrainingArguments))
     baseline, args = parser.parse_args_into_dataclasses()
     if not Path(baseline.model_path).is_dir():
         raise ValueError(f"Model directory not found: {baseline.model_path}")
