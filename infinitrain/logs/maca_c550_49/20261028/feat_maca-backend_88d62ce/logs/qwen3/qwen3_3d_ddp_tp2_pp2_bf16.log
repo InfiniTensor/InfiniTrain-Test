@@ -1,0 +1,26 @@
+[LAST_CMAKE] cmake -DINFINITRAIN_BACKEND=maca -DINFINITRAIN_MACA_WITH_MCCL=ON -DBUILD_TEST=OFF -DPROFILE_MODE=OFF ../.. && cmake --build . -j
+[RUN_METADATA] /home/chenxi/InfiniTrain-Backends/20261029/feat_maca-backend_88d62ce/logs/run_metadata.log
+[RUN_STARTED_AT] 2026-10-29 09:49:21
+[GIT_BRANCH] feat/maca-backend
+[GIT_COMMIT] 88d62ce04b2400b560f5f707ae80af7f74e8335b
+[GIT_COMMIT_SHORT] 88d62ce
+[COMMAND] ./qwen3 --input_bin /nfs/InfiniTrain-dev/data/llmc/qwen3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /nfs/InfiniTrain-dev/data/llmc/qwen3/qwen3-8b-fp32.llmc --device maca --dtype=bfloat16 --nthread_per_process=8 --num_iteration=10 --batch_size=20 --total_batch_size=5120 --tensor_parallel=2 --sequence_parallel=true --pipeline_parallel=2 --virtual_pipeline_parallel=2
+E20261029 09:57:52.468635 130073667569344 maca_guard_impl.cc:214] MACA runtime: multithread_workarounds=true allocator=sync retain_async_pool=false MACA_LAUNCH_BLOCKING=1 MCCL_P2P_DISABLE=1
+E20261029 09:58:55.284401 130073048909504 main.cc:645] step    1/10 | train loss 4.068994 | lr 1.00e-05 | (13180.66 ms | 388 tok/s | peak used: 48240 MB | peak reserved: 48242 MB, DP=2, TP=2, SP=2, PP=2)
+E20261029 09:59:06.019654 130073048909504 main.cc:645] step    2/10 | train loss 3.733763 | lr 1.00e-05 | (10735.12 ms | 477 tok/s | peak used: 48240 MB | peak reserved: 48242 MB, DP=2, TP=2, SP=2, PP=2)
+E20261029 09:59:17.020788 130073048909504 main.cc:645] step    3/10 | train loss 3.327974 | lr 1.00e-05 | (11001.01 ms | 465 tok/s | peak used: 48240 MB | peak reserved: 48242 MB, DP=2, TP=2, SP=2, PP=2)
+E20261029 09:59:31.435532 130073048909504 main.cc:645] step    4/10 | train loss 3.372286 | lr 1.00e-05 | (14414.60 ms | 355 tok/s | peak used: 48240 MB | peak reserved: 48242 MB, DP=2, TP=2, SP=2, PP=2)
+E20261029 09:59:46.450462 130073048909504 main.cc:645] step    5/10 | train loss 3.303236 | lr 1.00e-05 | (15014.78 ms | 341 tok/s | peak used: 48240 MB | peak reserved: 48242 MB, DP=2, TP=2, SP=2, PP=2)
+E20261029 10:00:00.056652 130073048909504 main.cc:645] step    6/10 | train loss 3.211335 | lr 1.00e-05 | (13606.02 ms | 376 tok/s | peak used: 48240 MB | peak reserved: 48242 MB, DP=2, TP=2, SP=2, PP=2)
+E20261029 10:00:12.645738 130073048909504 main.cc:645] step    7/10 | train loss 3.372587 | lr 1.00e-05 | (12588.93 ms | 407 tok/s | peak used: 48240 MB | peak reserved: 48242 MB, DP=2, TP=2, SP=2, PP=2)
+E20261029 10:00:25.274679 130073048909504 main.cc:645] step    8/10 | train loss 3.220203 | lr 1.00e-05 | (12628.80 ms | 405 tok/s | peak used: 48240 MB | peak reserved: 48242 MB, DP=2, TP=2, SP=2, PP=2)
+E20261029 10:00:37.531353 130073048909504 main.cc:645] step    9/10 | train loss 3.140128 | lr 1.00e-05 | (12256.35 ms | 418 tok/s | peak used: 48240 MB | peak reserved: 48242 MB, DP=2, TP=2, SP=2, PP=2)
+E20261029 10:00:50.675660 130073048909504 main.cc:645] step   10/10 | train loss 3.137252 | lr 1.00e-05 | (13144.18 ms | 390 tok/s | peak used: 48240 MB | peak reserved: 48242 MB, DP=2, TP=2, SP=2, PP=2)
+[10:00:50.707][MXKW][E]memory.c                :944 : [mxkwUnmapMemoryToGPU]fail to unmap from gpu.
+[10:00:50.707][MXKW][E]memory.c                :316 : [mxkwFreeMemory]fmm_release_svm failed
+[10:00:50.707][MXC][E]mxkwFreeMemory ptr(0x763f74c00000), size(50331648), status: 1
+[10:00:50.723][MXKW][E]memory.c                :944 : [mxkwUnmapMemoryToGPU]fail to unmap from gpu.
+[10:00:50.723][MXKW][E]memory.c                :316 : [mxkwFreeMemory]fmm_release_svm failed
+[10:00:50.723][MXC][E]mxkwFreeMemory ptr(0x763f2dc00000), size(33554432), status: 1
+[EXIT_CODE] 0
+[RESULT] PASS

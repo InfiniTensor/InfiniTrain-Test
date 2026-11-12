@@ -1,0 +1,20 @@
+[LAST_CMAKE] cmake -DINFINITRAIN_BACKEND=maca -DINFINITRAIN_MACA_WITH_MCCL=ON -DBUILD_TEST=ON -DPROFILE_MODE=OFF ../.. && cmake --build . -j
+[RUN_METADATA] /home/chenxi/InfiniTrain-Backends/20261028/feat_maca-backend_88d62ce/logs/run_metadata.log
+[RUN_STARTED_AT] 2026-10-28 03:11:43
+[GIT_BRANCH] feat/maca-backend
+[GIT_COMMIT] 88d62ce04b2400b560f5f707ae80af7f74e8335b
+[GIT_COMMIT_SHORT] 88d62ce
+[COMMAND] ./llama3 --input_bin /nfs/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin --llmc_filepath /nfs/InfiniTrain-dev/data/llmc/llama3/llama3.2_1B_fp32.bin --device maca --dtype=float32 --nthread_per_process=8 --num_iteration=10 --batch_size=40 --total_batch_size=5120 --tensor_parallel=2 --sequence_parallel=true --pipeline_parallel=2 --virtual_pipeline_parallel=2 --zero_stage=1 --learning_rate=1e-05 --min_lr=1e-06 --lr_decay_style=cosine --lr_warmup_iters=2 --lr_warmup_init=0.0 --lr_decay_iters=10
+E20261028 04:02:13.649551 136511406212800 maca_guard_impl.cc:214] MACA runtime: multithread_workarounds=true allocator=sync retain_async_pool=false MACA_LAUNCH_BLOCKING=1 MCCL_P2P_DISABLE=1
+E20261028 04:02:34.654299 136510827398848 main.cc:647] step    1/10 | train loss 4.726650 | lr 0.00e+00 | (6245.53 ms | 820 tok/s | peak used:  9798 MB | peak reserved:  9800 MB, DP=2, TP=2, SP=2, PP=2)
+E20261028 04:02:37.647626 136510827398848 main.cc:647] step    2/10 | train loss 4.580947 | lr 5.00e-06 | (2993.16 ms | 1711 tok/s | peak used:  9798 MB | peak reserved:  9800 MB, DP=2, TP=2, SP=2, PP=2)
+E20261028 04:02:40.624318 136510827398848 main.cc:647] step    3/10 | train loss 3.958149 | lr 1.00e-05 | (2976.57 ms | 1720 tok/s | peak used:  9798 MB | peak reserved:  9800 MB, DP=2, TP=2, SP=2, PP=2)
+E20261028 04:02:43.862048 136510827398848 main.cc:647] step    4/10 | train loss 3.883386 | lr 9.66e-06 | (3237.58 ms | 1581 tok/s | peak used:  9798 MB | peak reserved:  9800 MB, DP=2, TP=2, SP=2, PP=2)
+E20261028 04:02:47.175110 136510827398848 main.cc:647] step    5/10 | train loss 3.568159 | lr 8.68e-06 | (3312.88 ms | 1545 tok/s | peak used:  9798 MB | peak reserved:  9800 MB, DP=2, TP=2, SP=2, PP=2)
+E20261028 04:02:50.245114 136510827398848 main.cc:647] step    6/10 | train loss 3.501018 | lr 7.22e-06 | (3069.87 ms | 1668 tok/s | peak used:  9798 MB | peak reserved:  9800 MB, DP=2, TP=2, SP=2, PP=2)
+E20261028 04:02:53.089504 136510827398848 main.cc:647] step    7/10 | train loss 3.468195 | lr 5.50e-06 | (2844.29 ms | 1800 tok/s | peak used:  9798 MB | peak reserved:  9800 MB, DP=2, TP=2, SP=2, PP=2)
+E20261028 04:02:55.948817 136510827398848 main.cc:647] step    8/10 | train loss 3.601601 | lr 3.78e-06 | (2859.22 ms | 1791 tok/s | peak used:  9798 MB | peak reserved:  9800 MB, DP=2, TP=2, SP=2, PP=2)
+E20261028 04:02:58.824519 136510827398848 main.cc:647] step    9/10 | train loss 3.596830 | lr 2.32e-06 | (2875.61 ms | 1780 tok/s | peak used:  9798 MB | peak reserved:  9800 MB, DP=2, TP=2, SP=2, PP=2)
+E20261028 04:03:01.703179 136510827398848 main.cc:647] step   10/10 | train loss 3.459410 | lr 1.34e-06 | (2878.52 ms | 1779 tok/s | peak used:  9798 MB | peak reserved:  9800 MB, DP=2, TP=2, SP=2, PP=2)
+[EXIT_CODE] 0
+[RESULT] PASS
