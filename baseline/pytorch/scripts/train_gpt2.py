@@ -9,7 +9,7 @@ https://github.com/huggingface/transformers/blob/main/src/transformers/models/gp
 Example launches to only benchmark the speed of bfloat16 compiled GPU training:
 1 GPU:
 python train_gpt2.py --write_tensors=0 --num_iterations=50 --sequence_length=1024 --compile=1 --tensorcores=1 --dtype=bfloat16
-you can also turn on flash-attention by appending --flash=1
+you can also select fused or FlashAttention with --attention_backend=fused|flash
 4 GPU:
 torchrun --standalone --nproc_per_node=4 train_gpt2.py --write_tensors=0 --num_iterations=50 --sequence_length=1024 --compile=1 --tensorcores=1 --dtype=bfloat16
 """
@@ -44,8 +44,9 @@ class NewGELU(nn.Module):
     def forward(self, input):
         return 0.5 * input * (1.0 + torch.tanh(math.sqrt(2.0 / math.pi) * (input + 0.044715 * torch.pow(input, 3.0))))
 
-# using a global to toggle flash-attention
-FLASH = 0
+# Configured by --attention_backend before model construction.
+ATTENTION_BACKEND = "unfused"
+FLASH_ATTN_FUNC = None
 
 class CausalSelfAttention(nn.Module):
 
@@ -69,20 +70,24 @@ class CausalSelfAttention(nn.Module):
         # calculate query, key, values for all heads in batch and move head forward to be the batch dim
         qkv = self.c_attn(x)
         q, k, v = qkv.split(self.n_embd, dim=2)
-        k = k.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, nh, T, hs)
-        q = q.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, nh, T, hs)
-        v = v.view(B, T, self.n_head, C // self.n_head).transpose(1, 2) # (B, nh, T, hs)
-        if FLASH:
-            # flashattention
-            y = F.scaled_dot_product_attention(q, k, v, is_causal=True)
+        k = k.view(B, T, self.n_head, C // self.n_head) # (B, T, nh, hs)
+        q = q.view(B, T, self.n_head, C // self.n_head) # (B, T, nh, hs)
+        v = v.view(B, T, self.n_head, C // self.n_head) # (B, T, nh, hs)
+        if ATTENTION_BACKEND == "flash":
+            y = FLASH_ATTN_FUNC(q, k, v, causal=True)
         else:
-            # manual implementation of attention
-            # this materializes the large (T,T) matrix for all the queries and keys
-            att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1)))
-            att = att.masked_fill(self.bias[:,:,:T,:T] == 0, float('-inf'))
-            att = F.softmax(att, dim=-1)
-            y = att @ v # (B, nh, T, T) x (B, nh, T, hs) -> (B, nh, T, hs)
-        y = y.transpose(1, 2).contiguous().view(B, T, C) # re-assemble all head outputs side by side
+            q, k, v = map(lambda tensor: tensor.transpose(1, 2), (q, k, v)) # (B, nh, T, hs)
+            if ATTENTION_BACKEND == "fused":
+                y = F.scaled_dot_product_attention(q, k, v, is_causal=True)
+            else:
+                # manual implementation of attention
+                # this materializes the large (T,T) matrix for all the queries and keys
+                att = (q @ k.transpose(-2, -1)) * (1.0 / math.sqrt(k.size(-1)))
+                att = att.masked_fill(self.bias[:,:,:T,:T] == 0, float('-inf'))
+                att = F.softmax(att, dim=-1)
+                y = att @ v # (B, nh, T, T) x (B, nh, T, hs) -> (B, nh, T, hs)
+            y = y.transpose(1, 2)
+        y = y.contiguous().view(B, T, C) # re-assemble all head outputs side by side
         # output projection
         y = self.c_proj(y)
         return y
@@ -639,7 +644,8 @@ if __name__ == "__main__":
     # memory management
     parser.add_argument("--device", type=str, default="", help="by default we autodetect, or set it here")
     parser.add_argument("--compile", type=int, default=0, help="torch.compile the model")
-    parser.add_argument("--flash", type=int, default=0, help="use flash attention")
+    parser.add_argument("--attention_backend", choices=("unfused", "fused", "flash"), default="unfused",
+                        help="attention backend")
     parser.add_argument("--dtype", type=str, default="float32", help="float32|float16|bfloat16")
     parser.add_argument("--zero_stage", type=int, default=0, help="zero redundancy optimizer stage (0/1/2/3)")
     # python -> C bridge
@@ -659,6 +665,8 @@ if __name__ == "__main__":
     assert 1 <= T <= 1024
     assert args.dtype in {"float32", "float16", "bfloat16"}
     assert args.model in {"gpt2", "gpt2-medium", "gpt2-large", "gpt2-xl", "d12", "d24", "d36", "d48"}
+    if args.attention_backend == "flash" and args.dtype not in {"float16", "bfloat16"}:
+        parser.error("--attention_backend=flash requires --dtype=float16 or --dtype=bfloat16")
 
     # set up DDP (distributed data parallel). torchrun sets this env variable
     ddp = int(os.environ.get('RANK', -1)) != -1 # is this a ddp run?
@@ -716,9 +724,15 @@ if __name__ == "__main__":
     if args.tensorcores:
         torch.set_float32_matmul_precision('high')
 
-    # turn on/off flash attention
-    assert args.flash in {0, 1}
-    FLASH = args.flash
+    ATTENTION_BACKEND = args.attention_backend
+    if ATTENTION_BACKEND == "flash":
+        if device_type != "cuda":
+            parser.error("--attention_backend=flash requires a CUDA device")
+        try:
+            from flash_attn import flash_attn_func
+        except ImportError as exc:
+            raise RuntimeError("--attention_backend=flash requires the flash-attn Python package") from exc
+        FLASH_ATTN_FUNC = flash_attn_func
 
     # # init (and write) the tokenizer
     # enc = tiktoken.get_encoding("gpt2")
