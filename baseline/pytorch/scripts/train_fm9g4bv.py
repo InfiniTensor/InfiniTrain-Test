@@ -4154,10 +4154,12 @@ class FM9GV(FM9GVPreTrainedModel):
 from dataclasses import dataclass, field
 from functools import partial
 from pathlib import Path
-
+import time
 from torchvision import transforms
 from transformers import AutoTokenizer, HfArgumentParser
 from transformers import Trainer, TrainingArguments
+from transformers import Trainer, TrainerCallback, TrainingArguments
+from transformers.trainer_callback import PrinterCallback, ProgressCallback
 
 
 @dataclass
@@ -4193,6 +4195,45 @@ class FM9GTrainingArguments(TrainingArguments):
             self.deepspeed = "/data/shared/InfiniTrain-dev/data/llmc/9g4bv/FM9G4B-V/ds_config_zero2.json"
         super().__post_init__()
 
+class StepMetricsCallback(TrainerCallback):
+    """Report optimizer-step metrics, aggregating tokens and peaks across ranks."""
+
+    def on_train_begin(self, args, state, control, **kwargs):
+        if args.device.type == "cuda":
+            torch.cuda.reset_peak_memory_stats(args.device)
+
+    def on_step_begin(self, args, state, control, **kwargs):
+        self.tokens = 0
+        if args.device.type == "cuda":
+            torch.cuda.synchronize(args.device)
+        self.start_time = time.perf_counter()
+
+    def on_step_end(self, args, state, control, **kwargs):
+        if args.device.type == "cuda":
+            torch.cuda.synchronize(args.device)
+        elapsed = time.perf_counter() - self.start_time
+        used = torch.cuda.max_memory_allocated(args.device) if args.device.type == "cuda" else 0
+        reserved = torch.cuda.max_memory_reserved(args.device) if args.device.type == "cuda" else 0
+        tokens = torch.tensor(self.tokens, dtype=torch.int64, device=args.device)
+        peaks = torch.tensor([elapsed, used, reserved], dtype=torch.float64, device=args.device)
+        if torch.distributed.is_available() and torch.distributed.is_initialized():
+            torch.distributed.all_reduce(tokens, op=torch.distributed.ReduceOp.SUM)
+            torch.distributed.all_reduce(peaks, op=torch.distributed.ReduceOp.MAX)
+        self.last_tokens = tokens.item()
+        self.elapsed, self.used, self.reserved = peaks.tolist()
+
+    def on_log(self, args, state, control, logs=None, **kwargs):
+        if not state.is_world_process_zero or not logs or "loss" not in logs:
+            return
+        throughput = self.last_tokens / self.elapsed if self.elapsed else 0
+        print(
+            f"step {state.global_step:4d}/{state.max_steps} | train loss {logs['loss']:.6f} "
+            f"| lr {logs['learning_rate']:.2e} | "
+            f"({self.elapsed * 1000:.2f} ms | {throughput:.0f} tok/s | "
+            f"peak used: {self.used / 1024**2:.0f} MiB | "
+            f"peak reserved: {self.reserved / 1024**2:.0f} MiB)",
+            flush=True,
+        )
 
 class FM9GTrainer(Trainer):
     def compute_loss(self, model, inputs, return_outputs=False):
@@ -4208,6 +4249,7 @@ class FM9GTrainer(Trainer):
     def training_step(self, model, inputs):
         # Match the upstream Trainer's cache release before backward.
         model.train()
+        self.step_metrics.tokens += inputs["attention_mask"].sum().item()
         inputs = self._prepare_inputs(inputs)
         with self.compute_loss_context_manager():
             loss = self.compute_loss(model, inputs)
@@ -4276,10 +4318,15 @@ def main():
     args.remove_unused_columns = False
     args.label_names = ["labels"]
     args.gradient_checkpointing_kwargs = {"use_reentrant": False}
+    step_metrics = StepMetricsCallback()
     trainer = FM9GTrainer(
         model=model, tokenizer=tokenizer, args=args, train_dataset=dataset,
         data_collator=partial(data_collator, max_length=baseline.model_max_length),
+        callbacks=[step_metrics],
     )
+    trainer.step_metrics = step_metrics
+    trainer.remove_callback(PrinterCallback)
+    trainer.remove_callback(ProgressCallback)
     trainer.train()
 
 
