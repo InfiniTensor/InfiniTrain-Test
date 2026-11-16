@@ -100,6 +100,40 @@ torchrun --nproc_per_node=8 train_llama3.2_1B.py \
   --num_iterations 10 \
   --dtype bfloat16
 
+# ---------- FM9G4B-V ----------
+echo "=========================================="
+echo "Running: fm9g4bv_1_bfloat16 (single GPU, frozen LLM)"
+echo "=========================================="
+# Restrict Trainer to one GPU, respecting an existing visible-device list.
+fm9g_single_device="${CUDA_VISIBLE_DEVICES:-0}"
+CUDA_VISIBLE_DEVICES="${fm9g_single_device%%,*}" python train_fm9g4bv.py --tune_llm false
+
+
+echo "=========================================="
+echo "Running: fm9g4bv_1_fp32 (single GPU, frozen LLM)"
+echo "=========================================="
+CUDA_VISIBLE_DEVICES=0 python train_fm9g4bv.py \
+  --bf16 false \
+  --fp16 false \
+  --tune_llm false
+
+echo "=========================================="
+echo "Running: fm9g4bv_2_bfloat16 (8 GPUs, full training, ZeRO-2)"
+echo "=========================================="
+torchrun --nnodes=1 --nproc_per_node=8 \
+  --rdzv_backend=c10d --rdzv_endpoint=localhost:0 \
+  train_fm9g4bv.py --zero2 true
+
+echo "=========================================="
+echo "Running: fm9g4bv_2_fp32 (8 GPUs, full training, ZeRO-2)"
+echo "=========================================="
+torchrun --nnodes=1 --nproc_per_node=8 \
+  --rdzv_backend=c10d --rdzv_endpoint=localhost:0 \
+  train_fm9g4bv.py \
+  --zero2 true \
+  --bf16 false \
+  --fp16 false
+
 echo "=========================================="
 echo "All training jobs finished."
 echo "=========================================="
