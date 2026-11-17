@@ -1,0 +1,30 @@
+diff --git a/megatron/core/datasets/utils.py b/megatron/core/datasets/utils.py
+index e14656df7..927a93842 100644
+--- a/megatron/core/datasets/utils.py
++++ b/megatron/core/datasets/utils.py
+@@ -22,7 +22,7 @@ def compile_helpers():
+     import os
+     import subprocess
+ 
+-    command = ["make", "-C", os.path.abspath(os.path.dirname(__file__))]
++    command = ["make", "-C", os.path.abspath(os.path.dirname(__file__)), "CXX=/usr/bin/g++"]
+     if subprocess.run(command).returncode != 0:
+         import sys
+ 
+diff --git a/megatron/training/models/hybrid.py b/megatron/training/models/hybrid.py
+index b58a70d3c..8d28e8dfd 100644
+--- a/megatron/training/models/hybrid.py
++++ b/megatron/training/models/hybrid.py
+@@ -2,7 +2,11 @@
+ 
+ import logging
+ from dataclasses import dataclass
+-from typing import Any, Callable, ClassVar, Literal, override
++from typing import Any, Callable, ClassVar, Literal
++try:
++    from typing import override
++except ImportError:
++    from typing_extensions import override
+ 
+ from megatron.core.distributed.distributed_data_parallel_config import DistributedDataParallelConfig
+ from megatron.core.enums import ModelType

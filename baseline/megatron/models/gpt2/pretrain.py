@@ -11,7 +11,10 @@ import numpy as np
 import torch
 
 if os.environ.get("GPT2_DISABLE_TF32") == "1":
-    torch.backends.cuda.matmul.fp32_precision = "ieee"
+    if hasattr(torch.backends.cuda.matmul, "fp32_precision"):
+        torch.backends.cuda.matmul.fp32_precision = "ieee"
+    else:
+        torch.backends.cuda.matmul.allow_tf32 = False
 
 try:
     import nvidia_resiliency_ext as nvrx
