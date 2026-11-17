@@ -32,8 +32,12 @@ from torch.distributed import init_process_group, destroy_process_group
 from torch.distributed.optim import ZeroRedundancyOptimizer
 import torch.distributed as dist
 
+import torch_mlu  # noqa: F401 -- registers the MLU backend (torch.mlu)
+
 torch.set_float32_matmul_precision("highest")
-torch.backends.cuda.matmul.allow_tf32 = False
+# The torch.backends.cuda knobs are no-ops under torch_mlu and only warn;
+# use the MLU equivalents instead.
+torch.backends.mlu.matmul.allow_tf32 = False
 torch.backends.cudnn.allow_tf32 = False
 
 # -----------------------------------------------------------------------------

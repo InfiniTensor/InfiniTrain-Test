@@ -47,6 +47,8 @@ from torch.distributed import init_process_group, destroy_process_group
 from torch.distributed.optim import ZeroRedundancyOptimizer
 import torch.distributed as dist
 
+import torch_mlu  # noqa: F401 -- registers the MLU backend (torch.mlu)
+
 import tiktoken
 from tiktoken.load import load_tiktoken_bpe
 
@@ -58,7 +60,9 @@ def log(name, tensor):
     print(f"  → {name}, shape={tuple(tensor.shape)}")
     print(f"     range: min={min_w:.7f}, max={max_w:.7f}, values={rounded_w}")
 
-torch.backends.cuda.matmul.allow_tf32 = False
+# The torch.backends.cuda knobs are no-ops under torch_mlu and only warn;
+# use the MLU equivalents instead.
+torch.backends.mlu.matmul.allow_tf32 = False
 torch.backends.cudnn.allow_tf32 = False
 try:
     torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False

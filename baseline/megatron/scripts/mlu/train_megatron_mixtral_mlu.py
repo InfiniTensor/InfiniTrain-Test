@@ -7,15 +7,15 @@ different Megatron-LM checkout.
 
 The usual entry point is the companion shell script, which first writes a local
 LLMC checkpoint under baseline/megatron/models and then trains from it:
-    ./run_megatron_mixtral.sh
+    ./run_megatron_mlu.sh
 
 Export an LLMC checkpoint manually:
-    python3 train_megatron_mixtral.py \
+    python3 train_megatron_mixtral_mlu.py \
         --num_iterations 0 \
         --write_model_path ../models/mixtral_megatron_export.bin
 
 Train from the exported LLMC checkpoint manually:
-    python3 train_megatron_mixtral.py \
+    python3 train_megatron_mixtral_mlu.py \
         --weights_path ../models/mixtral_megatron_export.bin \
         --input_bin /data1/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin \
         --num_iterations 10 \
@@ -35,6 +35,8 @@ from dataclasses import dataclass
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
+import torch_mlu  # registers the MLU backend (torch.mlu)
 
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
@@ -582,6 +584,10 @@ def main():
             for micro_step in range(grad_accum_steps):
                 batch_idx = step * grad_accum_steps + micro_step
                 x, y = get_batch(tokens, batch_idx, args.micro_batch_size, args.sequence_length, device)
+                # torch_mlu takes over the CUDA autocast path (including the
+                # backward cast cache); device_type="mlu" has no backward
+                # cache in torch_mlu 1.33.1 and crashes in backward with a
+                # BFloat16 != float dtype mismatch.
                 with torch.autocast(device_type="cuda", dtype=autocast_dtype, enabled=use_autocast):
                     logits = model(x)
                     loss = F.cross_entropy(logits.view(-1, logits.size(-1)), y.view(-1))

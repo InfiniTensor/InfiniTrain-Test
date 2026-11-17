@@ -2,11 +2,13 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-cd "${SCRIPT_DIR}"
+TRAINING_DIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
+REPO_ROOT="$(cd -- "${TRAINING_DIR}/../.." && pwd)"
+cd "${TRAINING_DIR}"
 
-# MLU mirror of run_pytorch_training_lr_scheduler.sh (case-for-case).
-# Differences vs the CUDA original: *_mlu training scripts, per-script data
-# argument injection (the MLU scripts take explicit AFS data/weights paths).
+# MLU mirror of ../run_pytorch_training_lr_scheduler.sh (case-for-case).
+# Differences vs the CUDA original: mlu/ training scripts, per-script data
+# argument injection (the MLU scripts take explicit data/weights paths).
 
 # This script is used to compare loss only.
 # The loss performance of each case should be mathematically equivalent to the following setting with 8-card DDP.
@@ -17,27 +19,30 @@ BASE_ARGS=(
 )
 
 TRAINING_SCRIPTS=(
-  train_gpt2_mlu.py
-  train_llama3.2_1B_mlu.py
+  mlu/train_gpt2_mlu.py
+  mlu/train_llama3.2_1B_mlu.py
 )
 
-D=/mnt/afs/user_home/wangyichen/infinitrain-baseline
-DATA_GPT2="${D}/data/tinyshakespeare/tiny_shakespeare_train.bin"
-DATA_LLAMA="${D}/data/tinyshakespeare-llama3/tiny_shakespeare_train.bin"
-LLAMA_WEIGHTS="${D}/models/Llama-3.2-1B"
+# Defaults are resolved relative to the repo root; override any of them via
+# the environment when the assets live elsewhere (e.g. a shared NFS mount).
+GPT2_INPUT_BIN="${GPT2_INPUT_BIN:-${REPO_ROOT}/data/llmc/gpt2/tinyshakespeare/tiny_shakespeare_train.bin}"
+LLAMA3_INPUT_BIN="${LLAMA3_INPUT_BIN:-${REPO_ROOT}/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin}"
+LLAMA_WEIGHTS="${LLAMA_WEIGHTS:-${REPO_ROOT}/data/models/Llama-3.2-1B}"
+export HF_HOME="${HF_HOME:-${REPO_ROOT}/data/hf-home}"
+export HF_HUB_OFFLINE="${HF_HUB_OFFLINE:-1}"
 
-# The cluster has no direct internet; resolve hub models from the local
-# cache only (populated once via hf-mirror).
-export HF_HOME="${D}/models/hf-home"
-export HF_HUB_OFFLINE=1
+for path in "${GPT2_INPUT_BIN}" "${LLAMA3_INPUT_BIN}"; do
+  [[ -f "${path}" ]] || { echo "Error: input file not found: ${path}" >&2; exit 1; }
+done
+[[ -d "${LLAMA_WEIGHTS}" ]] || { echo "Error: model directory not found: ${LLAMA_WEIGHTS}" >&2; exit 1; }
 
 data_args_for() {
   case "$1" in
-    train_gpt2_mlu.py)
-      echo "--input_bin ${DATA_GPT2} --write_tensors 0"
+    mlu/train_gpt2_mlu.py)
+      echo "--input_bin ${GPT2_INPUT_BIN} --write_tensors 0"
       ;;
-    train_llama3.2_1B_mlu.py)
-      echo "--input_bin ${DATA_LLAMA} --model ${LLAMA_WEIGHTS}"
+    mlu/train_llama3.2_1B_mlu.py)
+      echo "--input_bin ${LLAMA3_INPUT_BIN} --model ${LLAMA_WEIGHTS}"
       ;;
   esac
 }
