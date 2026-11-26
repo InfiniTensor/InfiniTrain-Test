@@ -3,8 +3,6 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 TRAINING_DIR="$(cd -- "${SCRIPT_DIR}/.." && pwd)"
-PYTORCH_BASELINE_DIR="$(cd -- "${TRAINING_DIR}/.." && pwd)"
-
 export HF_HOME="${HF_HOME:-/data/shared/InfiniTrain-dev/env/HuggingFace}"
 export HF_HUB_CACHE="${HF_HUB_CACHE:-${HF_HOME}/hub}"
 export HF_HUB_OFFLINE="${HF_HUB_OFFLINE:-1}"
@@ -12,22 +10,20 @@ export TRANSFORMERS_OFFLINE="${TRANSFORMERS_OFFLINE:-${HF_HUB_OFFLINE}}"
 export HF_HUB_DISABLE_PROGRESS_BARS="${HF_HUB_DISABLE_PROGRESS_BARS:-1}"
 export TRANSFORMERS_VERBOSITY="${TRANSFORMERS_VERBOSITY:-error}"
 export TORCH_DISTRIBUTED_BACKEND="${TORCH_DISTRIBUTED_BACKEND:-nccl}"
-export TORCH_DIST_BACKEND="${TORCH_DIST_BACKEND:-${TORCH_DISTRIBUTED_BACKEND}}"
-export TORCH_CPP_LOG_LEVEL="${TORCH_CPP_LOG_LEVEL:-ERROR}"
-export OMP_NUM_THREADS="${OMP_NUM_THREADS:-1}"
 export MASTER_ADDR="${MASTER_ADDR:-127.0.0.1}"
 export MASTER_PORT="${MASTER_PORT:-29500}"
 
-PYTHON="${PYTHON:-/opt/conda/bin/python}"
-TORCHRUN="${TORCHRUN:-/opt/conda/bin/torchrun}"
+PYTHON="${PYTHON:-python}"
+TORCHRUN="${TORCHRUN:-torchrun}"
 NPROC_PER_NODE="${NPROC_PER_NODE:-8}"
 GPT2_INPUT_BIN="${GPT2_INPUT_BIN:-/nfs/InfiniTrain-dev/data/llmc/gpt2/tinyshakespeare/tiny_shakespeare_train.bin}"
 LLAMA3_INPUT_BIN="${LLAMA3_INPUT_BIN:-/nfs/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin}"
 RUN_GPT2="${RUN_GPT2:-1}"
 RUN_LLAMA3="${RUN_LLAMA3:-1}"
 WRITE_TENSORS="${WRITE_TENSORS:-}"
-PLATFORM_NAME="${PLATFORM_NAME:-maca}"
-RESULT_LOG="${RESULT_LOG:-${PYTORCH_BASELINE_DIR}/logs/${PLATFORM_NAME}/result_pytorch_training.log}"
+RESULT_LOG="${RESULT_LOG:-}"
+MACA_RUNTIME_ROOT="${MACA_RUNTIME_ROOT:-}"
+MACA_RUNTIME_WORKDIR="${MACA_RUNTIME_WORKDIR:-${TRAINING_DIR}}"
 
 [[ "${RUN_GPT2}" =~ ^[01]$ ]] || { echo "Error: RUN_GPT2 must be 0 or 1" >&2; exit 1; }
 [[ "${RUN_LLAMA3}" =~ ^[01]$ ]] || { echo "Error: RUN_LLAMA3 must be 0 or 1" >&2; exit 1; }
@@ -35,23 +31,16 @@ RESULT_LOG="${RESULT_LOG:-${PYTORCH_BASELINE_DIR}/logs/${PLATFORM_NAME}/result_p
 (( RUN_GPT2 || RUN_LLAMA3 )) || { echo "Error: no model selected" >&2; exit 1; }
 (( ! RUN_GPT2 )) || [[ -f "${GPT2_INPUT_BIN}" ]] || { echo "Error: input file not found: ${GPT2_INPUT_BIN}" >&2; exit 1; }
 (( ! RUN_LLAMA3 )) || [[ -f "${LLAMA3_INPUT_BIN}" ]] || { echo "Error: input file not found: ${LLAMA3_INPUT_BIN}" >&2; exit 1; }
-[[ -x "${PYTHON}" ]] || { echo "Error: Python not executable: ${PYTHON}" >&2; exit 1; }
-[[ -x "${TORCHRUN}" ]] || { echo "Error: torchrun not executable: ${TORCHRUN}" >&2; exit 1; }
+command -v "${PYTHON}" >/dev/null 2>&1 || { echo "Error: Python not found: ${PYTHON}" >&2; exit 1; }
+command -v "${TORCHRUN}" >/dev/null 2>&1 || { echo "Error: torchrun not found: ${TORCHRUN}" >&2; exit 1; }
+[[ -d "${MACA_RUNTIME_WORKDIR}" ]] || { echo "Error: runtime workdir not found: ${MACA_RUNTIME_WORKDIR}" >&2; exit 1; }
 
-for runtime_root in /opt/hpcc-3.5.3 /opt/hpcc /usr/local/maca /opt/maca; do
-  if [[ -d "${runtime_root}" ]]; then
-    export HPCC_PATH="${HPCC_PATH:-${runtime_root}}"
-    export MACA_PATH="${MACA_PATH:-${runtime_root}}"
-    break
-  fi
-done
-
-mkdir -p "$(dirname -- "${RESULT_LOG}")"
-if [[ -d /opt/hpcc/lib ]]; then
-  cd /opt/hpcc/lib
-else
-  cd "${TRAINING_DIR}"
+if [[ -n "${MACA_RUNTIME_ROOT}" ]]; then
+  [[ -d "${MACA_RUNTIME_ROOT}" ]] || { echo "Error: runtime root not found: ${MACA_RUNTIME_ROOT}" >&2; exit 1; }
+  export HPCC_PATH="${HPCC_PATH:-${MACA_RUNTIME_ROOT}}"
+  export MACA_PATH="${MACA_PATH:-${MACA_RUNTIME_ROOT}}"
 fi
+cd "${MACA_RUNTIME_WORKDIR}"
 
 run_case() {
   local name="$1"
@@ -103,7 +92,7 @@ run_model_cases() {
   run_ddp_case "${prefix}_3_bfloat16 (8 GPUs)" "${program}" "${input_bin}" "${common[@]}" "${ddp[@]}" --dtype bfloat16
 }
 
-{
+run_selected_models() {
   if (( RUN_GPT2 )); then
     run_model_cases gpt2 "${TRAINING_DIR}/train_gpt2.py" "${GPT2_INPUT_BIN}"
   fi
@@ -114,4 +103,11 @@ run_model_cases() {
   echo "=========================================="
   echo "All Maca training jobs finished."
   echo "=========================================="
-} 2>&1 | tee "${RESULT_LOG}"
+}
+
+if [[ -n "${RESULT_LOG}" ]]; then
+  mkdir -p "$(dirname -- "${RESULT_LOG}")"
+  run_selected_models 2>&1 | tee "${RESULT_LOG}"
+else
+  run_selected_models
+fi
