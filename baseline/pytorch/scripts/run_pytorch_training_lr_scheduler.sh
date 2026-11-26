@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WORKSPACE_ROOT="$(cd "${SCRIPT_DIR}/../../../.." && pwd)"
+GPT2_INPUT_BIN="${GPT2_INPUT_BIN:-${WORKSPACE_ROOT}/InfiniTrain/data/gpt2/tiny_shakespeare_train.bin}"
+LLAMA3_INPUT_BIN="${LLAMA3_INPUT_BIN:-${WORKSPACE_ROOT}/InfiniTrain/data/llama3/tiny_shakespeare_train.bin}"
+LLAMA3_LLMC_FILEPATH="${LLAMA3_LLMC_FILEPATH:-${WORKSPACE_ROOT}/InfiniTrain/data/llama3/llama3.2_1B_fp32.bin}"
+GPT2_ARGS=(
+  --input_bin "${GPT2_INPUT_BIN}"
+)
+LLAMA_ARGS=(
+  --input_bin "${LLAMA3_INPUT_BIN}"
+  --llmc_filepath "${LLAMA3_LLMC_FILEPATH}"
+)
+
 ### Set HF-related environments correctly if needed
 # export HF_HOME=/data1/shared/InfiniTrain-dev/env/HuggingFace
 # export HF_HUB_CACHE=/data1/shared/InfiniTrain-dev/env/HuggingFace/hub
@@ -27,7 +40,13 @@ run_case() {
     echo "=========================================="
     echo "Running: ${training_script} / ${case_id}"
     echo "=========================================="
-    torchrun --nproc_per_node=8 "${training_script}" "${BASE_ARGS[@]}" "$@"
+    if [[ "${training_script}" == train_llama3.2_1B.py ]]; then
+      torchrun --nproc_per_node=8 "${training_script}" \
+        "${BASE_ARGS[@]}" "${LLAMA_ARGS[@]}" "$@"
+    else
+      torchrun --nproc_per_node=8 "${training_script}" \
+        "${BASE_ARGS[@]}" "${GPT2_ARGS[@]}" "$@"
+    fi
   done
 }
 
