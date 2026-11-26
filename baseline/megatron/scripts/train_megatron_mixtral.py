@@ -33,13 +33,29 @@ import time
 from dataclasses import dataclass
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
-
+from torch import nn
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[3]
 DEFAULT_MEGATRON_PATH = os.environ.get("MEGATRON_PATH", str(REPO_ROOT / "third_party" / "Megatron-LM"))
+MODELS_DIR = REPO_ROOT / "baseline" / "megatron" / "models"
+sys.path.insert(0, str(MODELS_DIR))
+sys.path.insert(0, DEFAULT_MEGATRON_PATH)
 
+from device_compat import (
+    autocast_device_type,
+    device_name,
+    disable_reduced_precision_fp32,
+    distributed_backend,
+    empty_cache,
+    initialize_accelerator,
+    is_available,
+    manual_seed,
+    set_device,
+    synchronize,
+)
+
+initialize_accelerator()
 
 class RMSNorm(nn.Module):
     def __init__(self, dim, eps=1e-5):
@@ -238,9 +254,9 @@ def init_megatron(args):
     os.environ.setdefault("WORLD_SIZE", "1")
     os.environ.setdefault("LOCAL_RANK", "0")
 
-    torch.cuda.set_device(args.device_id)
+    set_device(args.device_id)
     if not dist.is_initialized():
-        dist.init_process_group("nccl", rank=0, world_size=1)
+        dist.init_process_group(distributed_backend(), rank=0, world_size=1)
 
     parallel_state.destroy_model_parallel()
     parallel_state.initialize_model_parallel(
@@ -329,11 +345,11 @@ class TinyMegatronMixtral(nn.Module):
         super().__init__()
         self.config = args
         self.transformer = nn.ModuleDict(
-            dict(
-                wte=nn.Embedding(args.vocab_size, args.n_embd),
-                h=nn.ModuleList([Block(args, layer + 1) for layer in range(args.n_layer)]),
-                ln_f=RMSNorm(args.n_embd, args.norm_eps),
-            )
+            {
+                "wte": nn.Embedding(args.vocab_size, args.n_embd),
+                "h": nn.ModuleList([Block(args, layer + 1) for layer in range(args.n_layer)]),
+                "ln_f": RMSNorm(args.n_embd, args.norm_eps),
+            }
         )
         self.lm_head = nn.Linear(args.n_embd, args.vocab_size, bias=False)
         self.freqs_cis = None
@@ -512,8 +528,8 @@ def parse_args():
     # Megatron runtime environment.
     parser.add_argument("--megatron_path", default=defaults.megatron_path, help="optional path to a Megatron-LM checkout; empty uses installed megatron-core")
     parser.add_argument("--seed", type=int, default=defaults.seed, help="random seed")
-    parser.add_argument("--device_id", type=int, default=defaults.device_id, help="CUDA device id")
-    parser.add_argument("--master_port", type=int, default=defaults.master_port, help="single-rank NCCL master port")
+    parser.add_argument("--device_id", type=int, default=defaults.device_id, help="accelerator device id")
+    parser.add_argument("--master_port", type=int, default=defaults.master_port, help="single-rank distributed master port")
 
     # Logging.
     parser.add_argument("--log_interval", type=int, default=defaults.log_interval, help="print train loss every N steps")
@@ -526,17 +542,15 @@ def parse_args():
 
 
 def configure_float32_matmul():
-    # InfiniTrain CUDA GEMM uses CUBLAS_COMPUTE_32F for fp32.
-    # Disable PyTorch/Megatron TF32 so fp32 loss validation compares the same math mode.
-    torch.backends.cuda.matmul.allow_tf32 = False
-    torch.backends.cudnn.allow_tf32 = False
+    # Match InfiniTrain's IEEE-FP32 math mode on CUDA and NPU.
+    disable_reduced_precision_fp32()
     if hasattr(torch, "set_float32_matmul_precision"):
         torch.set_float32_matmul_precision("highest")
 
 
 def validate_args(args):
-    if not torch.cuda.is_available():
-        raise RuntimeError("Megatron MoE validation requires CUDA")
+    if not is_available():
+        raise RuntimeError("Megatron MoE validation requires CUDA or NPU")
     assert args.n_embd % args.n_head == 0
     assert args.n_head % args.n_kv_head == 0
     assert 0 < args.router_topk <= args.num_experts
@@ -557,10 +571,10 @@ def main():
     validate_args(args)
     if args.weights_path:
         pathlib.Path(args.weights_path).resolve(strict=True)
-    torch.manual_seed(args.seed)
+    manual_seed(args.seed)
     configure_float32_matmul()
     init_megatron(args)
-    device = torch.device(f"cuda:{args.device_id}")
+    device = torch.device(device_name(args.device_id))
     try:
         model = TinyMegatronMixtral(args).to(device)
         if args.weights_path:
@@ -574,7 +588,7 @@ def main():
         autocast_dtype = torch.bfloat16 if args.dtype == "bfloat16" else torch.float32
         use_autocast = args.dtype == "bfloat16"
         for step in range(args.num_iterations):
-            torch.cuda.synchronize()
+            synchronize()
             step_start = time.perf_counter()
 
             optimizer.zero_grad(set_to_none=True)
@@ -582,15 +596,19 @@ def main():
             for micro_step in range(grad_accum_steps):
                 batch_idx = step * grad_accum_steps + micro_step
                 x, y = get_batch(tokens, batch_idx, args.micro_batch_size, args.sequence_length, device)
-                with torch.autocast(device_type="cuda", dtype=autocast_dtype, enabled=use_autocast):
+                with torch.autocast(
+                    device_type=autocast_device_type(),
+                    dtype=autocast_dtype,
+                    enabled=use_autocast,
+                ):
                     logits = model(x)
                     loss = F.cross_entropy(logits.view(-1, logits.size(-1)), y.view(-1))
                 loss_value += loss.detach().float().item() / grad_accum_steps
                 (loss / grad_accum_steps).backward()
             optimizer.step()
-            torch.cuda.empty_cache()
+            empty_cache()
 
-            torch.cuda.synchronize()
+            synchronize()
             duration_ms = (time.perf_counter() - step_start) * 1e3
             step_durations_ms.append(duration_ms)
             if args.log_interval > 0 and ((step + 1) % args.log_interval == 0 or step + 1 == args.num_iterations):

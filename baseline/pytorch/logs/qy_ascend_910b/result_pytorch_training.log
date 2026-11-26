@@ -1,0 +1,929 @@
+==========================================
+Running: gpt2_1 (fp32)
+==========================================
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:429: ImportWarning:
+    *************************************************************************************************************
+    The torch.Tensor.cuda and torch.nn.Module.cuda are replaced with torch.Tensor.npu and torch.nn.Module.npu now..
+    The torch.cuda.DoubleTensor is replaced with torch.npu.FloatTensor cause the double type is not supported now..
+    The backend in torch.distributed.init_process_group set to hccl now..
+    The torch.cuda.* and torch.cuda.amp.* are replaced with torch.npu.* and torch.npu.amp.* now..
+    The device parameters have been replaced with npu in the function below:
+    torch.logspace, torch.randint, torch.hann_window, torch.rand, torch.full_like, torch.ones_like, torch.rand_like, torch.randperm, torch.arange, torch.frombuffer, torch.normal, torch._empty_per_channel_affine_quantized, torch.empty_strided, torch.empty_like, torch.scalar_tensor, torch.tril_indices, torch.bartlett_window, torch.ones, torch.sparse_coo_tensor, torch.randn, torch.kaiser_window, torch.tensor, torch.triu_indices, torch.as_tensor, torch.zeros, torch.randint_like, torch.full, torch.eye, torch._sparse_csr_tensor_unsafe, torch.empty, torch._sparse_coo_tensor_unsafe, torch.blackman_window, torch.zeros_like, torch.range, torch.sparse_csr_tensor, torch.randn_like, torch.from_file, torch._cudnn_init_dropout_state, torch._empty_affine_quantized, torch.linspace, torch.hamming_window, torch.empty_quantized, torch._pin_memory, torch.load, torch.set_default_device, torch.get_device_module, torch.sparse_compressed_tensor, torch.Tensor.new_empty, torch.Tensor.new_empty_strided, torch.Tensor.new_full, torch.Tensor.new_ones, torch.Tensor.new_tensor, torch.Tensor.new_zeros, torch.Tensor.to, torch.Tensor.pin_memory, torch.nn.Module.to, torch.nn.Module.to_empty
+    *************************************************************************************************************
+
+  warnings.warn(msg, ImportWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:340: RuntimeWarning: torch.jit.script and torch.jit.script_method will be disabled by transfer_to_npu, which currently does not support them. If you need to enable them, please do not use transfer_to_npu.
+  warnings.warn(msg, RuntimeWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+[W1124 16:54:01.167832729 NPUCachingAllocator.cpp:204] Warning: The current CANN and HDK(driver) versions require processing for 32 padding size, with memory allocation. (function operator())
+Running pytorch 2.10.0+cpu
+using device: npu:0
+total desired batch size: 256
+=> calculated gradient accumulation steps: 1
+loading weights from pretrained gpt: gpt2
+DataLoader: total number of tokens: 305,260 across 1 files
+padded vocab size from 50257 to 50304
+wrote gpt2_124M.bin
+padded vocab size from 50257 to 50304
+wrote gpt2_124M_bf16.bin
+padded vocab size in reference grads from 50257 to 50304
+wrote gpt2_124M_debug_state.bin
+step    1/10 | train loss 5.356193 | norm -1.0000 | lr 1.00e-04 | (57.03 ms | 4489 tok/s)
+step    2/10 | train loss 5.060584 | norm -1.0000 | lr 1.00e-04 | (46.56 ms | 5498 tok/s)
+step    3/10 | train loss 4.860329 | norm -1.0000 | lr 1.00e-04 | (46.74 ms | 5477 tok/s)
+step    4/10 | train loss 4.961314 | norm -1.0000 | lr 1.00e-04 | (46.52 ms | 5503 tok/s)
+step    5/10 | train loss 4.888237 | norm -1.0000 | lr 1.00e-04 | (46.15 ms | 5547 tok/s)
+step    6/10 | train loss 5.099215 | norm -1.0000 | lr 1.00e-04 | (45.21 ms | 5663 tok/s)
+step    7/10 | train loss 4.860479 | norm -1.0000 | lr 1.00e-04 | (45.28 ms | 5653 tok/s)
+step    8/10 | train loss 4.945076 | norm -1.0000 | lr 1.00e-04 | (45.14 ms | 5671 tok/s)
+step    9/10 | train loss 5.121137 | norm -1.0000 | lr 1.00e-04 | (45.11 ms | 5675 tok/s)
+step   10/10 | train loss 5.270751 | norm -1.0000 | lr 1.00e-04 | (45.41 ms | 5637 tok/s)
+final 9 iters Latency avg: 45.792ms
+final 9 iters Throughput avg: 5592 tok/s
+peak memory consumption: 1503 MiB
+==========================================
+Running: gpt2_1_bfloat16
+==========================================
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:429: ImportWarning:
+    *************************************************************************************************************
+    The torch.Tensor.cuda and torch.nn.Module.cuda are replaced with torch.Tensor.npu and torch.nn.Module.npu now..
+    The torch.cuda.DoubleTensor is replaced with torch.npu.FloatTensor cause the double type is not supported now..
+    The backend in torch.distributed.init_process_group set to hccl now..
+    The torch.cuda.* and torch.cuda.amp.* are replaced with torch.npu.* and torch.npu.amp.* now..
+    The device parameters have been replaced with npu in the function below:
+    torch.logspace, torch.randint, torch.hann_window, torch.rand, torch.full_like, torch.ones_like, torch.rand_like, torch.randperm, torch.arange, torch.frombuffer, torch.normal, torch._empty_per_channel_affine_quantized, torch.empty_strided, torch.empty_like, torch.scalar_tensor, torch.tril_indices, torch.bartlett_window, torch.ones, torch.sparse_coo_tensor, torch.randn, torch.kaiser_window, torch.tensor, torch.triu_indices, torch.as_tensor, torch.zeros, torch.randint_like, torch.full, torch.eye, torch._sparse_csr_tensor_unsafe, torch.empty, torch._sparse_coo_tensor_unsafe, torch.blackman_window, torch.zeros_like, torch.range, torch.sparse_csr_tensor, torch.randn_like, torch.from_file, torch._cudnn_init_dropout_state, torch._empty_affine_quantized, torch.linspace, torch.hamming_window, torch.empty_quantized, torch._pin_memory, torch.load, torch.set_default_device, torch.get_device_module, torch.sparse_compressed_tensor, torch.Tensor.new_empty, torch.Tensor.new_empty_strided, torch.Tensor.new_full, torch.Tensor.new_ones, torch.Tensor.new_tensor, torch.Tensor.new_zeros, torch.Tensor.to, torch.Tensor.pin_memory, torch.nn.Module.to, torch.nn.Module.to_empty
+    *************************************************************************************************************
+
+  warnings.warn(msg, ImportWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:340: RuntimeWarning: torch.jit.script and torch.jit.script_method will be disabled by transfer_to_npu, which currently does not support them. If you need to enable them, please do not use transfer_to_npu.
+  warnings.warn(msg, RuntimeWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+[W1124 16:54:33.866960819 NPUCachingAllocator.cpp:204] Warning: The current CANN and HDK(driver) versions require processing for 32 padding size, with memory allocation. (function operator())
+Running pytorch 2.10.0+cpu
+using device: npu:0
+total desired batch size: 256
+=> calculated gradient accumulation steps: 1
+loading weights from pretrained gpt: gpt2
+DataLoader: total number of tokens: 305,260 across 1 files
+padded vocab size from 50257 to 50304
+wrote gpt2_124M.bin
+padded vocab size from 50257 to 50304
+wrote gpt2_124M_bf16.bin
+padded vocab size in reference grads from 50257 to 50304
+wrote gpt2_124M_debug_state.bin
+step    1/10 | train loss 5.310573 | norm -1.0000 | lr 1.00e-04 | (283.65 ms | 903 tok/s)
+step    2/10 | train loss 5.007482 | norm -1.0000 | lr 1.00e-04 | (64.94 ms | 3942 tok/s)
+step    3/10 | train loss 4.880848 | norm -1.0000 | lr 1.00e-04 | (64.63 ms | 3961 tok/s)
+step    4/10 | train loss 4.937265 | norm -1.0000 | lr 1.00e-04 | (62.20 ms | 4115 tok/s)
+step    5/10 | train loss 4.901549 | norm -1.0000 | lr 1.00e-04 | (62.31 ms | 4108 tok/s)
+step    6/10 | train loss 5.060335 | norm -1.0000 | lr 1.00e-04 | (62.26 ms | 4112 tok/s)
+step    7/10 | train loss 4.849660 | norm -1.0000 | lr 1.00e-04 | (62.46 ms | 4098 tok/s)
+step    8/10 | train loss 4.894289 | norm -1.0000 | lr 1.00e-04 | (62.48 ms | 4097 tok/s)
+step    9/10 | train loss 5.110291 | norm -1.0000 | lr 1.00e-04 | (62.41 ms | 4102 tok/s)
+step   10/10 | train loss 5.237294 | norm -1.0000 | lr 1.00e-04 | (62.32 ms | 4108 tok/s)
+final 9 iters Latency avg: 62.891ms
+final 9 iters Throughput avg: 4072 tok/s
+peak memory consumption: 1501 MiB
+==========================================
+Running: gpt2_2 (fp32)
+==========================================
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:429: ImportWarning:
+    *************************************************************************************************************
+    The torch.Tensor.cuda and torch.nn.Module.cuda are replaced with torch.Tensor.npu and torch.nn.Module.npu now..
+    The torch.cuda.DoubleTensor is replaced with torch.npu.FloatTensor cause the double type is not supported now..
+    The backend in torch.distributed.init_process_group set to hccl now..
+    The torch.cuda.* and torch.cuda.amp.* are replaced with torch.npu.* and torch.npu.amp.* now..
+    The device parameters have been replaced with npu in the function below:
+    torch.logspace, torch.randint, torch.hann_window, torch.rand, torch.full_like, torch.ones_like, torch.rand_like, torch.randperm, torch.arange, torch.frombuffer, torch.normal, torch._empty_per_channel_affine_quantized, torch.empty_strided, torch.empty_like, torch.scalar_tensor, torch.tril_indices, torch.bartlett_window, torch.ones, torch.sparse_coo_tensor, torch.randn, torch.kaiser_window, torch.tensor, torch.triu_indices, torch.as_tensor, torch.zeros, torch.randint_like, torch.full, torch.eye, torch._sparse_csr_tensor_unsafe, torch.empty, torch._sparse_coo_tensor_unsafe, torch.blackman_window, torch.zeros_like, torch.range, torch.sparse_csr_tensor, torch.randn_like, torch.from_file, torch._cudnn_init_dropout_state, torch._empty_affine_quantized, torch.linspace, torch.hamming_window, torch.empty_quantized, torch._pin_memory, torch.load, torch.set_default_device, torch.get_device_module, torch.sparse_compressed_tensor, torch.Tensor.new_empty, torch.Tensor.new_empty_strided, torch.Tensor.new_full, torch.Tensor.new_ones, torch.Tensor.new_tensor, torch.Tensor.new_zeros, torch.Tensor.to, torch.Tensor.pin_memory, torch.nn.Module.to, torch.nn.Module.to_empty
+    *************************************************************************************************************
+
+  warnings.warn(msg, ImportWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:340: RuntimeWarning: torch.jit.script and torch.jit.script_method will be disabled by transfer_to_npu, which currently does not support them. If you need to enable them, please do not use transfer_to_npu.
+  warnings.warn(msg, RuntimeWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+[W1124 16:55:07.401564270 NPUCachingAllocator.cpp:204] Warning: The current CANN and HDK(driver) versions require processing for 32 padding size, with memory allocation. (function operator())
+Running pytorch 2.10.0+cpu
+using device: npu:0
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+loading weights from pretrained gpt: gpt2
+DataLoader: total number of tokens: 305,260 across 1 files
+padded vocab size from 50257 to 50304
+wrote gpt2_124M.bin
+padded vocab size from 50257 to 50304
+wrote gpt2_124M_bf16.bin
+padded vocab size in reference grads from 50257 to 50304
+wrote gpt2_124M_debug_state.bin
+step    1/10 | train loss 5.219545 | norm -1.0000 | lr 1.00e-04 | (134.03 ms | 38200 tok/s)
+step    2/10 | train loss 5.110858 | norm -1.0000 | lr 1.00e-04 | (129.53 ms | 39527 tok/s)
+step    3/10 | train loss 5.022463 | norm -1.0000 | lr 1.00e-04 | (129.16 ms | 39640 tok/s)
+step    4/10 | train loss 4.687329 | norm -1.0000 | lr 1.00e-04 | (129.22 ms | 39624 tok/s)
+step    5/10 | train loss 4.798821 | norm -1.0000 | lr 1.00e-04 | (128.94 ms | 39708 tok/s)
+step    6/10 | train loss 4.736459 | norm -1.0000 | lr 1.00e-04 | (129.07 ms | 39668 tok/s)
+step    7/10 | train loss 4.794774 | norm -1.0000 | lr 1.00e-04 | (128.92 ms | 39714 tok/s)
+step    8/10 | train loss 4.686363 | norm -1.0000 | lr 1.00e-04 | (128.99 ms | 39692 tok/s)
+step    9/10 | train loss 4.795814 | norm -1.0000 | lr 1.00e-04 | (129.05 ms | 39674 tok/s)
+step   10/10 | train loss 4.800713 | norm -1.0000 | lr 1.00e-04 | (128.96 ms | 39701 tok/s)
+final 9 iters Latency avg: 129.094ms
+final 9 iters Throughput avg: 39661 tok/s
+peak memory consumption: 9766 MiB
+==========================================
+Running: gpt2_2_bfloat16
+==========================================
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:429: ImportWarning:
+    *************************************************************************************************************
+    The torch.Tensor.cuda and torch.nn.Module.cuda are replaced with torch.Tensor.npu and torch.nn.Module.npu now..
+    The torch.cuda.DoubleTensor is replaced with torch.npu.FloatTensor cause the double type is not supported now..
+    The backend in torch.distributed.init_process_group set to hccl now..
+    The torch.cuda.* and torch.cuda.amp.* are replaced with torch.npu.* and torch.npu.amp.* now..
+    The device parameters have been replaced with npu in the function below:
+    torch.logspace, torch.randint, torch.hann_window, torch.rand, torch.full_like, torch.ones_like, torch.rand_like, torch.randperm, torch.arange, torch.frombuffer, torch.normal, torch._empty_per_channel_affine_quantized, torch.empty_strided, torch.empty_like, torch.scalar_tensor, torch.tril_indices, torch.bartlett_window, torch.ones, torch.sparse_coo_tensor, torch.randn, torch.kaiser_window, torch.tensor, torch.triu_indices, torch.as_tensor, torch.zeros, torch.randint_like, torch.full, torch.eye, torch._sparse_csr_tensor_unsafe, torch.empty, torch._sparse_coo_tensor_unsafe, torch.blackman_window, torch.zeros_like, torch.range, torch.sparse_csr_tensor, torch.randn_like, torch.from_file, torch._cudnn_init_dropout_state, torch._empty_affine_quantized, torch.linspace, torch.hamming_window, torch.empty_quantized, torch._pin_memory, torch.load, torch.set_default_device, torch.get_device_module, torch.sparse_compressed_tensor, torch.Tensor.new_empty, torch.Tensor.new_empty_strided, torch.Tensor.new_full, torch.Tensor.new_ones, torch.Tensor.new_tensor, torch.Tensor.new_zeros, torch.Tensor.to, torch.Tensor.pin_memory, torch.nn.Module.to, torch.nn.Module.to_empty
+    *************************************************************************************************************
+
+  warnings.warn(msg, ImportWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:340: RuntimeWarning: torch.jit.script and torch.jit.script_method will be disabled by transfer_to_npu, which currently does not support them. If you need to enable them, please do not use transfer_to_npu.
+  warnings.warn(msg, RuntimeWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+[W1124 16:55:49.960783063 NPUCachingAllocator.cpp:204] Warning: The current CANN and HDK(driver) versions require processing for 32 padding size, with memory allocation. (function operator())
+Running pytorch 2.10.0+cpu
+using device: npu:0
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+loading weights from pretrained gpt: gpt2
+DataLoader: total number of tokens: 305,260 across 1 files
+padded vocab size from 50257 to 50304
+wrote gpt2_124M.bin
+padded vocab size from 50257 to 50304
+wrote gpt2_124M_bf16.bin
+padded vocab size in reference grads from 50257 to 50304
+wrote gpt2_124M_debug_state.bin
+step    1/10 | train loss 5.206707 | norm -1.0000 | lr 1.00e-04 | (297.92 ms | 17186 tok/s)
+step    2/10 | train loss 5.070441 | norm -1.0000 | lr 1.00e-04 | (89.08 ms | 57474 tok/s)
+step    3/10 | train loss 4.993724 | norm -1.0000 | lr 1.00e-04 | (89.38 ms | 57284 tok/s)
+step    4/10 | train loss 4.662660 | norm -1.0000 | lr 1.00e-04 | (88.54 ms | 57827 tok/s)
+step    5/10 | train loss 4.760212 | norm -1.0000 | lr 1.00e-04 | (87.78 ms | 58330 tok/s)
+step    6/10 | train loss 4.698830 | norm -1.0000 | lr 1.00e-04 | (87.72 ms | 58370 tok/s)
+step    7/10 | train loss 4.746656 | norm -1.0000 | lr 1.00e-04 | (87.67 ms | 58399 tok/s)
+step    8/10 | train loss 4.647241 | norm -1.0000 | lr 1.00e-04 | (87.66 ms | 58404 tok/s)
+step    9/10 | train loss 4.760798 | norm -1.0000 | lr 1.00e-04 | (87.59 ms | 58456 tok/s)
+step   10/10 | train loss 4.755839 | norm -1.0000 | lr 1.00e-04 | (87.63 ms | 58429 tok/s)
+final 9 iters Latency avg: 88.117ms
+final 9 iters Throughput avg: 58108 tok/s
+peak memory consumption: 8337 MiB
+==========================================
+Running: gpt2_3 (fp32, 8 GPUs)
+==========================================
+W1124 16:56:19.769000 1969594 torch/distributed/run.py:852]
+W1124 16:56:19.769000 1969594 torch/distributed/run.py:852] *****************************************
+W1124 16:56:19.769000 1969594 torch/distributed/run.py:852] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed.
+W1124 16:56:19.769000 1969594 torch/distributed/run.py:852] *****************************************
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:427: ImportWarning:
+    *************************************************************************************************************
+    The torch.Tensor.cuda and torch.nn.Module.cuda are replaced with torch.Tensor.npu and torch.nn.Module.npu now..
+    The torch.cuda.DoubleTensor is replaced with torch.npu.FloatTensor cause the double type is not supported now..
+    The backend in torch.distributed.init_process_group set to hccl now..
+    The torch.cuda.* and torch.cuda.amp.* are replaced with torch.npu.* and torch.npu.amp.* now..
+    The device parameters have been replaced with npu in the function below:
+    torch.logspace, torch.randint, torch.hann_window, torch.rand, torch.full_like, torch.ones_like, torch.rand_like, torch.randperm, torch.arange, torch.frombuffer, torch.normal, torch._empty_per_channel_affine_quantized, torch.empty_strided, torch.empty_like, torch.scalar_tensor, torch.tril_indices, torch.bartlett_window, torch.ones, torch.sparse_coo_tensor, torch.randn, torch.kaiser_window, torch.tensor, torch.triu_indices, torch.as_tensor, torch.zeros, torch.randint_like, torch.full, torch.eye, torch._sparse_csr_tensor_unsafe, torch.empty, torch._sparse_coo_tensor_unsafe, torch.blackman_window, torch.zeros_like, torch.range, torch.sparse_csr_tensor, torch.randn_like, torch.from_file, torch._cudnn_init_dropout_state, torch._empty_affine_quantized, torch.linspace, torch.hamming_window, torch.empty_quantized, torch._pin_memory, torch.load, torch.set_default_device, torch.get_device_module, torch.sparse_compressed_tensor, torch.Tensor.new_empty, torch.Tensor.new_empty_strided, torch.Tensor.new_full, torch.Tensor.new_ones, torch.Tensor.new_tensor, torch.Tensor.new_zeros, torch.Tensor.to, torch.Tensor.pin_memory, torch.nn.Module.to, torch.nn.Module.to_empty
+    *************************************************************************************************************
+
+  warnings.warn(msg, ImportWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:340: RuntimeWarning: torch.jit.script and torch.jit.script_method will be disabled by transfer_to_npu, which currently does not support them. If you need to enable them, please do not use transfer_to_npu.
+  warnings.warn(msg, RuntimeWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+Running pytorch 2.10.0+cpu
+using device: npu:2
+loading weights from pretrained gpt: gpt2
+using device: npu:0
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+using device: npu:1
+using device: npu:7
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+using device: npu:5
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+using device: npu:6
+loading weights from pretrained gpt: gpt2
+using device: npu:3
+using device: npu:4
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+[rank0]:[W1124 16:56:37.446089985 NPUCachingAllocator.cpp:204] Warning: The current CANN and HDK(driver) versions require processing for 32 padding size, with memory allocation. (function operator())
+DataLoader: total number of tokens: 305,260 across 1 files
+padded vocab size from 50257 to 50304
+wrote gpt2_124M.bin
+padded vocab size from 50257 to 50304
+wrote gpt2_124M_bf16.bin
+padded vocab size in reference grads from 50257 to 50304
+wrote gpt2_124M_debug_state.bin
+step    1/10 | train loss 5.219544 | norm -1.0000 | lr 1.00e-04 | (612.13 ms | 8364 tok/s)
+step    2/10 | train loss 5.110857 | norm -1.0000 | lr 1.00e-04 | (115.90 ms | 44174 tok/s)
+step    3/10 | train loss 5.022463 | norm -1.0000 | lr 1.00e-04 | (65.10 ms | 78646 tok/s)
+step    4/10 | train loss 4.687329 | norm -1.0000 | lr 1.00e-04 | (62.41 ms | 82044 tok/s)
+step    5/10 | train loss 4.798821 | norm -1.0000 | lr 1.00e-04 | (62.91 ms | 81381 tok/s)
+step    6/10 | train loss 4.736458 | norm -1.0000 | lr 1.00e-04 | (66.17 ms | 77373 tok/s)
+step    7/10 | train loss 4.794775 | norm -1.0000 | lr 1.00e-04 | (65.33 ms | 78372 tok/s)
+step    8/10 | train loss 4.686363 | norm -1.0000 | lr 1.00e-04 | (61.39 ms | 83402 tok/s)
+step    9/10 | train loss 4.795812 | norm -1.0000 | lr 1.00e-04 | (62.61 ms | 81780 tok/s)
+step   10/10 | train loss 4.800713 | norm -1.0000 | lr 1.00e-04 | (65.02 ms | 78749 tok/s)
+final 9 iters Latency avg: 69.649ms
+final 9 iters Throughput avg: 76214 tok/s
+peak memory consumption: 2626 MiB
+==========================================
+Running: gpt2_3_bfloat16 (8 GPUs)
+==========================================
+W1124 16:57:05.290000 1971830 torch/distributed/run.py:852]
+W1124 16:57:05.290000 1971830 torch/distributed/run.py:852] *****************************************
+W1124 16:57:05.290000 1971830 torch/distributed/run.py:852] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed.
+W1124 16:57:05.290000 1971830 torch/distributed/run.py:852] *****************************************
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:427: ImportWarning:
+    *************************************************************************************************************
+    The torch.Tensor.cuda and torch.nn.Module.cuda are replaced with torch.Tensor.npu and torch.nn.Module.npu now..
+    The torch.cuda.DoubleTensor is replaced with torch.npu.FloatTensor cause the double type is not supported now..
+    The backend in torch.distributed.init_process_group set to hccl now..
+    The torch.cuda.* and torch.cuda.amp.* are replaced with torch.npu.* and torch.npu.amp.* now..
+    The device parameters have been replaced with npu in the function below:
+    torch.logspace, torch.randint, torch.hann_window, torch.rand, torch.full_like, torch.ones_like, torch.rand_like, torch.randperm, torch.arange, torch.frombuffer, torch.normal, torch._empty_per_channel_affine_quantized, torch.empty_strided, torch.empty_like, torch.scalar_tensor, torch.tril_indices, torch.bartlett_window, torch.ones, torch.sparse_coo_tensor, torch.randn, torch.kaiser_window, torch.tensor, torch.triu_indices, torch.as_tensor, torch.zeros, torch.randint_like, torch.full, torch.eye, torch._sparse_csr_tensor_unsafe, torch.empty, torch._sparse_coo_tensor_unsafe, torch.blackman_window, torch.zeros_like, torch.range, torch.sparse_csr_tensor, torch.randn_like, torch.from_file, torch._cudnn_init_dropout_state, torch._empty_affine_quantized, torch.linspace, torch.hamming_window, torch.empty_quantized, torch._pin_memory, torch.load, torch.set_default_device, torch.get_device_module, torch.sparse_compressed_tensor, torch.Tensor.new_empty, torch.Tensor.new_empty_strided, torch.Tensor.new_full, torch.Tensor.new_ones, torch.Tensor.new_tensor, torch.Tensor.new_zeros, torch.Tensor.to, torch.Tensor.pin_memory, torch.nn.Module.to, torch.nn.Module.to_empty
+    *************************************************************************************************************
+
+  warnings.warn(msg, ImportWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:340: RuntimeWarning: torch.jit.script and torch.jit.script_method will be disabled by transfer_to_npu, which currently does not support them. If you need to enable them, please do not use transfer_to_npu.
+  warnings.warn(msg, RuntimeWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+Running pytorch 2.10.0+cpu
+using device: npu:7
+loading weights from pretrained gpt: gpt2
+using device: npu:4
+loading weights from pretrained gpt: gpt2
+using device: npu:3
+using device: npu:6
+using device: npu:1
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+loading weights from pretrained gpt: gpt2
+using device: npu:5
+loading weights from pretrained gpt: gpt2
+using device: npu:0
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+loading weights from pretrained gpt: gpt2
+using device: npu:2
+loading weights from pretrained gpt: gpt2
+[rank0]:[W1124 16:57:22.177356062 NPUCachingAllocator.cpp:204] Warning: The current CANN and HDK(driver) versions require processing for 32 padding size, with memory allocation. (function operator())
+DataLoader: total number of tokens: 305,260 across 1 files
+padded vocab size from 50257 to 50304
+wrote gpt2_124M.bin
+padded vocab size from 50257 to 50304
+wrote gpt2_124M_bf16.bin
+padded vocab size in reference grads from 50257 to 50304
+wrote gpt2_124M_debug_state.bin
+step    1/10 | train loss 5.207448 | norm -1.0000 | lr 1.00e-04 | (766.31 ms | 6681 tok/s)
+step    2/10 | train loss 5.073796 | norm -1.0000 | lr 1.00e-04 | (88.57 ms | 57810 tok/s)
+step    3/10 | train loss 4.987492 | norm -1.0000 | lr 1.00e-04 | (76.77 ms | 66693 tok/s)
+step    4/10 | train loss 4.659098 | norm -1.0000 | lr 1.00e-04 | (74.44 ms | 68778 tok/s)
+step    5/10 | train loss 4.761208 | norm -1.0000 | lr 1.00e-04 | (76.25 ms | 67148 tok/s)
+step    6/10 | train loss 4.705230 | norm -1.0000 | lr 1.00e-04 | (74.38 ms | 68836 tok/s)
+step    7/10 | train loss 4.745196 | norm -1.0000 | lr 1.00e-04 | (74.65 ms | 68590 tok/s)
+step    8/10 | train loss 4.646858 | norm -1.0000 | lr 1.00e-04 | (74.89 ms | 68365 tok/s)
+step    9/10 | train loss 4.769349 | norm -1.0000 | lr 1.00e-04 | (74.69 ms | 68554 tok/s)
+step   10/10 | train loss 4.752072 | norm -1.0000 | lr 1.00e-04 | (74.92 ms | 68337 tok/s)
+final 9 iters Latency avg: 76.617ms
+final 9 iters Throughput avg: 67012 tok/s
+peak memory consumption: 2730 MiB
+==========================================
+Running: llama3_1 (fp32)
+==========================================
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:429: ImportWarning:
+    *************************************************************************************************************
+    The torch.Tensor.cuda and torch.nn.Module.cuda are replaced with torch.Tensor.npu and torch.nn.Module.npu now..
+    The torch.cuda.DoubleTensor is replaced with torch.npu.FloatTensor cause the double type is not supported now..
+    The backend in torch.distributed.init_process_group set to hccl now..
+    The torch.cuda.* and torch.cuda.amp.* are replaced with torch.npu.* and torch.npu.amp.* now..
+    The device parameters have been replaced with npu in the function below:
+    torch.logspace, torch.randint, torch.hann_window, torch.rand, torch.full_like, torch.ones_like, torch.rand_like, torch.randperm, torch.arange, torch.frombuffer, torch.normal, torch._empty_per_channel_affine_quantized, torch.empty_strided, torch.empty_like, torch.scalar_tensor, torch.tril_indices, torch.bartlett_window, torch.ones, torch.sparse_coo_tensor, torch.randn, torch.kaiser_window, torch.tensor, torch.triu_indices, torch.as_tensor, torch.zeros, torch.randint_like, torch.full, torch.eye, torch._sparse_csr_tensor_unsafe, torch.empty, torch._sparse_coo_tensor_unsafe, torch.blackman_window, torch.zeros_like, torch.range, torch.sparse_csr_tensor, torch.randn_like, torch.from_file, torch._cudnn_init_dropout_state, torch._empty_affine_quantized, torch.linspace, torch.hamming_window, torch.empty_quantized, torch._pin_memory, torch.load, torch.set_default_device, torch.get_device_module, torch.sparse_compressed_tensor, torch.Tensor.new_empty, torch.Tensor.new_empty_strided, torch.Tensor.new_full, torch.Tensor.new_ones, torch.Tensor.new_tensor, torch.Tensor.new_zeros, torch.Tensor.to, torch.Tensor.pin_memory, torch.nn.Module.to, torch.nn.Module.to_empty
+    *************************************************************************************************************
+
+  warnings.warn(msg, ImportWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:340: RuntimeWarning: torch.jit.script and torch.jit.script_method will be disabled by transfer_to_npu, which currently does not support them. If you need to enable them, please do not use transfer_to_npu.
+  warnings.warn(msg, RuntimeWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+[W1124 16:57:57.546185930 NPUCachingAllocator.cpp:204] Warning: The current CANN and HDK(driver) versions require processing for 32 padding size, with memory allocation. (function operator())
+Running pytorch 2.10.0+cpu
+using device: npu:0
+total desired batch size: 256
+=> calculated gradient accumulation steps: 1
+loaded Llama3 LLMC checkpoint: /home/dzx/InfiniTrain-work/InfiniTrain/data/llama3/llama3.2_1B_fp32.bin
+DataLoader: total number of tokens: 276,224 across 1 files
+step    1/10 | train loss 4.899450 | norm -1.0000 | lr 1.00e-05 | (1897.74 ms | 135 tok/s)
+step    2/10 | train loss 4.086942 | norm -1.0000 | lr 1.00e-05 | (236.61 ms | 1082 tok/s)
+step    3/10 | train loss 3.874073 | norm -1.0000 | lr 1.00e-05 | (212.00 ms | 1208 tok/s)
+step    4/10 | train loss 3.917665 | norm -1.0000 | lr 1.00e-05 | (211.93 ms | 1208 tok/s)
+step    5/10 | train loss 3.868921 | norm -1.0000 | lr 1.00e-05 | (211.88 ms | 1208 tok/s)
+step    6/10 | train loss 3.946009 | norm -1.0000 | lr 1.00e-05 | (211.55 ms | 1210 tok/s)
+step    7/10 | train loss 4.028151 | norm -1.0000 | lr 1.00e-05 | (212.74 ms | 1203 tok/s)
+step    8/10 | train loss 3.513872 | norm -1.0000 | lr 1.00e-05 | (211.46 ms | 1211 tok/s)
+step    9/10 | train loss 3.602719 | norm -1.0000 | lr 1.00e-05 | (210.67 ms | 1215 tok/s)
+step   10/10 | train loss 3.716989 | norm -1.0000 | lr 1.00e-05 | (210.84 ms | 1214 tok/s)
+final 9 iters Latency avg: 214.408ms
+final 9 iters Throughput avg: 1195 tok/s
+peak memory consumption: 28585 MiB
+==========================================
+Running: llama3_1_bfloat16
+==========================================
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:429: ImportWarning:
+    *************************************************************************************************************
+    The torch.Tensor.cuda and torch.nn.Module.cuda are replaced with torch.Tensor.npu and torch.nn.Module.npu now..
+    The torch.cuda.DoubleTensor is replaced with torch.npu.FloatTensor cause the double type is not supported now..
+    The backend in torch.distributed.init_process_group set to hccl now..
+    The torch.cuda.* and torch.cuda.amp.* are replaced with torch.npu.* and torch.npu.amp.* now..
+    The device parameters have been replaced with npu in the function below:
+    torch.logspace, torch.randint, torch.hann_window, torch.rand, torch.full_like, torch.ones_like, torch.rand_like, torch.randperm, torch.arange, torch.frombuffer, torch.normal, torch._empty_per_channel_affine_quantized, torch.empty_strided, torch.empty_like, torch.scalar_tensor, torch.tril_indices, torch.bartlett_window, torch.ones, torch.sparse_coo_tensor, torch.randn, torch.kaiser_window, torch.tensor, torch.triu_indices, torch.as_tensor, torch.zeros, torch.randint_like, torch.full, torch.eye, torch._sparse_csr_tensor_unsafe, torch.empty, torch._sparse_coo_tensor_unsafe, torch.blackman_window, torch.zeros_like, torch.range, torch.sparse_csr_tensor, torch.randn_like, torch.from_file, torch._cudnn_init_dropout_state, torch._empty_affine_quantized, torch.linspace, torch.hamming_window, torch.empty_quantized, torch._pin_memory, torch.load, torch.set_default_device, torch.get_device_module, torch.sparse_compressed_tensor, torch.Tensor.new_empty, torch.Tensor.new_empty_strided, torch.Tensor.new_full, torch.Tensor.new_ones, torch.Tensor.new_tensor, torch.Tensor.new_zeros, torch.Tensor.to, torch.Tensor.pin_memory, torch.nn.Module.to, torch.nn.Module.to_empty
+    *************************************************************************************************************
+
+  warnings.warn(msg, ImportWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:340: RuntimeWarning: torch.jit.script and torch.jit.script_method will be disabled by transfer_to_npu, which currently does not support them. If you need to enable them, please do not use transfer_to_npu.
+  warnings.warn(msg, RuntimeWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+[W1124 16:58:22.207049485 NPUCachingAllocator.cpp:204] Warning: The current CANN and HDK(driver) versions require processing for 32 padding size, with memory allocation. (function operator())
+Running pytorch 2.10.0+cpu
+using device: npu:0
+total desired batch size: 256
+=> calculated gradient accumulation steps: 1
+loaded Llama3 LLMC checkpoint: /home/dzx/InfiniTrain-work/InfiniTrain/data/llama3/llama3.2_1B_fp32.bin
+DataLoader: total number of tokens: 276,224 across 1 files
+step    1/10 | train loss 4.904801 | norm -1.0000 | lr 1.00e-05 | (1950.51 ms | 131 tok/s)
+step    2/10 | train loss 4.545533 | norm -1.0000 | lr 1.00e-05 | (310.41 ms | 825 tok/s)
+step    3/10 | train loss 4.142231 | norm -1.0000 | lr 1.00e-05 | (227.02 ms | 1128 tok/s)
+step    4/10 | train loss 4.321636 | norm -1.0000 | lr 1.00e-05 | (227.00 ms | 1128 tok/s)
+step    5/10 | train loss 3.966801 | norm -1.0000 | lr 1.00e-05 | (226.90 ms | 1128 tok/s)
+step    6/10 | train loss 3.993213 | norm -1.0000 | lr 1.00e-05 | (226.87 ms | 1128 tok/s)
+step    7/10 | train loss 4.042072 | norm -1.0000 | lr 1.00e-05 | (226.99 ms | 1128 tok/s)
+step    8/10 | train loss 3.493026 | norm -1.0000 | lr 1.00e-05 | (227.97 ms | 1123 tok/s)
+step    9/10 | train loss 3.621694 | norm -1.0000 | lr 1.00e-05 | (227.14 ms | 1127 tok/s)
+step   10/10 | train loss 3.714656 | norm -1.0000 | lr 1.00e-05 | (227.06 ms | 1127 tok/s)
+final 9 iters Latency avg: 236.374ms
+final 9 iters Throughput avg: 1094 tok/s
+peak memory consumption: 28585 MiB
+==========================================
+Running: llama3_2 (fp32)
+==========================================
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:429: ImportWarning:
+    *************************************************************************************************************
+    The torch.Tensor.cuda and torch.nn.Module.cuda are replaced with torch.Tensor.npu and torch.nn.Module.npu now..
+    The torch.cuda.DoubleTensor is replaced with torch.npu.FloatTensor cause the double type is not supported now..
+    The backend in torch.distributed.init_process_group set to hccl now..
+    The torch.cuda.* and torch.cuda.amp.* are replaced with torch.npu.* and torch.npu.amp.* now..
+    The device parameters have been replaced with npu in the function below:
+    torch.logspace, torch.randint, torch.hann_window, torch.rand, torch.full_like, torch.ones_like, torch.rand_like, torch.randperm, torch.arange, torch.frombuffer, torch.normal, torch._empty_per_channel_affine_quantized, torch.empty_strided, torch.empty_like, torch.scalar_tensor, torch.tril_indices, torch.bartlett_window, torch.ones, torch.sparse_coo_tensor, torch.randn, torch.kaiser_window, torch.tensor, torch.triu_indices, torch.as_tensor, torch.zeros, torch.randint_like, torch.full, torch.eye, torch._sparse_csr_tensor_unsafe, torch.empty, torch._sparse_coo_tensor_unsafe, torch.blackman_window, torch.zeros_like, torch.range, torch.sparse_csr_tensor, torch.randn_like, torch.from_file, torch._cudnn_init_dropout_state, torch._empty_affine_quantized, torch.linspace, torch.hamming_window, torch.empty_quantized, torch._pin_memory, torch.load, torch.set_default_device, torch.get_device_module, torch.sparse_compressed_tensor, torch.Tensor.new_empty, torch.Tensor.new_empty_strided, torch.Tensor.new_full, torch.Tensor.new_ones, torch.Tensor.new_tensor, torch.Tensor.new_zeros, torch.Tensor.to, torch.Tensor.pin_memory, torch.nn.Module.to, torch.nn.Module.to_empty
+    *************************************************************************************************************
+
+  warnings.warn(msg, ImportWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:340: RuntimeWarning: torch.jit.script and torch.jit.script_method will be disabled by transfer_to_npu, which currently does not support them. If you need to enable them, please do not use transfer_to_npu.
+  warnings.warn(msg, RuntimeWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+[W1124 16:58:45.651031708 NPUCachingAllocator.cpp:204] Warning: The current CANN and HDK(driver) versions require processing for 32 padding size, with memory allocation. (function operator())
+Running pytorch 2.10.0+cpu
+using device: npu:0
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+loaded Llama3 LLMC checkpoint: /home/dzx/InfiniTrain-work/InfiniTrain/data/llama3/llama3.2_1B_fp32.bin
+DataLoader: total number of tokens: 276,224 across 1 files
+step    1/10 | train loss 4.726650 | norm -1.0000 | lr 1.00e-05 | (2677.15 ms | 1912 tok/s)
+step    2/10 | train loss 4.117813 | norm -1.0000 | lr 1.00e-05 | (1234.96 ms | 4146 tok/s)
+step    3/10 | train loss 3.613311 | norm -1.0000 | lr 1.00e-05 | (1060.01 ms | 4830 tok/s)
+step    4/10 | train loss 3.654189 | norm -1.0000 | lr 1.00e-05 | (1060.13 ms | 4830 tok/s)
+step    5/10 | train loss 3.519615 | norm -1.0000 | lr 1.00e-05 | (1060.39 ms | 4828 tok/s)
+step    6/10 | train loss 3.483861 | norm -1.0000 | lr 1.00e-05 | (1060.78 ms | 4827 tok/s)
+step    7/10 | train loss 3.432115 | norm -1.0000 | lr 1.00e-05 | (1062.55 ms | 4819 tok/s)
+step    8/10 | train loss 3.572647 | norm -1.0000 | lr 1.00e-05 | (1060.34 ms | 4829 tok/s)
+step    9/10 | train loss 3.578180 | norm -1.0000 | lr 1.00e-05 | (1061.10 ms | 4825 tok/s)
+step   10/10 | train loss 3.383959 | norm -1.0000 | lr 1.00e-05 | (1063.24 ms | 4815 tok/s)
+final 9 iters Latency avg: 1080.391ms
+final 9 iters Throughput avg: 4750 tok/s
+peak memory consumption: 43191 MiB
+==========================================
+Running: llama3_2_bfloat16
+==========================================
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:429: ImportWarning:
+    *************************************************************************************************************
+    The torch.Tensor.cuda and torch.nn.Module.cuda are replaced with torch.Tensor.npu and torch.nn.Module.npu now..
+    The torch.cuda.DoubleTensor is replaced with torch.npu.FloatTensor cause the double type is not supported now..
+    The backend in torch.distributed.init_process_group set to hccl now..
+    The torch.cuda.* and torch.cuda.amp.* are replaced with torch.npu.* and torch.npu.amp.* now..
+    The device parameters have been replaced with npu in the function below:
+    torch.logspace, torch.randint, torch.hann_window, torch.rand, torch.full_like, torch.ones_like, torch.rand_like, torch.randperm, torch.arange, torch.frombuffer, torch.normal, torch._empty_per_channel_affine_quantized, torch.empty_strided, torch.empty_like, torch.scalar_tensor, torch.tril_indices, torch.bartlett_window, torch.ones, torch.sparse_coo_tensor, torch.randn, torch.kaiser_window, torch.tensor, torch.triu_indices, torch.as_tensor, torch.zeros, torch.randint_like, torch.full, torch.eye, torch._sparse_csr_tensor_unsafe, torch.empty, torch._sparse_coo_tensor_unsafe, torch.blackman_window, torch.zeros_like, torch.range, torch.sparse_csr_tensor, torch.randn_like, torch.from_file, torch._cudnn_init_dropout_state, torch._empty_affine_quantized, torch.linspace, torch.hamming_window, torch.empty_quantized, torch._pin_memory, torch.load, torch.set_default_device, torch.get_device_module, torch.sparse_compressed_tensor, torch.Tensor.new_empty, torch.Tensor.new_empty_strided, torch.Tensor.new_full, torch.Tensor.new_ones, torch.Tensor.new_tensor, torch.Tensor.new_zeros, torch.Tensor.to, torch.Tensor.pin_memory, torch.nn.Module.to, torch.nn.Module.to_empty
+    *************************************************************************************************************
+
+  warnings.warn(msg, ImportWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:340: RuntimeWarning: torch.jit.script and torch.jit.script_method will be disabled by transfer_to_npu, which currently does not support them. If you need to enable them, please do not use transfer_to_npu.
+  warnings.warn(msg, RuntimeWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+[W1124 16:59:18.499354275 NPUCachingAllocator.cpp:204] Warning: The current CANN and HDK(driver) versions require processing for 32 padding size, with memory allocation. (function operator())
+Running pytorch 2.10.0+cpu
+using device: npu:0
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+loaded Llama3 LLMC checkpoint: /home/dzx/InfiniTrain-work/InfiniTrain/data/llama3/llama3.2_1B_fp32.bin
+DataLoader: total number of tokens: 276,224 across 1 files
+step    1/10 | train loss 4.726976 | norm -1.0000 | lr 1.00e-05 | (2413.21 ms | 2122 tok/s)
+step    2/10 | train loss 4.375796 | norm -1.0000 | lr 1.00e-05 | (872.74 ms | 5867 tok/s)
+step    3/10 | train loss 3.781805 | norm -1.0000 | lr 1.00e-05 | (644.80 ms | 7940 tok/s)
+step    4/10 | train loss 3.849114 | norm -1.0000 | lr 1.00e-05 | (645.07 ms | 7937 tok/s)
+step    5/10 | train loss 3.561860 | norm -1.0000 | lr 1.00e-05 | (645.34 ms | 7934 tok/s)
+step    6/10 | train loss 3.511828 | norm -1.0000 | lr 1.00e-05 | (645.00 ms | 7938 tok/s)
+step    7/10 | train loss 3.464773 | norm -1.0000 | lr 1.00e-05 | (645.25 ms | 7935 tok/s)
+step    8/10 | train loss 3.592493 | norm -1.0000 | lr 1.00e-05 | (644.86 ms | 7940 tok/s)
+step    9/10 | train loss 3.607199 | norm -1.0000 | lr 1.00e-05 | (645.15 ms | 7936 tok/s)
+step   10/10 | train loss 3.410330 | norm -1.0000 | lr 1.00e-05 | (644.90 ms | 7939 tok/s)
+final 9 iters Latency avg: 670.346ms
+final 9 iters Throughput avg: 7707 tok/s
+peak memory consumption: 38328 MiB
+==========================================
+Running: llama3_3 (fp32, 8 GPUs)
+==========================================
+W1124 16:59:41.056000 1975506 torch/distributed/run.py:852]
+W1124 16:59:41.056000 1975506 torch/distributed/run.py:852] *****************************************
+W1124 16:59:41.056000 1975506 torch/distributed/run.py:852] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed.
+W1124 16:59:41.056000 1975506 torch/distributed/run.py:852] *****************************************
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:427: ImportWarning:
+    *************************************************************************************************************
+    The torch.Tensor.cuda and torch.nn.Module.cuda are replaced with torch.Tensor.npu and torch.nn.Module.npu now..
+    The torch.cuda.DoubleTensor is replaced with torch.npu.FloatTensor cause the double type is not supported now..
+    The backend in torch.distributed.init_process_group set to hccl now..
+    The torch.cuda.* and torch.cuda.amp.* are replaced with torch.npu.* and torch.npu.amp.* now..
+    The device parameters have been replaced with npu in the function below:
+    torch.logspace, torch.randint, torch.hann_window, torch.rand, torch.full_like, torch.ones_like, torch.rand_like, torch.randperm, torch.arange, torch.frombuffer, torch.normal, torch._empty_per_channel_affine_quantized, torch.empty_strided, torch.empty_like, torch.scalar_tensor, torch.tril_indices, torch.bartlett_window, torch.ones, torch.sparse_coo_tensor, torch.randn, torch.kaiser_window, torch.tensor, torch.triu_indices, torch.as_tensor, torch.zeros, torch.randint_like, torch.full, torch.eye, torch._sparse_csr_tensor_unsafe, torch.empty, torch._sparse_coo_tensor_unsafe, torch.blackman_window, torch.zeros_like, torch.range, torch.sparse_csr_tensor, torch.randn_like, torch.from_file, torch._cudnn_init_dropout_state, torch._empty_affine_quantized, torch.linspace, torch.hamming_window, torch.empty_quantized, torch._pin_memory, torch.load, torch.set_default_device, torch.get_device_module, torch.sparse_compressed_tensor, torch.Tensor.new_empty, torch.Tensor.new_empty_strided, torch.Tensor.new_full, torch.Tensor.new_ones, torch.Tensor.new_tensor, torch.Tensor.new_zeros, torch.Tensor.to, torch.Tensor.pin_memory, torch.nn.Module.to, torch.nn.Module.to_empty
+    *************************************************************************************************************
+
+  warnings.warn(msg, ImportWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:340: RuntimeWarning: torch.jit.script and torch.jit.script_method will be disabled by transfer_to_npu, which currently does not support them. If you need to enable them, please do not use transfer_to_npu.
+  warnings.warn(msg, RuntimeWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+Running pytorch 2.10.0+cpu
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+using device: npu:6
+using device: npu:4
+using device: npu:0
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+[rank0]:[W1124 16:59:52.672652812 NPUCachingAllocator.cpp:204] Warning: The current CANN and HDK(driver) versions require processing for 32 padding size, with memory allocation. (function operator())
+using device: npu:7
+using device: npu:1
+using device: npu:5
+using device: npu:3
+using device: npu:2
+loaded Llama3 LLMC checkpoint: /home/dzx/InfiniTrain-work/InfiniTrain/data/llama3/llama3.2_1B_fp32.bin
+DataLoader: total number of tokens: 276,224 across 1 files
+step    1/10 | train loss 4.726651 | norm -1.0000 | lr 1.00e-05 | (2062.68 ms | 2482 tok/s)
+step    2/10 | train loss 4.117813 | norm -1.0000 | lr 1.00e-05 | (664.84 ms | 7701 tok/s)
+step    3/10 | train loss 3.613311 | norm -1.0000 | lr 1.00e-05 | (335.45 ms | 15263 tok/s)
+step    4/10 | train loss 3.654190 | norm -1.0000 | lr 1.00e-05 | (339.25 ms | 15092 tok/s)
+step    5/10 | train loss 3.519616 | norm -1.0000 | lr 1.00e-05 | (335.89 ms | 15243 tok/s)
+step    6/10 | train loss 3.483861 | norm -1.0000 | lr 1.00e-05 | (333.43 ms | 15355 tok/s)
+step    7/10 | train loss 3.432115 | norm -1.0000 | lr 1.00e-05 | (339.25 ms | 15092 tok/s)
+step    8/10 | train loss 3.572648 | norm -1.0000 | lr 1.00e-05 | (334.61 ms | 15301 tok/s)
+step    9/10 | train loss 3.578181 | norm -1.0000 | lr 1.00e-05 | (337.04 ms | 15191 tok/s)
+step   10/10 | train loss 3.383959 | norm -1.0000 | lr 1.00e-05 | (338.19 ms | 15139 tok/s)
+final 9 iters Latency avg: 373.105ms
+final 9 iters Throughput avg: 14375 tok/s
+peak memory consumption: 34301 MiB
+==========================================
+Running: llama3_3_bfloat16 (8 GPUs)
+==========================================
+W1124 17:00:22.429000 1977032 torch/distributed/run.py:852]
+W1124 17:00:22.429000 1977032 torch/distributed/run.py:852] *****************************************
+W1124 17:00:22.429000 1977032 torch/distributed/run.py:852] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed.
+W1124 17:00:22.429000 1977032 torch/distributed/run.py:852] *****************************************
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:13: FutureWarning: triton.language.extra.cann.extension.atan2 is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.atan2 instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.atan2")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:35: FutureWarning: triton.language.extra.cann.extension.isfinited is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.isfinited instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.isfinited")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/triton/language/extra/cann/extension/math_ops.py:49: FutureWarning: triton.language.extra.cann.extension.finitef is deprecated and will be removed in the next release; use triton.language.extra.cann.libdevice.finitef instead.
+  @_deprecated(replacement="triton.language.extra.cann.libdevice.finitef")
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:427: ImportWarning:
+    *************************************************************************************************************
+    The torch.Tensor.cuda and torch.nn.Module.cuda are replaced with torch.Tensor.npu and torch.nn.Module.npu now..
+    The torch.cuda.DoubleTensor is replaced with torch.npu.FloatTensor cause the double type is not supported now..
+    The backend in torch.distributed.init_process_group set to hccl now..
+    The torch.cuda.* and torch.cuda.amp.* are replaced with torch.npu.* and torch.npu.amp.* now..
+    The device parameters have been replaced with npu in the function below:
+    torch.logspace, torch.randint, torch.hann_window, torch.rand, torch.full_like, torch.ones_like, torch.rand_like, torch.randperm, torch.arange, torch.frombuffer, torch.normal, torch._empty_per_channel_affine_quantized, torch.empty_strided, torch.empty_like, torch.scalar_tensor, torch.tril_indices, torch.bartlett_window, torch.ones, torch.sparse_coo_tensor, torch.randn, torch.kaiser_window, torch.tensor, torch.triu_indices, torch.as_tensor, torch.zeros, torch.randint_like, torch.full, torch.eye, torch._sparse_csr_tensor_unsafe, torch.empty, torch._sparse_coo_tensor_unsafe, torch.blackman_window, torch.zeros_like, torch.range, torch.sparse_csr_tensor, torch.randn_like, torch.from_file, torch._cudnn_init_dropout_state, torch._empty_affine_quantized, torch.linspace, torch.hamming_window, torch.empty_quantized, torch._pin_memory, torch.load, torch.set_default_device, torch.get_device_module, torch.sparse_compressed_tensor, torch.Tensor.new_empty, torch.Tensor.new_empty_strided, torch.Tensor.new_full, torch.Tensor.new_ones, torch.Tensor.new_tensor, torch.Tensor.new_zeros, torch.Tensor.to, torch.Tensor.pin_memory, torch.nn.Module.to, torch.nn.Module.to_empty
+    *************************************************************************************************************
+
+  warnings.warn(msg, ImportWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch_npu/contrib/transfer_to_npu.py:340: RuntimeWarning: torch.jit.script and torch.jit.script_method will be disabled by transfer_to_npu, which currently does not support them. If you need to enable them, please do not use transfer_to_npu.
+  warnings.warn(msg, RuntimeWarning)
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/torch/jit/_script.py:362: DeprecationWarning: `torch.jit.script_method` is deprecated. Please switch to `torch.compile` or `torch.export`.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+Running pytorch 2.10.0+cpu
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+/home/dzx/InfiniTrain-work/InfiniTrain-Test/.venv/lib/python3.12/site-packages/peft/import_utils.py:52: FutureWarning: Support for Transformers < 5.6 is deprecated in PEFT and will be removed in the next release, v1.0. You have Transformers 4.57.1. Please upgrade to Transformers >= 5.6.
+  warnings.warn(
+using device: npu:7
+using device: npu:6
+using device: npu:0
+total desired batch size: 5120
+=> calculated gradient accumulation steps: 1
+[rank0]:[W1124 17:00:34.117140556 NPUCachingAllocator.cpp:204] Warning: The current CANN and HDK(driver) versions require processing for 32 padding size, with memory allocation. (function operator())
+using device: npu:4
+using device: npu:1
+using device: npu:3
+using device: npu:2
+using device: npu:5
+loaded Llama3 LLMC checkpoint: /home/dzx/InfiniTrain-work/InfiniTrain/data/llama3/llama3.2_1B_fp32.bin
+DataLoader: total number of tokens: 276,224 across 1 files
+step    1/10 | train loss 4.726878 | norm -1.0000 | lr 1.00e-05 | (2063.78 ms | 2481 tok/s)
+step    2/10 | train loss 4.375286 | norm -1.0000 | lr 1.00e-05 | (458.30 ms | 11172 tok/s)
+step    3/10 | train loss 3.781834 | norm -1.0000 | lr 1.00e-05 | (342.01 ms | 14970 tok/s)
+step    4/10 | train loss 3.849185 | norm -1.0000 | lr 1.00e-05 | (338.22 ms | 15138 tok/s)
+step    5/10 | train loss 3.561923 | norm -1.0000 | lr 1.00e-05 | (343.10 ms | 14923 tok/s)
+step    6/10 | train loss 3.511551 | norm -1.0000 | lr 1.00e-05 | (346.30 ms | 14785 tok/s)
+step    7/10 | train loss 3.464934 | norm -1.0000 | lr 1.00e-05 | (341.13 ms | 15009 tok/s)
+step    8/10 | train loss 3.591970 | norm -1.0000 | lr 1.00e-05 | (338.43 ms | 15129 tok/s)
+step    9/10 | train loss 3.606706 | norm -1.0000 | lr 1.00e-05 | (341.30 ms | 15001 tok/s)
+step   10/10 | train loss 3.410157 | norm -1.0000 | lr 1.00e-05 | (341.54 ms | 14991 tok/s)
+final 9 iters Latency avg: 354.482ms
+final 9 iters Throughput avg: 14569 tok/s
+peak memory consumption: 34302 MiB
+==========================================
+All training jobs finished.
+==========================================

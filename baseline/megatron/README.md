@@ -11,6 +11,36 @@ The Llama3 baseline below uses the same LLMC FP32 checkpoint and ordered Tiny
 Shakespeare token stream as InfiniTrain. It does not replace or modify the
 existing PyTorch Llama3 baseline.
 
+## Accelerator environment
+
+The baseline entry points support NVIDIA CUDA and Ascend NPU. Device selection
+is handled by `models/device_compat.py`; use `INFINITRAIN_ACCELERATOR` to make
+the choice explicit:
+
+```bash
+# NVIDIA A100
+export INFINITRAIN_ACCELERATOR=cuda
+
+# Ascend 910B
+source /usr/local/Ascend/ascend-toolkit/set_env.sh
+source <python-env>/bin/activate
+export INFINITRAIN_ACCELERATOR=npu
+```
+
+Ascend runs require a Python environment with a compatible `torch_npu`, CANN,
+MegatronAdaptor, TransformerEngineNPU, and MindSpeed installation. If these
+packages are not already importable, add their source roots before launching:
+
+```bash
+export MEGATRON_ADAPTOR_PATH=<path-to-MegatronAdaptor>
+export MINDSPEED_PATH=<path-to-MindSpeed>
+```
+
+The accelerator layer initializes HCCL for NPU and NCCL for CUDA. When
+`INFINITRAIN_ACCELERATOR` is unset, `auto` mode prefers NPU when
+`ASCEND_HOME_PATH` is present and a working `torch_npu` is available; otherwise
+it uses CUDA.
+
 ## Prepare and run
 
 ```bash
@@ -82,8 +112,17 @@ peak memory consumption: ... MiB
 ```
 
 For distributed runs, latency and peak memory use the maximum value across ranks.
-`run_cases.sh` writes the filtered key output for all selected cases to
+By default, `run_cases.sh` writes the filtered key output for all selected cases
+to the corresponding archived A100 path, such as
 `baseline/megatron/logs/qy_a100_g3025/result_megatron_training_llama3.log`.
+Set `RESULT_LOG` to keep accelerator runs separate:
+
+```bash
+# Ascend 910B archive
+RESULT_LOG=baseline/megatron/logs/qy_ascend_910b/result_megatron_training_llama3.log \
+  bash baseline/megatron/scripts/llama3/run_cases.sh
+```
+
 The complete output for each case remains available under
 `baseline/megatron/artifacts/llama3/logs/` for diagnostics.
 

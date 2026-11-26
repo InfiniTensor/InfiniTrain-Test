@@ -9,8 +9,27 @@ import time
 import numpy as np
 import torch
 
+SCRIPT_DIR = pathlib.Path(__file__).resolve().parent
+MODELS_DIR = SCRIPT_DIR.parent
+REPO_ROOT = SCRIPT_DIR.parents[3]
+MEGATRON_PATH = pathlib.Path(os.environ.get("MEGATRON_PATH", REPO_ROOT / "third_party" / "Megatron-LM"))
+sys.path.insert(0, str(MODELS_DIR))
+sys.path.insert(0, str(MEGATRON_PATH))
+
+from device_compat import (
+    autocast_device_type,
+    counter_dtype,
+    current_device,
+    disable_reduced_precision_fp32,
+    initialize_accelerator,
+    max_memory_allocated_mib,
+    synchronize,
+    timing_dtype,
+)
+
+initialize_accelerator()
 if os.environ.get("QWEN3_DISABLE_TF32") == "1":
-    torch.backends.cuda.matmul.fp32_precision = "ieee"
+    disable_reduced_precision_fp32()
 
 try:
     import nvidia_resiliency_ext as nvrx
@@ -19,26 +38,27 @@ try:
 except ModuleNotFoundError:
     pass
 
-SCRIPT_DIR = pathlib.Path(__file__).resolve().parent
-REPO_ROOT = SCRIPT_DIR.parents[3]
-MEGATRON_PATH = pathlib.Path(os.environ.get("MEGATRON_PATH", REPO_ROOT / "third_party" / "Megatron-LM"))
-sys.path.insert(0, str(MEGATRON_PATH))
-
 import pretrain_gpt as upstream
 from gpt_builders import gpt_builder
+from llmc_loader import Reader, pack_qkv_for_megatron, tensor_parallel_slice
 from megatron.core import parallel_state
 from megatron.core.datasets import gpt_dataset
 from megatron.core.enums import ModelType
 from megatron.core.extensions.transformer_engine import TENorm
 from megatron.core.models.gpt import GPTModel
 from megatron.core.models.gpt.gpt_layer_specs import get_gpt_layer_local_spec
-from megatron.core.transformer.transformer_block import TransformerBlockSubmodules, get_num_layers_to_build
+from megatron.core.transformer.transformer_block import (
+    TransformerBlockSubmodules,
+    get_num_layers_to_build,
+)
 from megatron.training import get_args, pretrain
 from megatron.training import training as megatron_training
 from megatron.training.argument_utils import pretrain_cfg_container_from_args
-from megatron.training.arguments import core_transformer_config_from_args, parse_and_validate_args
+from megatron.training.arguments import (
+    core_transformer_config_from_args,
+    parse_and_validate_args,
+)
 from model_provider import model_provider
-from llmc_loader import Reader, pack_qkv_for_megatron, tensor_parallel_slice
 
 
 def add_args(parser):
@@ -109,14 +129,14 @@ def install_performance_logger():
         iteration = kwargs.get("iteration")
         if iteration is None and len(args) > 7:
             iteration = args[7]
-        torch.cuda.synchronize()
+        synchronize()
         started = time.perf_counter()
         result = original_train_step(*args, **kwargs)
-        torch.cuda.synchronize()
+        synchronize()
         local_elapsed = time.perf_counter() - started
 
         # Exclude the slowest-rank reduction itself from the measured interval.
-        elapsed = torch.tensor(local_elapsed, dtype=torch.float64, device=torch.cuda.current_device())
+        elapsed = torch.tensor(local_elapsed, dtype=timing_dtype(), device=current_device())
         if torch.distributed.is_initialized():
             torch.distributed.all_reduce(elapsed, op=torch.distributed.ReduceOp.MAX)
         elapsed_seconds = elapsed.item()
@@ -140,9 +160,9 @@ def install_performance_logger():
             measured.append((elapsed_seconds, tokens_per_second))
         if step == runtime_args.train_iters:
             peak_memory = torch.tensor(
-                torch.cuda.max_memory_allocated() // 1024 // 1024,
-                dtype=torch.int64,
-                device=torch.cuda.current_device(),
+                max_memory_allocated_mib(),
+                dtype=counter_dtype(),
+                device=current_device(),
             )
             if torch.distributed.is_initialized():
                 torch.distributed.all_reduce(peak_memory, op=torch.distributed.ReduceOp.MAX)
@@ -163,7 +183,7 @@ def install_performance_logger():
 
 def autocast_forward_step(*args, **kwargs):
     # Keep parameters in FP32 while using PyTorch's BF16 autocast policy for forward operators.
-    with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
+    with torch.autocast(device_type=autocast_device_type(), dtype=torch.bfloat16):
         return upstream.forward_step(*args, **kwargs)
 
 
@@ -268,7 +288,7 @@ def llmc_model_provider(pre_process=True, post_process=True, vp_stage=None, conf
 
 if __name__ == "__main__":
     gpt_dataset._build_shuffle_index = ordered_shuffle_index
-    setattr(upstream.train_valid_test_datasets_provider, "is_distributed", True)
+    upstream.train_valid_test_datasets_provider.is_distributed = True
     args = parse_and_validate_args(extra_args_provider=add_args, args_defaults={"tokenizer_type": "NullTokenizer"})
     if args.log_step_performance:
         install_performance_logger()

@@ -14,15 +14,15 @@ TODO: add the actual commands
 """
 
 import argparse
-import os
-import struct
-import math
 import glob
 import inspect
-from contextlib import nullcontext
+import math
+import os
+import struct
+import sys
+import time
 from dataclasses import dataclass
 from pathlib import Path
-import time
 from typing import (
     AbstractSet,
     Collection,
@@ -39,16 +39,39 @@ from typing import (
 
 import numpy as np
 import torch
-import torch.nn as nn
-from torch.nn import functional as F
-import torch._inductor.config as config
-from torch.nn.parallel import DistributedDataParallel as DDP
-from torch.distributed import init_process_group, destroy_process_group
-from torch.distributed.optim import ZeroRedundancyOptimizer
-import torch.distributed as dist
+from device_compat import (
+    accelerated_default_device,
+    autocast_context,
+    configure_fp32,
+    device_name,
+    distributed_backend,
+    initialize_accelerator,
+    is_available,
+    manual_seed,
+    max_memory_allocated_mib,
+    reset_peak_memory_stats,
+    set_device,
+    synchronize,
+)
+
+initialize_accelerator()
+configure_fp32()
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+LLMC_LOADER_DIR = SCRIPT_DIR.parents[1] / "megatron" / "models" / "llama3"
+sys.path.insert(0, str(LLMC_LOADER_DIR))
 
 import tiktoken
+import torch._inductor.config as config
+import torch.distributed as dist
+import torch.nn as nn
+from llmc_loader import Reader
 from tiktoken.load import load_tiktoken_bpe
+from torch.distributed import destroy_process_group, init_process_group
+from torch.distributed.optim import ZeroRedundancyOptimizer
+from torch.nn import functional as F
+from torch.nn.parallel import DistributedDataParallel as DDP
+
 
 def log(name, tensor):
     min_w = tensor.min().item()
@@ -57,12 +80,6 @@ def log(name, tensor):
     rounded_w = [f"{v:.7f}" for v in flat_w]
     print(f"  → {name}, shape={tuple(tensor.shape)}")
     print(f"     range: min={min_w:.7f}, max={max_w:.7f}, values={rounded_w}")
-
-torch.backends.cuda.matmul.allow_tf32 = False
-torch.backends.cudnn.allow_tf32 = False
-torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction = False
-torch.backends.cudnn.deterministic = True
-torch.set_float32_matmul_precision("highest")
 
 # -----------------------------------------------------------------------------
 # PyTorch nn.Module definitions for the LLaMA 3.x model
@@ -434,17 +451,17 @@ class LLaMA(nn.Module):
     def from_pretrained_llama3_hf(cls, model_id):
         """Loads pretrained LLaMA model weights from HuggingFace"""
         from transformers import AutoModelForCausalLM, AutoTokenizer
-        assert model_id == "meta-llama/Llama-3.2-1B", "Only the 1B-base model is supported for now"
+        assert (
+            os.path.isdir(model_id) or model_id == "meta-llama/Llama-3.2-1B"
+        ), "Only the 1B-base model or a local Llama3.2-1B directory is supported"
         model_args = LlamaConfig()
 
         model = AutoModelForCausalLM.from_pretrained(model_id)
         checkpoint = LLaMA.adapt_llama_state_dict_keys_hf(model.state_dict(), model_args)
 
-        original_default_type = torch.get_default_dtype()  # save the default type
-        torch.set_default_tensor_type(torch.cuda.FloatTensor)  # much faster loading
-        model = LLaMA(model_args)
-        model.load_state_dict(checkpoint, strict=False)
-        torch.set_default_tensor_type(torch.tensor([], dtype=original_default_type, device="cpu").type())  # restore default type
+        with accelerated_default_device():
+            model = LLaMA(model_args)
+            model.load_state_dict(checkpoint, strict=False)
 
         tokenizer = AutoTokenizer.from_pretrained(model_id)
         tokenizer.pad_id = 128004  # this is the pad token id for LLaMA 3.2 base, we need to set this explicitly as our generate func expects it
@@ -461,14 +478,64 @@ class LLaMA(nn.Module):
         checkpoint = torch.load(ckpt_path, map_location="cpu", weights_only=True)
         checkpoint = LLaMA.adapt_llama_state_dict_keys(checkpoint, model_args)
 
-        original_default_type = torch.get_default_dtype()  # save the default type
-        torch.set_default_tensor_type(torch.cuda.FloatTensor)  # much faster loading
-        model = LLaMA(model_args)
-        model.load_state_dict(checkpoint, strict=False)
-        torch.set_default_tensor_type(torch.tensor([], dtype=original_default_type, device="cpu").type())  # restore default type
+        with accelerated_default_device():
+            model = LLaMA(model_args)
+            model.load_state_dict(checkpoint, strict=False)
 
         tokenizer = Tokenizer(model_path=tokenizer_path)
         model.tokenizer = tokenizer
+        return model
+
+    @classmethod
+    def from_llmc(cls, filepath):
+        """Loads an InfiniTrain LLMC checkpoint without requiring HuggingFace."""
+        reader = Reader(filepath)
+        source_config = reader.config
+        model_args = LlamaConfig(
+            block_size=source_config.max_position_embeddings,
+            vocab_size=source_config.vocab_size,
+            n_layer=source_config.num_layers,
+            n_head=source_config.num_attention_heads,
+            n_kv_head=source_config.num_query_groups,
+            n_embd=source_config.hidden_size,
+            ffn_dim_multiplier=source_config.ffn_multiplier,
+            multiple_of=source_config.multiple_of,
+            norm_eps=source_config.norm_epsilon,
+            rope_theta=source_config.rotary_base,
+            use_scaled_rope=source_config.use_scaled_rope,
+            use_kv=False,
+        )
+
+        def assign(target, source, name):
+            source = np.asarray(source)
+            if tuple(target.shape) != tuple(source.shape):
+                raise RuntimeError(
+                    f"{name}: PyTorch {tuple(target.shape)} != LLMC {tuple(source.shape)}"
+                )
+            target.copy_(torch.from_numpy(np.array(source, copy=True)))
+
+        with accelerated_default_device():
+            model = cls(model_args)
+            tensors = reader.tensors
+            with torch.no_grad():
+                assign(model.transformer.wte.weight, tensors["embedding"], "embedding")
+                for i, block in enumerate(model.transformer.h):
+                    assign(block.ln_1.weight, tensors["input_norm"][i], f"layer{i}.input_norm")
+                    assign(block.attn.c_attn.weight, tensors["qkv"][i], f"layer{i}.qkv")
+                    assign(
+                        block.attn.c_proj.weight,
+                        tensors["attention_output"][i],
+                        f"layer{i}.attention_output",
+                    )
+                    assign(block.ln_2.weight, tensors["pre_mlp_norm"][i], f"layer{i}.pre_mlp_norm")
+                    ffn_size = source_config.intermediate_size
+                    assign(block.mlp.c_fc.weight[:ffn_size], tensors["gate"][i], f"layer{i}.gate")
+                    assign(block.mlp.c_fc.weight[ffn_size:], tensors["up"][i], f"layer{i}.up")
+                    assign(block.mlp.c_proj.weight, tensors["down"][i], f"layer{i}.down")
+                assign(model.transformer.ln_f.weight, tensors["final_norm"], "final_norm")
+                assign(model.lm_head.weight, tensors["output"], "output")
+
+        print0(f"loaded Llama3 LLMC checkpoint: {filepath}")
         return model
 
     def configure_optimizers(self, weight_decay, learning_rate, betas, device_type, zero_stage):
@@ -999,8 +1066,8 @@ def write_lora_weights(model, filepath):
     - PyTorch: transformer.h.{i}.attn.c_attn.lora_A.default.weight
     - Our framework expects: __pp_chunk_0.h.{i}.attn.c_attn.lora_A
     """
-    import struct
     import re
+    import struct
 
     # Collect lora_A and lora_B parameters
     lora_tensors = {}
@@ -1169,6 +1236,7 @@ if __name__ == "__main__":
     parser.add_argument("--use_hf", type=int, default=1, help="use HuggingFace (default) or use Meta's model")
     parser.add_argument("--ckpt_dir", type=str, default=None, help="path to llama3 model checkpoint (needed if use_hf=0)")
     parser.add_argument("--tokenizer_path", type=str, default=None, help="path to llama3 tokenizer (needed if use_hf=0)")
+    parser.add_argument("--llmc_filepath", type=str, default=os.environ.get("LLAMA3_LLMC_FILEPATH", ""), help="path to an InfiniTrain Llama3 LLMC checkpoint")
     # file system input / output
     parser.add_argument("--input_bin", type=str, default="/data/shared/InfiniTrain-dev/data/llmc/llama3/tinyshakespeare/tiny_shakespeare_train.bin", help="input .bin to train on")
     parser.add_argument("--input_val_bin", type=str, default="", help="input .bin to eval validation loss on")
@@ -1225,7 +1293,9 @@ if __name__ == "__main__":
     B, T = args.batch_size, args.sequence_length
     assert 1 <= T <= 8192, "sequence length must be between 1 and 8192"
     assert args.dtype in {"float32", "float16", "bfloat16"}
-    assert args.model in {"meta-llama/Llama-3.2-1B"}  # only 1B base model supported for now
+    assert args.llmc_filepath or os.path.isdir(args.model) or args.model == "meta-llama/Llama-3.2-1B", (
+        "Only an LLMC checkpoint, the official 1B model, or a local Llama3.2-1B directory is supported"
+    )
 
     # create the logging directory if it does not exist
     logfile = None
@@ -1239,14 +1309,13 @@ if __name__ == "__main__":
     # set up DDP (distributed data parallel). torchrun sets this env variable
     ddp = int(os.environ.get('RANK', -1)) != -1 # is this a ddp run?
     if ddp:
-        # use of DDP atm demands CUDA, we set the device appropriately according to rank
-        assert torch.cuda.is_available(), "for now i think we need CUDA for DDP"
-        init_process_group(backend='nccl')
+        assert is_available(), "DDP requires CUDA or NPU"
+        init_process_group(backend=distributed_backend())
         ddp_rank = int(os.environ['RANK'])
         ddp_local_rank = int(os.environ['LOCAL_RANK'])
         ddp_world_size = int(os.environ['WORLD_SIZE'])
-        device = f'cuda:{ddp_local_rank}'
-        torch.cuda.set_device(device)
+        set_device(ddp_local_rank)
+        device = device_name(ddp_local_rank)
         master_process = ddp_rank == 0 # this process will do logging, checkpointing etc.
         seed_offset = 0 # each process gets the exact same seed
         zero_stage = args.zero_stage
@@ -1262,14 +1331,7 @@ if __name__ == "__main__":
             # provided explicitly by the user
             device = args.device
         else:
-            # attempt to autodetect the device
-            device = "cpu"
-            if torch.cuda.is_available():
-                device = "cuda"
-            elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-                device = "mps"
-    device_type = 'cuda' if 'cuda' in device else 'cpu'
-    # assert device_type in {'cuda'}, "GPU required to run LLaMA 3"  # we need to load LLaMA as bf16 on CUDA
+            device = device_name()
     print(f"using device: {device}")
 
     # calculate gradient accumulation from the desired total batch size and the current run configuration
@@ -1281,12 +1343,10 @@ if __name__ == "__main__":
 
     # set up a context manager following the desired dtype and device
     ptdtype = {'float32': torch.float32, 'bfloat16': torch.bfloat16, 'float16': torch.float16}[args.dtype]
-    ctx = torch.amp.autocast(device_type=device_type, dtype=ptdtype) if (device_type == "cuda") else nullcontext()
+    ctx = autocast_context(ptdtype)
 
     # rng / reproducibility
-    torch.manual_seed(42)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed(42)
+    manual_seed(42)
 
     # set the torch precision mode to use TensorFloat32 (TF32) for matmuls
     # docs https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html
@@ -1298,7 +1358,9 @@ if __name__ == "__main__":
     FLASH = args.flash
 
     # init the model
-    if args.use_hf:
+    if args.llmc_filepath:
+        model = LLaMA.from_llmc(args.llmc_filepath)
+    elif args.use_hf:
         model = LLaMA.from_pretrained_llama3_hf(args.model)
         write_tokenizer(model.tokenizer, f"llama3_tokenizer.bin")
     else:  # use Meta's checkpoint
@@ -1457,7 +1519,7 @@ if __name__ == "__main__":
         loss.backward()
         # save model params, in bfloat16
         model_to_size = {"meta-llama/Llama-3.2-1B": "1B"}
-        model_size_str = model_to_size[args.model] # e.g. "1B"
+        model_size_str = model_to_size.get(args.model, "1B")
         write_model(model, os.path.join(args.output_dir, f"llama3.2_{model_size_str}_fp32.bin"), dtype="float32")
         # save x, y, logits, loss, and parameter gradients, for debugging C
         # always store these in fp32 to have an accurate reference (?)
@@ -1480,8 +1542,7 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(raw_model.parameters(), lr=args.learning_rate, betas=(0.9, 0.999))
     get_lr = build_training_lr_schedule(args)
 
-    if device == "cuda":
-        torch.cuda.reset_peak_memory_stats()
+    reset_peak_memory_stats()
     timings = []
     norm = -1.0   # dummy value to print in inference-only mode
     for step in range(args.num_iterations + 1):
@@ -1605,10 +1666,7 @@ if __name__ == "__main__":
         # everything that follows now is just diagnostics, prints, logging, etc.
 
         # wait on the CPU for all device work to end so we get accurate per-iteration timings below
-        if device == "mps":
-            torch.mps.synchronize()
-        elif device == "cuda":
-            torch.cuda.synchronize()
+        synchronize()
         # time and print
         t1 = time.time()
         # the 0th iteration is often an outlier (much slower) => skip logging it
@@ -1629,7 +1687,7 @@ if __name__ == "__main__":
     avg_throughput = np.mean([t[1] for t in timings])
     print0(f"final {len(timings)} iters Latency avg: {avg_latency:.3f}ms")
     print0(f"final {len(timings)} iters Throughput avg: {avg_throughput:.0f} tok/s")
-    print0(f"peak memory consumption: {torch.cuda.max_memory_allocated() // 1024 // 1024} MiB")
+    print0(f"peak memory consumption: {max_memory_allocated_mib()} MiB")
 
     # -------------------------------------------------------------------------
     # clean up nice

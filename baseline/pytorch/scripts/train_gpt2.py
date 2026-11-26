@@ -14,27 +14,39 @@ you can also turn on flash-attention by appending --flash=1
 torchrun --standalone --nproc_per_node=4 train_gpt2.py --write_tensors=0 --num_iterations=50 --sequence_length=1024 --compile=1 --tensorcores=1 --dtype=bfloat16
 """
 
-import os
-import math
 import glob
-import struct
 import inspect
-from contextlib import nullcontext
+import math
+import os
+import struct
 from dataclasses import dataclass
 
 import numpy as np
 import torch
-import torch.nn as nn
-from torch.nn import functional as F
-import torch._inductor.config as config
-from torch.nn.parallel import DistributedDataParallel as DDP
-from torch.distributed import init_process_group, destroy_process_group
-from torch.distributed.optim import ZeroRedundancyOptimizer
-import torch.distributed as dist
+from device_compat import (
+    autocast_context,
+    configure_fp32,
+    device_name,
+    distributed_backend,
+    initialize_accelerator,
+    is_available,
+    manual_seed,
+    max_memory_allocated_mib,
+    reset_peak_memory_stats,
+    set_device,
+    synchronize,
+)
 
-torch.set_float32_matmul_precision("highest")
-torch.backends.cuda.matmul.allow_tf32 = False
-torch.backends.cudnn.allow_tf32 = False
+initialize_accelerator()
+configure_fp32()
+
+import torch._inductor.config as config
+import torch.distributed as dist
+from torch import nn
+from torch.distributed import destroy_process_group, init_process_group
+from torch.distributed.optim import ZeroRedundancyOptimizer
+from torch.nn import functional as F
+from torch.nn.parallel import DistributedDataParallel as DDP
 
 # -----------------------------------------------------------------------------
 # PyTorch nn.Module definitions for the GPT-2 model
@@ -594,9 +606,9 @@ def build_training_lr_schedule(args):
     return get_lr
 
 if __name__ == "__main__":
-    import time
     import argparse
-    import tiktoken
+    import time
+
     print0(f"Running pytorch {torch.version.__version__}")
 
     # default settings will overfit a tiny batch of data
@@ -663,14 +675,13 @@ if __name__ == "__main__":
     # set up DDP (distributed data parallel). torchrun sets this env variable
     ddp = int(os.environ.get('RANK', -1)) != -1 # is this a ddp run?
     if ddp:
-        # use of DDP atm demands CUDA, we set the device appropriately according to rank
-        assert torch.cuda.is_available(), "for now i think we need CUDA for DDP"
-        init_process_group(backend='nccl')
+        assert is_available(), "DDP requires CUDA or NPU"
+        init_process_group(backend=distributed_backend())
         ddp_rank = int(os.environ['RANK'])
         ddp_local_rank = int(os.environ['LOCAL_RANK'])
         ddp_world_size = int(os.environ['WORLD_SIZE'])
-        device = f'cuda:{ddp_local_rank}'
-        torch.cuda.set_device(device)
+        set_device(ddp_local_rank)
+        device = device_name(ddp_local_rank)
         master_process = ddp_rank == 0 # this process will do logging, checkpointing etc.
         seed_offset = 0 # each process gets the exact same seed
         zero_stage = args.zero_stage
@@ -686,14 +697,8 @@ if __name__ == "__main__":
             # provided explicitly by the user
             device = args.device
         else:
-            # attempt to autodetect the device
-            device = "cpu"
-            if torch.cuda.is_available():
-                device = "cuda"
-            elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-                device = "mps"
+            device = device_name()
     print(f"using device: {device}")
-    device_type = 'cuda' if 'cuda' in device else 'cpu'
 
     # calculate gradient accumulation from the desired total batch size and the current run configuration
     tokens_per_fwdbwd = B * T * ddp_world_size
@@ -704,12 +709,10 @@ if __name__ == "__main__":
 
     # set up a context manager following the desired dtype and device
     ptdtype = {'float32': torch.float32, 'bfloat16': torch.bfloat16, 'float16': torch.float16}[args.dtype]
-    ctx = torch.amp.autocast(device_type=device_type, dtype=ptdtype) if device_type == "cuda" else nullcontext()
+    ctx = autocast_context(ptdtype)
 
     # rng / reproducibility
-    torch.manual_seed(42)
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed(42)
+    manual_seed(42)
 
     # set the torch precision mode to use TensorFloat32 (TF32) for matmuls
     # docs https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html
@@ -843,8 +846,7 @@ if __name__ == "__main__":
         with open(logfile, "w") as f:
             pass
 
-    if device == "cuda":
-        torch.cuda.reset_peak_memory_stats()
+    reset_peak_memory_stats()
     timings = []
     norm = -1.0   # dummy value to print in inference-only mode
     for step in range(args.num_iterations + 1):
@@ -938,10 +940,7 @@ if __name__ == "__main__":
         # everything that follows now is just diagnostics, prints, logging, etc.
 
         # wait on the CPU for all device work to end so we get accurate per-iteration timings below
-        if device == "mps":
-            torch.mps.synchronize()
-        elif device == "cuda":
-            torch.cuda.synchronize()
+        synchronize()
         # time and print
         t1 = time.time()
         # the 0th iteration is often an outlier (much slower) => skip logging it
@@ -962,7 +961,7 @@ if __name__ == "__main__":
     avg_throughput = np.mean([t[1] for t in timings])
     print0(f"final {len(timings)} iters Latency avg: {avg_latency:.3f}ms")
     print0(f"final {len(timings)} iters Throughput avg: {avg_throughput:.0f} tok/s")
-    print0(f"peak memory consumption: {torch.cuda.max_memory_allocated() // 1024 // 1024} MiB")
+    print0(f"peak memory consumption: {max_memory_allocated_mib()} MiB")
 
     # -------------------------------------------------------------------------
     # clean up nice
